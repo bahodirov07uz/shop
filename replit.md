@@ -7,6 +7,8 @@ This is a full-stack e-commerce application built for selling ASIC cryptocurrenc
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Development preference: Frontend-only solutions, user will handle backend implementation separately.
+Design style: Professional, clean design based on provided samples with ASIC miner focus.
 
 ## System Architecture
 
