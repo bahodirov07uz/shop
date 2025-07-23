@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+
+<!-- Hero Section -->
+<section id="home" class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">Профессиональные ASIC майнеры</h1>
+                    <p class="hero-subtitle">
+                        Ведущий поставщик оригинального криптовалютного оборудования.
+                        Доставка по всему миру, официальная гарантия производителя.
+                    </p>
+                    <a href="{% url 'asic:catalog' %}" class="btn-primary-custom">
+                        <i class="fas fa-shopping-bag me-2"></i>Посмотреть каталог
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-asic text-center">
+                    <img src="staticfiles/attached_assets/Асик (1)_1753196830612.jpg" alt="ASIC Miner"
+                        class="asic-image">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="features-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="section-title">Почему выбирают нас</h2>
+                <p class="section-subtitle">
+                    Мы предлагаем комплексные решения для майнинга с полной технической поддержкой
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Гарантия качества</h4>
+                    <p>Официальная гарантия от производителей на все оборудование</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h4>Быстрая доставка</h4>
+                    <p>Доставка в 50+ стран мира. Экспресс-доставка за 3-5 дней</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>Поддержка 24/7</h4>
+                    <p>Техническая поддержка и консультации в любое время суток</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h4>Сертификация</h4>
+                    <p>Только сертифицированное оборудование от официальных поставщиков</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section id="products" class="products-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="section-title">Популярные ASIC майнеры</h2>
+                <p class="section-subtitle">
+                    Лучшие модели от ведущих производителей с высокой энергоэффективностью
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for i in products %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'asic:detail' i.id %}">
+                    <div class="product-card">
+                        <img src="{{i.images.url}}" alt="Bitmain Antminer S19 Pro" class="product-image">
+                        <div class="product-body">
+                            <h5 class="product-title">{{i.name}}</h5>
+                            <div class="product-price">$ {{i.price}}</div>
+                            <ul class="product-specs">
+                                <li><i class="fas fa-bolt text-primary me-2"></i>Хешрейт: {{i.hash_rate}} TH/s</li>
+                                <li><i class="fas fa-plug text-primary me-2"></i>Потребление: {{i.power_consumption}} W
+                                </li>
+                                <li><i class="fas fa-microchip text-primary me-2"></i>Алгоритм: {{i.algorithm}}</li>
+                            </ul>
+                            <button class="btn btn-primary w-100">
+                                <i class="fas fa-cart-plus me-2"></i>В корзину
+                            </button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="#" class="btn-primary-custom">
+                <i class="fas fa-th me-2"></i>Посмотреть все модели
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Brands Section -->
+<section class="brands-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="text-center mb-5">Официальные партнеры</h3>
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-6 col-md-2 text-center mb-4">
+                <img src="https://logos-world.net/wp-content/uploads/2021/02/Bitmain-Logo.png" alt="Bitmain"
+                    class="brand-logo">
+            </div>
+            <div class="col-6 col-md-2 text-center mb-4">
+                <div style="background: #f8fafc; padding: 15px; border-radius: 10px;">
+                    <span style="font-weight: 700; font-size: 1.2rem; color: #1e293b;">CANAAN</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-2 text-center mb-4">
+                <div style="background: #f8fafc; padding: 15px; border-radius: 10px;">
+                    <span style="font-weight: 700; font-size: 1.2rem; color: #3b82f6;">IceRiver</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-2 text-center mb-4">
+                <div style="background: #f8fafc; padding: 15px; border-radius: 10px;">
+                    <span style="font-weight: 700; font-size: 1.2rem; color: #dc2626;">WhatsMiner</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="stat-number">5000+</div>
+                <div class="stat-label">Довольных клиентов</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Стран доставки</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number">10+</div>
+                <div class="stat-label">Лет на рынке</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Техподдержка</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

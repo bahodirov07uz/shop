@@ -1,0 +1,6 @@
+Django>=4.2
+django-allauth
+dj-database-url
+gunicorn
+whitenoise
+psycopg2-binary

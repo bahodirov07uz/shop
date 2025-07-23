@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/catalog.css' %}">
+    <!-- Header -->
+    <section class="catalog-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="landing" class="text-primary">Главная</a></li>
+                            <li class="breadcrumb-item active">ASIC майнеры</li>
+                        </ol>
+                    </nav>
+                    <h1 class="h2 mb-2">ASIC майнеры</h1>
+                    <p class="text-muted">Профессиональное оборудование для майнинга криптовалют</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-4">
+        <div class="container">
+            <div class="row">
+                <!-- Filters Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="filters-card">
+                        <h5 class="mb-3">Фильтры</h5>
+                        
+                        <!-- Brand Filter -->
+                        <div class="filter-group">
+                            <div class="filter-title">Производитель</div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="bitmain" id="bitmain">
+                                <label class="form-check-label" for="bitmain">Bitmain</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="canaan" id="canaan">
+                                <label class="form-check-label" for="canaan">Canaan</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="iceriver" id="iceriver">
+                                <label class="form-check-label" for="iceriver">IceRiver</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="whatsminer" id="whatsminer">
+                                <label class="form-check-label" for="whatsminer">WhatsMiner</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Algorithm Filter -->
+                        <div class="filter-group">
+                            <div class="filter-title">Алгоритм</div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="sha256" id="sha256">
+                                <label class="form-check-label" for="sha256">SHA-256</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="scrypt" id="scrypt">
+                                <label class="form-check-label" for="scrypt">Scrypt</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="kheavyhash" id="kheavyhash">
+                                <label class="form-check-label" for="kheavyhash">KHeavyHash</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Price Range -->
+                        <div class="filter-group">
+                            <div class="filter-title">Цена, $</div>
+                            <div class="price-range">
+                                <input type="number" class="form-control form-control-sm" placeholder="От" id="priceFrom">
+                                <span>—</span>
+                                <input type="number" class="form-control form-control-sm" placeholder="До" id="priceTo">
+                            </div>
+                        </div>
+                        
+                        <!-- In Stock -->
+                        <div class="filter-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="instock" id="instock">
+                                <label class="form-check-label" for="instock">Только в наличии</label>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary w-100 mb-2">Применить фильтры</button>
+                        <button class="btn btn-outline-secondary w-100">Сбросить</button>
+                    </div>
+                </div>
+                
+                <!-- Products Grid -->
+                <div class="col-lg-9">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Найдено 24 товара</span>
+                        <select class="form-select form-select-sm" style="width: auto;">
+                            <option>По популярности</option>
+                            <option>По цене ↑</option>
+                            <option>По цене ↓</option>
+                            <option>Новинки</option>
+                        </select>
+                    </div>
+                    
+                    <div class="product-grid">
+                        {% for i in products %}
+                        <div class="product-card">
+                            <a href="{% url 'asic:detail' i.id %}">
+                                <div style="position: relative;">
+                                <img src="{{i.images.url}}" alt="{{i.name}}" class="product-image">
+                                {% if i.is_featured %}
+                                <div class="product-badge">FEATURED</div>
+                                {% endif %}
+                            </div>
+                            </a>
+                            <div class="product-body">
+                                <div class="product-brand">{{i.manufacturer.name}}</div>
+                                <h5 class="product-title">{{i.name}} {{i.hash_rate}} TH/s</h5>
+                                <div class="product-price">${{i.price}}</div>
+                                <ul class="product-specs">
+                                    <li><span>Хешрейт:</span> <span>{{i.hash_rate}} TH/s</span></li>
+                                    <li><span>Потребление:</span> <span>{{i.power_consumption}}W</span></li>
+                                    <li><span>Алгоритм:</span> <span>{{i.algorithm}}</span></li>
+                                </ul>
+                                <div class="product-actions">
+                                    <button class="btn-primary-custom">
+                                        <i class="fas fa-cart-plus me-1"></i>В корзину
+                                    </button>
+                                    <button class="btn-outline-custom">
+                                        <a href="{% url 'asic:detail' i.id %}"><i class="fas fa-eye"></i></a>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>                        
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav class="mt-5">
+                        <ul class="pagination justify-content-center pagination-custom">
+                            <li class="page-item disabled">
+                                <span class="page-link">Предыдущая</span>
+                            </li>
+                            <li class="page-item active">
+                                <span class="page-link">1</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Следующая</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
