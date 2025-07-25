@@ -1,11 +1,20 @@
 from django.contrib import admin
 from django.urls import path
-from .views import HomeView,CatalogView,ProductDetailView
+from . import views
 
 app_name =  "asic"
 urlpatterns = [
-    path('', HomeView.as_view(), name="home"),
-    path('catalog/', CatalogView.as_view(), name="catalog"),
-    path('detail/<int:pk>/', ProductDetailView.as_view(), name="detail"),
-    
+    path('', views.HomeView.as_view(), name="home"),
+    path('catalog/', views.CatalogView.as_view(), name="catalog"),
+    path('profile/', views.profile_view, name="profile"),
+    path('detail/<int:pk>/', views.ProductDetailView.as_view(), name="detail"),
+    path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('buy-cart/add/<int:product_id>/', views.add_cart_buy, name='add_buy'),
+    path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('cart/', views.cart_detail, name='cart_detail'),
+    path('cart/order/', views.cart_order, name='cart_order'),
+    path('orders/<int:order_id>/', views.order_detail, name='order_detail'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('about/', views.AboutPage.as_view(), name='about'),
+
 ]

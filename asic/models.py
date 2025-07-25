@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
-from datetime import timezone
+from django.utils import timezone
 from .utils import calculate_product_discount,get_product_discounts
 
 class Manufacturer(models.Model):
@@ -18,6 +18,13 @@ class Manufacturer(models.Model):
     def __str__(self):
         return self.name
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
+    
 class ProductCategory(models.Model):
     """Mahsulot kategoriyalari"""
     name = models.CharField(max_length=100)
@@ -41,11 +48,16 @@ class Product(models.Model):
     description = models.TextField()
     specifications = models.TextField(blank=True)
     images = models.ImageField(upload_to="media/products",null=True,blank=True)
+    image2 = models.ImageField(upload_to="media/products",null=True,blank=True)
+    image3 = models.ImageField(upload_to="media/products",null=True,blank=True)
     stock = models.PositiveIntegerField(default=0)
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True,null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    coins = models.ManyToManyField('Coin', related_name='products',null=True,blank=True)  
+    
     @property
     def current_price(self):
         """Aktiv chegirmalarni hisobga olgan holda joriy narx"""
@@ -59,27 +71,14 @@ class Product(models.Model):
     def has_discount(self):
         """Mahsulotda chegirma borligini tekshiradi"""
         return bool(get_product_discounts(self))
+    
     def __str__(self):
         return f"{self.manufacturer.name} {self.name}"
 
-class Page(models.Model):
-    """Sayt statik sahifalari"""
-    title = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True)
-    content = models.TextField()
-    meta_title = models.CharField(max_length=200, blank=True)
-    meta_description = models.CharField(max_length=300, blank=True)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return self.title
-
 class Order(models.Model):
     DELIVERY_TYPES = [
-        ('air', 'Aviakuryer'),
-        ('sea', 'Dengiz orqali'),
+        ('air', 'Авиакурьер'),
+        ('sea', 'По морю'),
     ]
     
     DOCUMENT_TYPES = [
@@ -88,13 +87,12 @@ class Order(models.Model):
     ]
     
     STATUS_CHOICES = [
-        ('new', 'Yangi buyurtma'),
-        ('processing', 'Tayyorlanmoqda'),
-        ('shipped', 'Yuborilgan'),
-        ('customs', 'Bojiqada'),
-        ('ready', 'Topshirishga tayyor'),
-        ('completed', 'Yakunlangan'),
-        ('cancelled', 'Bekor qilingan'),
+        ('new', 'Новый заказ'),
+        ('processing', 'Подготовка'),
+        ('shipped', 'Отправил'),
+        ('ready', 'Готов отправить'),
+        ('completed', 'Завершенный'),
+        ('cancelled', 'Отменено'),
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
@@ -118,6 +116,15 @@ class Order(models.Model):
     
     def __str__(self):
         return f"Buyurtma #{self.order_number} - {self.user.username}"
+    
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField()
+    
+    def get_cost(self):
+        return self.quantity*self.price
     
 class OrderStatusHistory(models.Model):
     """Buyurtma statusi tarixi"""
@@ -217,6 +224,7 @@ class DeliverySettings(models.Model):
     def __str__(self):
         return f"Yetkazib berish sozlamalari"
 
+
 class SiteSettings(models.Model):
     """Sayt umumiy sozlamalari"""
     site_name = models.CharField(max_length=100)
@@ -226,9 +234,38 @@ class SiteSettings(models.Model):
     default_meta_description = models.CharField(max_length=300, blank=True)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
-    address = models.TextField()
-    map_embed_code = models.TextField(blank=True)
-    copyright_text = models.CharField(max_length=200)
+    location = models.CharField(max_length=100)
+     
     
     def __str__(self):
         return "Sayt sozlamalari"
+    
+class BannerImage(models.Model):
+    banner = models.ImageField(upload_to='media/banners')
+    title = models.CharField(max_length=1000)
+    text = models.TextField()
+    is_active = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.title
+    
+class Coin(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    symbol = models.CharField(max_length=10, unique=True)
+    icon = models.ImageField(upload_to='coin_icons/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Office(models.Model):
+    name = models.CharField(max_length=50)
+    location = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='offices')
+    email = models.CharField(max_length=100)
+    phone = models.CharField(max_length=30)
+    vkontakte = models.CharField(max_length=200)
+    telegram = models.CharField(max_length=200)
+    whatsapp = models.CharField(max_length=200)
+    
+    def __str__(self):
+        return self.name

@@ -3,6 +3,159 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 
+<style>
+    /* Mobile-specific styles */
+    @media (max-width: 767.98px) {
+        .hero-section {
+            position: relative;
+            padding-top: 80px;
+            padding-bottom: 80px;
+            overflow: hidden;
+            min-height: 500px;
+            /* Ensure enough height for content */
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+
+                {
+                % if active_banner %
+            }
+
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+            url('{{ active_banner.banner.url }}');
+
+                {
+                % else %
+            }
+
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+            url('{% static "attached_assets/miners.png" %}');
+
+                {
+                % endif %
+            }
+
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            filter: blur(2px);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: #fff;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .hero-asic {
+            display: none;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-primary-custom {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Adjust other sections for mobile */
+        .features-section,
+        .products-section,
+        .brands-section,
+        .stats-section {
+            padding: 40px 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+        }
+
+        .product-card {
+            margin-bottom: 20px;
+        }
+    }
+
+    /* Desktop styles */
+    @media (min-width: 768px) {
+        .hero-section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .hero-asic img {
+            max-width: 100%;
+            height: auto;
+            animation: float 6s ease-in-out infinite;
+
+                {
+                % if active_banner %
+            }
+
+            content: url('{{ active_banner.banner.url }}');
+
+                {
+                % endif %
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* Fallback if no active banner */
+            {
+            % if not active_banner %
+        }
+
+        .hero-asic img {
+            content: url('{% static "attached_assets/miners.png" %}');
+        }
+
+            {
+            % endif %
+        }
+    }
+</style>
 
 <!-- Hero Section -->
 <section id="home" class="hero-section">
@@ -10,11 +163,16 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <div class="hero-content">
+                    {% if active_banner %}
+                    <h1 class="hero-title">{{ active_banner.title }}</h1>
+                    <p class="hero-subtitle">{{ active_banner.text }}</p>
+                    {% else %}
                     <h1 class="hero-title">Профессиональные ASIC майнеры</h1>
                     <p class="hero-subtitle">
                         Ведущий поставщик оригинального криптовалютного оборудования.
                         Доставка по всему миру, официальная гарантия производителя.
                     </p>
+                    {% endif %}
                     <a href="{% url 'asic:catalog' %}" class="btn-primary-custom">
                         <i class="fas fa-shopping-bag me-2"></i>Посмотреть каталог
                     </a>
@@ -22,14 +180,17 @@
             </div>
             <div class="col-lg-6">
                 <div class="hero-asic text-center">
-                    <img src="staticfiles/attached_assets/Асик (1)_1753196830612.jpg" alt="ASIC Miner"
-                        class="asic-image">
+                    {% if active_banner %}
+                    <img src="{{ active_banner.banner.url }}" alt="{{ active_banner.title }}" class="asic-image">
+                    {% else %}
+                    <img src="{% static 'attached_assets/miners.png' %}" alt="ASIC Miner" class="asic-image">
+                    {% endif %}
+
                 </div>
             </div>
         </div>
     </div>
 </section>
-
 <!-- Features Section -->
 <section id="features" class="features-section">
     <div class="container">
@@ -113,19 +274,20 @@
                                 </li>
                                 <li><i class="fas fa-microchip text-primary me-2"></i>Алгоритм: {{i.algorithm}}</li>
                             </ul>
-                            <button class="btn btn-primary w-100">
-                                <i class="fas fa-cart-plus me-2"></i>В корзину
-                            </button>
+                            <a href="{% url 'asic:add_to_cart' i.id %}">
+                                <button class="btn btn-primary w-100">
+                                    <i class="fas fa-cart-plus me-2"></i>В корзину
+                                </button>
+                            </a>
                         </div>
                     </div>
                 </a>
             </div>
             {% endfor %}
-
         </div>
 
         <div class="text-center mt-5">
-            <a href="#" class="btn-primary-custom">
+            <a href="{% url 'asic:catalog'%}" class="btn-primary-custom">
                 <i class="fas fa-th me-2"></i>Посмотреть все модели
             </a>
         </div>

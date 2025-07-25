@@ -48,6 +48,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+CART_SESSION_ID = 'cart'
 SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/'
@@ -65,6 +66,7 @@ EMAIL_HOST_USER = 'sizning_email@gmail.com'
 EMAIL_HOST_PASSWORD = 'sizning_parolingiz'  
 DEFAULT_FROM_EMAIL = 'sizning_email@gmail.com'
 
+CSRF_TRUSTED_ORIGINS = ['https://730947c9d279.ngrok-free.app']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -89,6 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'asic.context_pros.site_settings'
             ],
         },
     },
@@ -130,7 +133,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
+
 
 TIME_ZONE = 'UTC'
 

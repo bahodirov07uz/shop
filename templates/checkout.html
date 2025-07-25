@@ -1,412 +1,365 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  body {
+    background: #181f2a;
+    color: #fff;
+  }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Оформление заказа - CHINA-ASIC.RU</title>
-    <meta name="description"
-        content="Оформление заказа на ASIC майнеры. Быстрая и безопасная покупка с доставкой по всему миру.">
+  .bg-navbar {
+    background: #fff;
+    border-bottom: 1px solid #e2e2e2;
+  }
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  .navbar .navbar-brand {
+    font-weight: 700;
+    color: #11d560 !important;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
 
-</head>
+  .navbar-nav .nav-link {
+    color: #222 !important;
+    font-weight: 500;
+    margin-right: 20px;
+  }
 
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom">
-        <div class="container">
-            <a class="navbar-brand" href="landing">
-                <i class="fas fa-microchip me-2"></i>CHINA-ASIC.RU
-            </a>
+  .navbar-nav .nav-link.active,
+  .navbar-nav .nav-link:focus,
+  .navbar-nav .nav-link:hover {
+    color: #11d560 !important;
+  }
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+  .btn-logout {
+    color: #ec6d6d !important;
+    border: 1px solid #ec6d6d;
+    background: #fff;
+    border-radius: 6px;
+    font-weight: 500;
+    margin-right: 8px;
+    transition: 0.2s;
+  }
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="landing">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="catalog">ASIC майнеры</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">О компании</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Контакты</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  .btn-logout:hover {
+    background: #ec6d6d;
+    color: #fff !important;
+  }
 
-    <!-- Header -->
-    <section class="checkout-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="landing" class="text-primary">Главная</a></li>
-                            <li class="breadcrumb-item"><a href="catalog" class="text-primary">Корзина</a></li>
-                            <li class="breadcrumb-item active">Оформление заказа</li>
-                        </ol>
-                    </nav>
-                    <h1 class="h2 mb-2">Оформление заказа</h1>
+  .card {
+    background: #21293a;
+    border-radius: 18px;
+    border: none;
+    box-shadow: 0 2px 8px #161b2380;
+  }
 
-                    <!-- Progress Bar -->
-                    <div class="progress-bar-custom">
-                        <div>
-                            <div class="progress-step completed">1</div>
-                            <div class="step-label">Корзина</div>
-                        </div>
-                        <div>
-                            <div class="progress-step active">2</div>
-                            <div class="step-label">Доставка</div>
-                        </div>
-                        <div>
-                            <div class="progress-step">3</div>
-                            <div class="step-label">Оплата</div>
-                        </div>
-                        <div>
-                            <div class="progress-step">4</div>
-                            <div class="step-label">Подтверждение</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+  .form-label,
+  .form-control {
+    color: #fff;
+    background: #232b39;
+    border: 1px solid #232b39;
+    border-radius: 8px;
+  }
 
-    <!-- Main Content -->
-    <section class="py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <!-- Contact Information -->
-                    <div class="checkout-card">
-                        <h4 class="mb-4">
-                            <i class="fas fa-user me-2 text-primary"></i>
-                            Контактная информация
-                        </h4>
+  .form-control {
+    color: #fff;
+    background: #232b39;
+    border: 1.5px solid #516070;
+    border-radius: 8px;
+  }
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Имя *</label>
-                                    <input type="text" class="form-control" placeholder="Введите ваше имя" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Фамилия *</label>
-                                    <input type="text" class="form-control" placeholder="Введите вашу фамилию" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Email *</label>
-                                    <input type="email" class="form-control" placeholder="example@email.com" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Телефон *</label>
-                                    <input type="tel" class="form-control" placeholder="+7 (999) 123-45-67" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  .form-control:focus {
+    background: #232b39;
+    color: #fff;
+    border-color: #11d560;
+    box-shadow: 0 0 0 2px #11d56040;
+  }
 
-                    <!-- Shipping Information -->
-                    <div class="checkout-card">
-                        <h4 class="mb-4">
-                            <i class="fas fa-truck me-2 text-primary"></i>
-                            Доставка
-                        </h4>
+  .form-label {
+    margin-bottom: 4px;
+    font-size: 15px;
+    font-weight: 500;
+  }
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Страна *</label>
-                                    <select class="form-control" required>
-                                        <option value="">Выберите страну</option>
-                                        <option value="RU">Россия</option>
-                                        <option value="KZ">Казахстан</option>
-                                        <option value="BY">Беларусь</option>
-                                        <option value="UA">Украина</option>
-                                        <option value="US">США</option>
-                                        <option value="DE">Германия</option>
-                                        <option value="CN">Китай</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Город *</label>
-                                    <input type="text" class="form-control" placeholder="Введите ваш город" required>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label class="form-label">Адрес доставки *</label>
-                                    <textarea class="form-control" rows="3" placeholder="Введите полный адрес доставки"
-                                        required></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Почтовый индекс</label>
-                                    <input type="text" class="form-control" placeholder="123456">
-                                </div>
-                            </div>
-                        </div>
+  .btn-checkout {
+    background: #11d560;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 24px;
+    transition: 0.2s;
+  }
 
-                        <h5 class="mt-4 mb-3">Способ доставки</h5>
-                        <div class="payment-method selected">
-                            <input type="radio" name="shipping" value="express" checked>
-                            <i class="fas fa-plane payment-icon text-primary"></i>
-                            <div class="d-inline-block">
-                                <strong>Авиа экспресс</strong>
-                                <div class="text-muted">3-5 дней, $120</div>
-                            </div>
-                        </div>
+  .btn-checkout:hover {
+    background: #0bc04f;
+  }
 
-                        <div class="payment-method">
-                            <input type="radio" name="shipping" value="standard">
-                            <i class="fas fa-truck payment-icon text-primary"></i>
-                            <div class="d-inline-block">
-                                <strong>Стандартная доставка</strong>
-                                <div class="text-muted">7-10 дней, $80</div>
-                            </div>
-                        </div>
+  .order-summary {
+    background: #232b39;
+    border-radius: 10px;
+    padding: 24px;
+    margin-top: 0;
+    color: #fff;
+    font-size: 15px;
+  }
 
-                        <div class="payment-method">
-                            <input type="radio" name="shipping" value="sea">
-                            <i class="fas fa-ship payment-icon text-primary"></i>
-                            <div class="d-inline-block">
-                                <strong>Морская доставка</strong>
-                                <div class="text-muted">15-30 дней, $50</div>
-                            </div>
-                        </div>
-                    </div>
+  .order-summary img {
+    width: 44px;
+    border-radius: 5px;
+    background: #fff;
+    margin-right: 8px;
+  }
 
-                    <!-- Payment Method -->
-                    <div class="checkout-card">
-                        <h4 class="mb-4">
-                            <i class="fas fa-credit-card me-2 text-primary"></i>
-                            Способ оплаты
-                        </h4>
+  .order-summary h6,
+  .order-summary h5 {
+    color: #11d560;
+    font-weight: 600;
+  }
 
-                        <div class="payment-method selected">
-                            <input type="radio" name="payment" value="card" checked>
-                            <i class="fas fa-credit-card payment-icon text-primary"></i>
-                            <div class="d-inline-block">
-                                <strong>Банковская карта</strong>
-                                <div class="text-muted">Visa, MasterCard, МИР</div>
-                            </div>
-                        </div>
+  .order-summary .text-success {
+    color: #11d560 !important;
+  }
 
-                        <div class="payment-method">
-                            <input type="radio" name="payment" value="crypto">
-                            <i class="fab fa-bitcoin payment-icon text-warning"></i>
-                            <div class="d-inline-block">
-                                <strong>Криптовалюта</strong>
-                                <div class="text-muted">Bitcoin, USDT, ETH</div>
-                            </div>
-                        </div>
+  .footer-dark {
+    background: #181f2a;
+    color: #fff;
+    border-top: 1px solid #232b39;
+  }
 
-                        <div class="payment-method">
-                            <input type="radio" name="payment" value="bank">
-                            <i class="fas fa-university payment-icon text-primary"></i>
-                            <div class="d-inline-block">
-                                <strong>Банковский перевод</strong>
-                                <div class="text-muted">Для юридических лиц</div>
-                            </div>
-                        </div>
+  @media(max-width: 768px) {
+    .card {
+      padding: 1rem !important;
+    }
 
-                        <div class="security-info">
-                            <i class="fas fa-shield-alt me-2"></i>
-                            <strong>Безопасная оплата</strong> - Все платежи защищены SSL-шифрованием
-                        </div>
-                    </div>
+    .order-summary {
+      padding: 14px;
+    }
+  }
+</style>
 
-                    <!-- Additional Comments -->
-                    <div class="checkout-card">
-                        <h5 class="mb-3">Дополнительные комментарии</h5>
-                        <textarea class="form-control" rows="3"
-                            placeholder="Особые пожелания к заказу (необязательно)"></textarea>
-                    </div>
-                </div>
+<div class="container my-5">
+  <div class="card p-4">
+    <h2 class="fw-bold mb-4" style="color:#11d560;">Оформление заказа</h2>
 
-                <!-- Order Summary -->
-                <div class="col-lg-4">
-                    <div class="order-summary">
-                        <h4 class="mb-4">Ваш заказ</h4>
+    <div class="row g-4">
+      <!-- LEFT: Form -->
+      <div class="col-md-6">
+        <form action="{% url 'asic:checkout' %}" id="checkoutForm" method="post">
+          {% csrf_token %}
 
-                        <div class="order-item">
-                            <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=160&h=160"
-                                alt="Bitmain Antminer S19 Pro" class="order-item-image">
-                            <div class="order-item-info">
-                                <div class="order-item-title">Bitmain Antminer S19 Pro</div>
-                                <div class="order-item-qty">Количество: 1 шт.</div>
-                            </div>
-                            <div class="order-item-price">$2,899</div>
-                        </div>
+          <!-- Customer Information -->
+          <div class="mb-3">
+            <label class="form-label">ФИО*</label>
+            <input type="text" name="full_name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Телефон*</label>
+            <input type="tel" name="phone" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email*</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
 
-                        <div class="order-item">
-                            <img src="https://images.unsplash.com/photo-1640340434855-6084b1f4901c?ixlib=rb-4.0.3&auto=format&fit=crop&w=160&h=160"
-                                alt="Canaan Avalon A1246" class="order-item-image">
-                            <div class="order-item-info">
-                                <div class="order-item-title">Canaan Avalon A1246</div>
-                                <div class="order-item-qty">Количество: 2 шт.</div>
-                            </div>
-                            <div class="order-item-price">$4,998</div>
-                        </div>
+          <!-- Address -->
+          <div class="mb-3">
+            <label class="form-label">Страна*</label>
+            <input type="text" name="country" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Регион*</label>
+            <input type="text" name="region" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Город*</label>
+            <input type="text" name="city" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Улица*</label>
+            <input type="text" name="street" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Дом*</label>
+            <input type="text" name="house" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Корпус</label>
+            <input type="text" name="block" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Квартира</label>
+            <input type="text" name="apartment" class="form-control">
+          </div>
 
-                        <hr>
+          <!-- Delivery -->
 
-                        <div class="total-row">
-                            <span>Подытог:</span>
-                            <span>$7,897</span>
-                        </div>
-                        <div class="total-row">
-                            <span>Доставка:</span>
-                            <span>$120</span>
-                        </div>
-                        <div class="total-row">
-                            <span>НДС:</span>
-                            <span>$0</span>
-                        </div>
+          <div class="mb-3">
+            <label class="form-label">Тип доставки*</label>
+            <select name="delivery_type" class="form-select" required>
+              {% for code, name_price in delivery_types %}
+              <option value="{{ code }}">{{ name_price }}</option>
+              {% endfor %}
+            </select>
 
-                        <div class="total-row final">
-                            <span>Итого:</span>
-                            <span>$8,017</span>
-                        </div>
+          </div>
 
-                        <button class="btn-primary-custom mt-3" onclick="placeOrder()">
-                            <i class="fas fa-lock me-2"></i>
-                            Оформить заказ
-                        </button>
+          <!-- Document -->
+          <div class="mb-3">
+            <label class="form-label">Тип документа*</label>
+            <select name="document_type" class="form-select" required>
+              {% for code, name_price in document_types %}
+              <option value="{{ code }}">{{ name_price }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
-                        <button class="btn-outline-custom" onclick="goBack()">
-                            <i class="fas fa-arrow-left me-2"></i>
-                            Вернуться в корзину
-                        </button>
+          <div class="mb-3">
+            <label class="form-label">Комментарий</label>
+            <textarea name="notes" class="form-control" rows="3"></textarea>
+          </div>
 
-                        <div class="mt-3 text-center">
-                            <small class="text-muted">
-                                <i class="fas fa-shield-alt me-1"></i>
-                                Ваши данные надежно защищены<br>
-                                <i class="fas fa-headset me-1"></i>
-                                Поддержка 24/7: +7 (909) 390-77-80
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+          <button type="submit" class="btn btn-checkout btn-lg w-100 mt-2">Подтвердить заказ</button>
+        </form>
+      </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // Payment method selection
-        document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                // Remove selected class from all payment methods in the same group
-                const groupName = this.name;
-                document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
-                    r.closest('.payment-method').classList.remove('selected');
-                });
-
-                // Add selected class to current selection
-                this.closest('.payment-method').classList.add('selected');
-
-                // Update shipping cost if shipping method changed
-                if (groupName === 'shipping') {
-                    updateShippingCost(this.value);
-                }
-            });
-        });
-
-        function updateShippingCost(method) {
-            const costs = {
-                'express': 120,
-                'standard': 80,
-                'sea': 50
-            };
-
-            const shippingElement = document.querySelector('.total-row:nth-child(2) span:last-child');
-            const totalElement = document.querySelector('.total-row.final span:last-child');
-
-            const subtotal = 7897;
-            const shipping = costs[method];
-            const total = subtotal + shipping;
-
-            shippingElement.textContent = `$${shipping}`;
-            totalElement.textContent = `$${total}`;
-        }
-
-        function placeOrder() {
-            // Validate required fields
-            const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
-            let isValid = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.style.borderColor = '#ef4444';
-                    isValid = false;
-                } else {
-                    field.style.borderColor = '';
-                }
-            });
-
-            if (!isValid) {
-                alert('Пожалуйста, заполните все обязательные поля');
-                return;
+      <!-- RIGHT: Summary -->
+      <div class="col-md-6">
+        <div class="order-summary">
+          <h5>Информация о доставке</h5>
+          <p>
+            Доставка осуществляется Bitmain — ведущий производитель майнингового оборудования, известен своими
+            высококачественными и эффективными майнерами Antminer.
+          </p>
+          <p>
+            Компания Bitmain — бесспорный лидер по выпуску оборудования для майнинга криптовалют. С 2013-го ежегодно на
+            рынок выходит обновление ASIC'ов, задающие планку всей индустрии.
+          </p>
+          <hr>
+          <h6>Ваш заказ:</h6>
+          <style>
+            .cart-item {
+              padding: 15px;
+              border-radius: 12px;
+              background-color: #181f2a;
+              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+              transition: all 0.3s ease-in-out;
             }
 
-            // Simulate order processing
-            const button = document.querySelector('.btn-primary-custom');
-            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Обработка заказа...';
-            button.disabled = true;
+            .cart-item:hover {
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
 
-            setTimeout(() => {
-                alert('Заказ успешно оформлен! Номер заказа: #ORD-2024-0001\n\nВы получите подтверждение на указанный email адрес.');
-                button.innerHTML = '<i class="fas fa-check me-2"></i>Заказ оформлен!';
-                button.style.background = '#10b981';
-            }, 2000);
+            .cart-item img {
+              width: 90px;
+              height: auto;
+              object-fit: cover;
+              border-radius: 8px;
+            }
+
+            .cart-item-name {
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: #fff;
+            }
+
+            .cart-item-price {
+              font-size: 1rem;
+              font-weight: 500;
+              color: #11d560;
+            }
+
+            .cart-empty {
+              font-size: 1.2rem;
+              text-align: center;
+              color: #888;
+              padding: 20px 0;
+            }
+          </style>
+
+
+          <ul class="list-unstyled mb-3">
+            {% for item in cart %}
+            <li class="cart-item mb-3 d-flex align-items-center">
+              <img src="{{ item.product.images.url }}" alt="{{ item.product.name }}" class="me-3">
+              <div>
+                <div class="cart-item-name mb-1">{{ item.product.name }}</div>
+                <div class="cart-item-price">
+                  {{ item.price }} $ × {{ item.quantity }}
+                </div>
+              </div>
+            </li>
+            {% empty %}
+            <li class="cart-empty">Корзина пуста</li>
+            {% endfor %}
+          </ul>
+
+
+
+          <div class="d-flex justify-content-between">
+            <span>Сумма товаров:</span>
+            <span id="cartTotal">{{ cart_total|floatformat:2 }} $</span>
+          </div>
+          <div class="d-flex justify-content-between mt-1">
+            <span>Стоимость доставки:</span>
+            <span id="deliveryFee">0 $</span>
+          </div>
+<div class="d-flex justify-content-between mt-1">
+  <span>Таможенные документы:</span>
+  <span id="documentFee">0 $</span>
+</div>
+          <div class="d-flex justify-content-between mt-2 fs-5">
+            <span>Итого:</span>
+            <span class="text-success fw-bold" id="grandTotal">{{ cart_total|floatformat:2 }} $</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const deliverySelect = document.querySelector('select[name="delivery_type"]');
+    const documentSelect = document.querySelector('select[name="document_type"]');
+    const deliveryFeeElement = document.getElementById('deliveryFee');
+    const documentFeeElement = document.getElementById('documentFee'); // Yangi element
+    const grandTotalElement = document.getElementById('grandTotal');
+    const cartTotal = parseFloat('{{ cart_total|default:0 }}');
+
+    function updateTotals() {
+        const selectedDelivery = deliverySelect.value;
+        const selectedDocument = documentSelect.value;
+
+        let deliveryFee = 0;
+        let documentFee = 0;
+
+        if (selectedDelivery === 'air') {
+            deliveryFee = parseFloat('{{ delivery_settings.air_delivery_rate|default:0 }}');
+        } else if (selectedDelivery === 'sea') {
+            deliveryFee = parseFloat('{{ delivery_settings.sea_delivery_rate|default:0 }}');
         }
 
-        function goBack() {
-            window.history.back();
+        if (selectedDocument === 'gtd_rb') {
+            documentFee = parseFloat('{{ delivery_settings.gtd_rb_cost|default:0 }}');
+        } else if (selectedDocument === 'dt_rf') {
+            documentFee = parseFloat('{{ delivery_settings.dt_rf_cost|default:0 }}');
         }
 
-        // Form validation
-        document.addEventListener('DOMContentLoaded', function () {
-            const inputs = document.querySelectorAll('input, select, textarea');
+        const total = cartTotal + deliveryFee + documentFee;
 
-            inputs.forEach(input => {
-                input.addEventListener('blur', function () {
-                    if (this.hasAttribute('required') && !this.value.trim()) {
-                        this.style.borderColor = '#ef4444';
-                    } else {
-                        this.style.borderColor = '';
-                    }
-                });
-            });
-        });
-    </script>
-</body>
+        deliveryFeeElement.textContent = deliveryFee.toFixed(2) + ' $';
+        documentFeeElement.textContent = documentFee.toFixed(2) + ' $'; // Yangi qator
+        grandTotalElement.textContent = total.toFixed(2) + ' $';
+    }
 
-</html>
+    deliverySelect.addEventListener('change', updateTotals);
+    documentSelect.addEventListener('change', updateTotals);
+    updateTotals();
+});
+</script>
+
+{% endblock %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% endblock content %}

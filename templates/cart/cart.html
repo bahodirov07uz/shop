@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  body {
+    background: #181f2a;
+    color: #fff;
+  }
+
+  .bg-navbar {
+    background: #fff;
+    border-bottom: 1px solid #e2e2e2;
+  }
+
+  .navbar .navbar-brand {
+    font-weight: 700;
+    color: #11d560 !important;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+
+  .navbar-nav .nav-link {
+    color: #222 !important;
+    font-weight: 500;
+    margin-right: 20px;
+  }
+
+  .navbar-nav .nav-link.active,
+  .navbar-nav .nav-link:focus,
+  .navbar-nav .nav-link:hover {
+    color: #11d560 !important;
+  }
+
+  .btn-logout {
+    color: #ec6d6d !important;
+    border: 1px solid #ec6d6d;
+    background: #fff;
+    border-radius: 6px;
+    font-weight: 500;
+    margin-right: 8px;
+    transition: 0.2s;
+  }
+
+  .btn-logout:hover {
+    background: #ec6d6d;
+    color: #fff !important;
+  }
+
+  .cart-table th,
+  .cart-table td {
+    background: #232b39 !important;
+    color: #fff;
+    border-color: #232b39;
+    vertical-align: middle;
+  }
+
+  .cart-table img {
+    width: 52px;
+    border-radius: 5px;
+    background: #fff;
+  }
+
+  .card {
+    background: #21293a;
+    border-radius: 18px;
+    border: none;
+    box-shadow: 0 2px 8px #161b2380;
+  overflow-x: auto; /* Горизонтал скролл учун */
+  }
+
+  .cart-total {
+    color: #11d560;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .btn-checkout {
+    background: #11d560;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 32px;
+    transition: 0.2s;
+  }
+
+  .btn-checkout:hover {
+    background: #0bc04f;
+  }
+
+  .footer-dark {
+    background: #181f2a;
+    color: #fff;
+    border-top: 1px solid #232b39;
+  }
+
+  /* Мобил версия учун стиллар */
+  @media (max-width: 768px) {
+    .cart-table {
+      width: 100%;
+      min-width: 600px; /* Минимал кенглик */
+    }
+    
+    .container {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    
+    .card {
+      padding: 15px;
+    }
+    
+    .btn-checkout {
+      width: 100%;
+      margin-top: 15px;
+    }
+    
+    .cart-total {
+      display: block;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    
+    .text-end {
+      text-align: center !important;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+</style>
+<div class="container my-5">
+  <div class="card p-4">
+    <h2 class="fw-bold mb-4" style="color:#11d560;">Корзина</h2>
+    <div class="table-responsive">
+      <table class="table cart-table align-middle">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Кол-во</th>
+            <th>Итого</th>
+            <th>Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart %}
+          <tr>
+            <td>
+              {% if item.product.images %}
+              <img src="{{ item.product.images.url }}" alt="{{ item.product.name }}"
+                style="width: 50px; height: 50px; object-fit: cover;">
+              {% else %}
+              <div
+                style="width: 50px; height: 50px; background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                <span>No image</span>
+              </div>
+              {% endif %}
+            </td>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.price|floatformat:2 }} $</td>
+            <td>{{ item.quantity }}</td>
+            <td class="fw-bold">{{ item.total_price|floatformat:2 }} $</td>
+            <td>
+              <a href="{% url 'asic:remove_from_cart' item.product.id %}" class="btn btn-danger btn-sm">
+                Удалить
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center">Ваша корзина пуста</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="text-end mt-3">
+      <span class="cart-total fw-bold">Общая сумма: {{ cart.get_total_price|floatformat:2 }} $</span>
+      {% if cart %}
+      <a href="{% url 'asic:checkout' %}" class="d-inline-block mt-2 mt-md-0">
+        <button type="submit" class="btn btn-primary btn-checkout">Оформить заказ</button>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

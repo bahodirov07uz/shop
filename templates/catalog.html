@@ -1,163 +1,243 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/catalog.css' %}">
-    <!-- Header -->
-    <section class="catalog-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="landing" class="text-primary">Главная</a></li>
-                            <li class="breadcrumb-item active">ASIC майнеры</li>
-                        </ol>
-                    </nav>
-                    <h1 class="h2 mb-2">ASIC майнеры</h1>
-                    <p class="text-muted">Профессиональное оборудование для майнинга криптовалют</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    {% extends 'base.html' %}
+    {% load static %}
+    {% block content %}
+    <link rel="stylesheet" href="{% static 'css/catalog.css' %}">
+        <!-- Header -->
 
-    <!-- Main Content -->
-    <section class="py-4">
-        <div class="container">
-            <div class="row">
-                <!-- Filters Sidebar -->
-                <div class="col-lg-3 mb-4">
-                    <div class="filters-card">
-                        <h5 class="mb-3">Фильтры</h5>
-                        
-                        <!-- Brand Filter -->
-                        <div class="filter-group">
-                            <div class="filter-title">Производитель</div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="bitmain" id="bitmain">
-                                <label class="form-check-label" for="bitmain">Bitmain</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="canaan" id="canaan">
-                                <label class="form-check-label" for="canaan">Canaan</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="iceriver" id="iceriver">
-                                <label class="form-check-label" for="iceriver">IceRiver</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="whatsminer" id="whatsminer">
-                                <label class="form-check-label" for="whatsminer">WhatsMiner</label>
-                            </div>
-                        </div>
-                        
-                        <!-- Algorithm Filter -->
-                        <div class="filter-group">
-                            <div class="filter-title">Алгоритм</div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="sha256" id="sha256">
-                                <label class="form-check-label" for="sha256">SHA-256</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="scrypt" id="scrypt">
-                                <label class="form-check-label" for="scrypt">Scrypt</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="kheavyhash" id="kheavyhash">
-                                <label class="form-check-label" for="kheavyhash">KHeavyHash</label>
-                            </div>
-                        </div>
-                        
-                        <!-- Price Range -->
-                        <div class="filter-group">
-                            <div class="filter-title">Цена, $</div>
-                            <div class="price-range">
-                                <input type="number" class="form-control form-control-sm" placeholder="От" id="priceFrom">
-                                <span>—</span>
-                                <input type="number" class="form-control form-control-sm" placeholder="До" id="priceTo">
-                            </div>
-                        </div>
-                        
-                        <!-- In Stock -->
-                        <div class="filter-group">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="instock" id="instock">
-                                <label class="form-check-label" for="instock">Только в наличии</label>
-                            </div>
-                        </div>
-                        
-                        <button class="btn btn-primary w-100 mb-2">Применить фильтры</button>
-                        <button class="btn btn-outline-secondary w-100">Сбросить</button>
-                    </div>
-                </div>
-                
-                <!-- Products Grid -->
-                <div class="col-lg-9">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted">Найдено 24 товара</span>
-                        <select class="form-select form-select-sm" style="width: auto;">
-                            <option>По популярности</option>
-                            <option>По цене ↑</option>
-                            <option>По цене ↓</option>
-                            <option>Новинки</option>
-                        </select>
-                    </div>
-                    
-                    <div class="product-grid">
-                        {% for i in products %}
-                        <div class="product-card">
-                            <a href="{% url 'asic:detail' i.id %}">
-                                <div style="position: relative;">
-                                <img src="{{i.images.url}}" alt="{{i.name}}" class="product-image">
-                                {% if i.is_featured %}
-                                <div class="product-badge">FEATURED</div>
-                                {% endif %}
-                            </div>
-                            </a>
-                            <div class="product-body">
-                                <div class="product-brand">{{i.manufacturer.name}}</div>
-                                <h5 class="product-title">{{i.name}} {{i.hash_rate}} TH/s</h5>
-                                <div class="product-price">${{i.price}}</div>
-                                <ul class="product-specs">
-                                    <li><span>Хешрейт:</span> <span>{{i.hash_rate}} TH/s</span></li>
-                                    <li><span>Потребление:</span> <span>{{i.power_consumption}}W</span></li>
-                                    <li><span>Алгоритм:</span> <span>{{i.algorithm}}</span></li>
-                                </ul>
-                                <div class="product-actions">
-                                    <button class="btn-primary-custom">
-                                        <i class="fas fa-cart-plus me-1"></i>В корзину
-                                    </button>
-                                    <button class="btn-outline-custom">
-                                        <a href="{% url 'asic:detail' i.id %}"><i class="fas fa-eye"></i></a>
-                                    </button>
+
+        <!-- Main Content -->
+        <section class="py-4">
+            <div class="container">
+                <div class="row">
+                    <!-- Filters Sidebar -->
+                    <div class="col-lg-3 mb-4 d-none d-lg-block">
+                        <div class="filters-card">
+                            <form method="get" class="filters-card">
+
+                                <!-- Manufacturer Filter -->
+                                <div class="filter-group">
+                                    <div class="filter-title">Производитель</div>
+                                    {% for man in manufacturers %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="manufacturer" value="{{ man.id }}"
+                                                id="manufacturer-{{ man.id }}"
+                                                {% if man.id|stringformat:"s" in selected_manufacturers %}checked{% endif %}>
+                                            <label class="form-check-label" for="manufacturer-{{ man.id }}">
+                                                {{ man.name }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            </div>
-                        </div>                        
-                        {% endfor %}
+
+                                <!-- Algorithm Filter -->
+                                <div class="filter-group mt-3">
+                                    <div class="filter-title">Алгоритм</div>
+                                    {% for algo in algorithms %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="algorithm" value="{{ algo }}"
+                                                id="algo-{{ forloop.counter }}"
+                                                {% if algo in selected_algorithms %}checked{% endif %}>
+                                            <label class="form-check-label" for="algo-{{ forloop.counter }}">
+                                                {{ algo }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Price Filter -->
+                                <div class="filter-group mt-3">
+                                    <div class="filter-title">Цена</div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" name="price_from" class="form-control" placeholder="от" value="{{ price_from }}">
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" name="price_to" class="form-control" placeholder="до" value="{{ price_to }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stock Filter -->
+                                <div class="filter-group mt-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="in_stock" value="1"
+                                            id="in-stock" {% if in_stock %}checked{% endif %}>
+                                        <label class="form-check-label" for="in-stock">
+                                            В наличии
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="filter-group mt-4">
+                                    <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
                     
-                    <!-- Pagination -->
-                    <nav class="mt-5">
-                        <ul class="pagination justify-content-center pagination-custom">
-                            <li class="page-item disabled">
-                                <span class="page-link">Предыдущая</span>
-                            </li>
-                            <li class="page-item active">
-                                <span class="page-link">1</span>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">2</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">3</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Следующая</a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <!-- Products Grid -->
+                    <div class="col-lg-9">
+                        <div class="mb-2">
+                            <form method="get" class="filters-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted m-2">Найдено {{ product_count }} товара</span>
+                                <select class="form-select form-select-sm" name="sort" onchange="this.form.submit()" style="width: auto;">
+                                    <option value="">По популярности</option>
+
+                                    <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>
+                                        По цене ↑
+                                    </option>
+
+                                    <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>
+                                        По цене ↓
+                                    </option>
+
+                                    <option value="new" {% if request.GET.sort == "new" %}selected{% endif %}>
+                                        Новинки
+                                    </option>
+                                </select>
+
+                            </div>
+                        </form>
+                        </div>
+                        <button class="btn btn-primary mb-2 d-block d-lg-none mb-3" style="width: 100%;" onclick="openFilterModal()">Фильтровать</button>
+
+                        <div class="product-grid">
+                            {% for i in products %}
+                            <div class="product-card">
+                                <a href="{% url 'asic:detail' i.id %}">
+                                    <div style="position: relative;">
+                                        <img src="{{i.images.url}}" alt="{{i.name}}" class="product-image">
+                                        {% if i.is_featured %}
+                                        <div class="product-badge">FEATURED</div>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                                <div class="product-body">
+                                    <div class="product-brand">{{i.manufacturer.name}}</div>
+                                    <h5 class="product-title">{{i.name}} {{i.hash_rate}} TH/s</h5>
+                                    <ul class="product-specs">
+                                        <li><span>Алгоритм:</span> <span>{{i.algorithm}}</span></li>
+                                        <li><span>Хешрейт:</span> <span>{{i.hash_rate}} TH/s</span></li>
+                                        <li><span>Потребление:</span> <span>{{i.power_consumption}} Вт</span></li>
+                                    </ul>
+                                    <div class="product-price-container" style="display: flex;justify-content: space-between;">
+                                        <div class="product-price text-danger">${{i.current_price}}</div>
+                                        {% if i.has_discount %}
+                                        <div class="product-price-old text-decoration-line-through">${{i.price}}</div>
+                                        {% else %}
+                                        <span class="text-decoration-line-through">{{ i.old_price }} USD</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-actions">
+                                        <a href="{% url 'asic:add_buy' i.id %}">
+                                            <button class="btn btn-primary-custom">
+                                            <i class="fas fa-cart-plus me-1"></i>Купить
+                                        </button>
+                                        </a>
+                                        <a href="{% url 'asic:add_to_cart' i.id %}">
+                                            <button class="btn btn-outline-custom">
+                                                <i class="fas fa-cart-plus"></i>В корзину
+                                        </button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>                        
+                            {% endfor %}
+                        </div>
+                        <!-- Pagination -->
+                        {% include 'partials/pagination.html' %}
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>  
 
-{% endblock content %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Modal ochish funksiyasi -->
+    <script>
+      function openFilterModal() {
+        const modalElement = document.getElementById('filterModal');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+      }
+    </script>
+
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Фильтр</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+
+        <div class="modal-body">
+                            <form method="get" class="filters-card">
+
+                                <!-- Manufacturer Filter -->
+                                <div class="filter-group">
+                                    <div class="filter-title">Производитель</div>
+                                    {% for man in manufacturers %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="manufacturer" value="{{ man.id }}"
+                                                id="manufacturer-{{ man.id }}"
+                                                {% if man.id|stringformat:"s" in selected_manufacturers %}checked{% endif %}>
+                                            <label class="form-check-label" for="manufacturer-{{ man.id }}">
+                                                {{ man.name }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Algorithm Filter -->
+                                <div class="filter-group mt-3">
+                                    <div class="filter-title">Алгоритм</div>
+                                    {% for algo in algorithms %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="algorithm" value="{{ algo }}"
+                                                id="algo-{{ forloop.counter }}"
+                                                {% if algo in selected_algorithms %}checked{% endif %}>
+                                            <label class="form-check-label" for="algo-{{ forloop.counter }}">
+                                                {{ algo }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Price Filter -->
+                                <div class="filter-group mt-3">
+                                    <div class="filter-title">Цена</div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" name="price_from" class="form-control" placeholder="от" value="{{ price_from }}">
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" name="price_to" class="form-control" placeholder="до" value="{{ price_to }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stock Filter -->
+                                <div class="filter-group mt-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="in_stock" value="1"
+                                            id="in-stock" {% if in_stock %}checked{% endif %}>
+                                        <label class="form-check-label" for="in-stock">
+                                            В наличии
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="filter-group mt-4">
+                                    <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
+                                </div>
+
+                            </form>
+        </div>
+        </div>
+    </div>
+    </div>
+    {% endblock content %}

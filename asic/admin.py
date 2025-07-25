@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import (
     Manufacturer, ProductCategory, Product,
-    Page, Order, OrderStatusHistory, Discount,
-    DeliverySettings, SiteSettings
+     Order, OrderStatusHistory, Discount,
+    DeliverySettings, SiteSettings,OrderItem,BannerImage,Coin,Office
 )
 
 
@@ -37,32 +37,72 @@ class ProductAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
 
 
-@admin.register(Page)
-class PageAdmin(admin.ModelAdmin):
-    list_display = ('title', 'is_active')
-    list_editable = ('is_active',)
-    search_fields = ('title', 'content')
-    prepopulated_fields = {'slug': ('title',)}
-    ordering = ('title',)
-
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+    readonly_fields = ('product', 'price', 'quantity')
+    can_delete = False
+    
+    def has_add_permission(self, request, obj=None):
+        return False
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_number', 'user', 'status', 'total', 'created_at')
+    list_display = ('order_number', 'user', 'status', 'total', 'created_at', 'items_count')
     list_filter = ('status', 'created_at')
     search_fields = ('order_number', 'user__username')
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at', 'order_number', 'items_list')
     autocomplete_fields = ('user',)
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
-    actions = ['mark_as_completed']
+    inlines = [OrderItemInline]
+    actions = ['mark_as_completed', 'mark_as_shipped', 'mark_as_customs']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('order_number', 'user', 'status')
+        }),
+        ('Financial Information', {
+            'fields': ('subtotal', 'delivery_cost', 'document_cost', 'total')
+        }),
+        ('Delivery Information', {
+            'fields': ('delivery_type', 'document_type', 'shipping_address', 'billing_address')
+        }),
+        ('Additional Information', {
+            'fields': ('payment_status', 'notes', 'created_at', 'updated_at')
+        }),
+    )
+    
+    def items_count(self, obj):
+        return obj.items.count()
+    items_count.short_description = 'Items'
 
-    @admin.action(description="Mark selected orders as completed")
+    def items_list(self, obj):
+        return ", ".join([f"{item.product.name} ({item.quantity})" for item in obj.items.all()])
+    items_list.short_description = 'Order Items'
+
+    @admin.action(description="Отметить выбранные заказы как выполненные")
     def mark_as_completed(self, request, queryset):
         updated = queryset.update(status='completed')
-        self.message_user(request, f"{updated} orders marked as completed")
+        self.message_user(request, f"{updated} заказы отмечены как выполненные")
+
+    @admin.action(description="Отметить выбранные заказы как отправленные")
+    def mark_as_shipped(self, request, queryset):
+        updated = queryset.update(status='shipped')
+        self.message_user(request, f"{updated} заказы отмечены как отправленные")
 
 
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ('order', 'product', 'price', 'quantity', 'order_status')
+    list_filter = ('order__status',)
+    search_fields = ('order__order_number', 'product__name')
+    raw_id_fields = ('order', 'product')
+    
+    def order_status(self, obj):
+        return obj.order.status
+    order_status.short_description = 'Order Status'
+    order_status.admin_order_field = 'order__status'
 @admin.register(OrderStatusHistory)
 class OrderStatusHistoryAdmin(admin.ModelAdmin):
     list_display = ('order', 'status', 'created_at')
@@ -92,3 +132,49 @@ class DeliverySettingsAdmin(admin.ModelAdmin):
 class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ('site_name', 'email', 'phone')
     ordering = ('site_name',)
+
+from django.contrib import admin
+from .models import BannerImage
+
+@admin.register(BannerImage)
+class BannerAdmin(admin.ModelAdmin):
+    list_display = ('title', 'is_active')
+    search_fields = ('title', 'text')
+    fieldsets = (
+        (None, {
+            'fields': ('banner', 'title', 'text', 'is_active')
+        }),
+    )
+    
+    actions = ['activate_selected', 'deactivate_selected']
+    
+    def activate_selected(self, request, queryset):
+        # Only activate one banner at a time
+        if queryset.count() > 1:
+            self.message_user(request, "You can only activate one banner at a time.", level='ERROR')
+            return
+        
+        banner = queryset.first()
+        banner.is_active = True
+        banner.save()
+        self.message_user(request, f"Activated banner: {banner.title}")
+    
+    activate_selected.short_description = "Activate selected banner (deactivates others)"
+    
+    def deactivate_selected(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(request, f"Deactivated {updated} banners")
+    
+    deactivate_selected.short_description = "Deactivate selected banners"
+    
+    def save_model(self, request, obj, form, change):
+        # Ensure only one active banner exists
+        if obj.is_active:
+            BannerImage.objects.exclude(pk=obj.pk).filter(is_active=True).update(is_active=False)
+        super().save_model(request, obj, form, change)
+        
+admin.site.register(Coin)
+
+@admin.register(Office)
+class OfficeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'location', 'phone')

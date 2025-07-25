@@ -256,3 +256,35 @@
     }
 }
  
+.price-wrapper {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.discount-badge {
+  position: absolute;
+  top: -5px;
+  left: 70px;
+  background-color: #e53935;
+  color: white;
+  border-radius: 50%;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.new-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.old-price {
+  font-size: 0.95rem;
+  color: #888;
+  text-decoration: line-through;
+  margin-top: 4px;
+}
