@@ -4,7 +4,8 @@ from .models import (
      Order, OrderStatusHistory, Discount,
     DeliverySettings, SiteSettings,OrderItem,BannerImage,Coin,Office
 )
-
+from import_export.admin import ExportMixin
+from .resources import ProductResource
 
 @admin.register(Manufacturer)
 class ManufacturerAdmin(admin.ModelAdmin):
@@ -24,8 +25,11 @@ class ProductCategoryAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
 
+from import_export.admin import ImportExportModelAdmin
+
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(ImportExportModelAdmin):  # ✅ to‘g‘risi shu
+    resource_class = ProductResource
     list_display = ('name', 'manufacturer', 'category', 'price', 'stock', 'is_active')
     list_editable = ('price', 'stock', 'is_active')
     list_filter = ('is_active', 'is_featured', 'category', 'manufacturer')

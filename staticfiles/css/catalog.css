@@ -308,25 +308,35 @@
     font-size: 1rem;
 }
 
-/* Add this to your media query for mobile (max-width: 768px) */
-@media (max-width: 768px) {
-    .product-actions {
-        flex-direction: column;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-    .btn-primary-custom,
-    .btn-outline-custom {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1rem;
-        padding: 0.6rem 0; /* slightly taller buttons for touch */
-    }
-    .btn-primary-custom i,
-    .btn-outline-custom i {
-        margin-right: 6px;
-        font-size: 1rem;
-    }
+
+@media (max-width: 576px) {
+  .product-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .product-actions a {
+    flex: 1;
+  }
+
+  .product-actions button {
+    width: 100%;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+
+  .product-body {
+    padding: 8px !important;
+  }
+
+  .product-title,
+  .product-specs li,
+  .product-price {
+    margin-bottom: 4px;
+  }
+
+  .product-specs {
+    margin-bottom: 6px;
+  }
 }

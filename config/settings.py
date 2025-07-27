@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8r2=zm3_-_p*_g_mp&-r+otarqt#-or2+^0#e9*cckbq%vc2cg'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")])
 
 
 # Application definition
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'asic.apps.AsicConfig',
+    'import_export',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -59,14 +61,14 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # Gmail
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sizning_email@gmail.com'
-EMAIL_HOST_PASSWORD = 'sizning_parolingiz'  
-DEFAULT_FROM_EMAIL = 'sizning_email@gmail.com'
+EMAIL_HOST = 'smtp.beget.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'info@china-asic.com'
+EMAIL_HOST_PASSWORD = 'asic-China2025?'
+DEFAULT_FROM_EMAIL = 'info@china-asic.com'
 
-CSRF_TRUSTED_ORIGINS = ['https://730947c9d279.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://701664f74387.ngrok-free.app']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -8,3 +8,4 @@ def site_settings(request):
     return {
         'site_settings': settings
     }
+    

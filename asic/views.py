@@ -85,7 +85,6 @@ class ProductDetailView(DetailView):
         context['discount_info'] = discount_info
         return context
 
-    
 # CART
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -264,7 +263,6 @@ def profile_view(request):
         'orders': orders,
     }
     return render(request, 'profile.html', context)
-
 
 
 @login_required
