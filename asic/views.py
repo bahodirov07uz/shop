@@ -8,7 +8,12 @@ from .cart import Cart
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from decimal import Decimal
+from django.urls import reverse
+from django.conf import settings
 from django.views.decorators.http import require_POST
+from payments.models import Payment
+import requests
+
 
 class HomeView(ListView):
     template_name = "index.html"
@@ -114,29 +119,7 @@ def cart_detail(request):
     cart = Cart(request)
     return render(request, 'cart/cart.html', {'cart': cart})
 
-@login_required
-def cart_order(request):
-    cart = Cart(request)
-    
-    if not cart:
-        messages.error(request, "Корзина пуста. Пожалуйста, сначала добавьте товары.")
-        return redirect('cart_detail')
-    
-    order = Order.objects.create(user=request.user)  # Order yaratish
 
-    for item in cart:
-        product = item['product']
-        quantity = item['quantity']
-        OrderItem.objects.create(
-            order=order,
-            product=product,
-            price=item['price'],
-            quantity=quantity
-        )
-
-    cart.clear()  # Savatni tozalash
-    messages.success(request, "Заказ принят!")
-    return redirect('asic:home')  
 
 @login_required
 @transaction.atomic
@@ -147,14 +130,12 @@ def checkout(request):
         messages.error(request, "Корзина пуста.")
         return redirect('asic:cart_detail')
 
-    # Get active delivery settings
     delivery_settings = DeliverySettings.objects.filter(is_active=True).first()
     if not delivery_settings:
-        messages.error(request, "Настройки доставки не найдены. Обратитесь к администратору.")
+        messages.error(request, "Настройки доставки не найдены.")
         return redirect('asic:cart_detail')
 
     if request.method == 'POST':
-        # Extract form data
         full_name = request.POST.get('full_name')
         phone = request.POST.get('phone')
         email = request.POST.get('email')
@@ -166,20 +147,16 @@ def checkout(request):
         block = request.POST.get('block', '')
         apartment = request.POST.get('apartment', '')
         notes = request.POST.get('notes', '')
-        delivery_type = request.POST.get('delivery_type', 'air')  # Get from form
-        document_type = request.POST.get('document_type', 'gtd_rb')  # Get from form
+        delivery_type = request.POST.get('delivery_type', 'air')
+        document_type = request.POST.get('document_type', 'gtd_rb')
 
-        # Validate delivery and document types
         valid_delivery_types = dict(Order.DELIVERY_TYPES).keys()
         valid_document_types = dict(Order.DOCUMENT_TYPES).keys()
-        
         if delivery_type not in valid_delivery_types:
-            delivery_type = 'air'  # Default if invalid
-            
+            delivery_type = 'air'
         if document_type not in valid_document_types:
-            document_type = 'gtd_rb'  # Default if invalid
+            document_type = 'gtd_rb'
 
-        # Build shipping address
         shipping_address = f"""
         ФИО: {full_name}
         Тел: {phone}
@@ -188,53 +165,90 @@ def checkout(request):
         {f"Квартира: {apartment}" if apartment else ""}
         """.strip()
 
-        subtotal = Decimal(str(cart.get_total_price()))  # Convert float to Decimal
-        delivery_cost = (delivery_settings.air_delivery_rate if delivery_type == 'air' 
-                        else delivery_settings.sea_delivery_rate)
-        document_cost = (delivery_settings.gtd_rb_cost if document_type == 'gtd_rb' 
-                        else delivery_settings.dt_rf_cost)
-        
+        subtotal = Decimal(str(cart.get_total_price()))
+        delivery_cost = delivery_settings.air_delivery_rate if delivery_type == 'air' else delivery_settings.sea_delivery_rate
+        document_cost = delivery_settings.gtd_rb_cost if document_type == 'gtd_rb' else delivery_settings.dt_rf_cost
         total = subtotal + delivery_cost + document_cost
-        # Create the order
-        order = Order.objects.create(
-            user=request.user,
-            order_number=generate_order_number(),
-            status='new',
-            delivery_type=delivery_type,
-            delivery_cost=delivery_cost,
-            document_type=document_type,
-            document_cost=document_cost,
-            subtotal=subtotal,
-            discount_percent=0,  # No discount
-            discount_amount=0,   # No discount
-            total=total,
-            shipping_address=shipping_address,
-            billing_address=shipping_address,  # Same as shipping
-            notes=notes,
-            payment_status='pending'
+
+        # Generate unique billing ID
+        billing_id = str(uuid.uuid4())
+
+        # Save payment before redirect
+        payment = Payment.objects.create(
+            client=request.user,
+            billing_id=billing_id,
+            email=email,
+            currency="USD",
+            amount=total,
+            status='pending',
+            temp_data={
+                'full_name': full_name,
+                'phone': phone,
+                'email': email,
+                'country': country,
+                'region': region,
+                'city': city,
+                'street': street,
+                'house': house,
+                'block': block,
+                'apartment': apartment,
+                'notes': notes,
+                'delivery_type': delivery_type,
+                'document_type': document_type,
+                'shipping_address': shipping_address,
+                'subtotal': float(subtotal),
+                'delivery_cost': float(delivery_cost),
+                'document_cost': float(document_cost),
+                'total': float(total),
+                'cart_items': [
+                    {
+                        'product_id': item['product'].id,
+                        'quantity': item['quantity'],
+                        'price': float(item['price']),
+                    } for item in cart
+                ]
+            }
         )
 
-        # Create order items
-        for item in cart:
-            OrderItem.objects.create(
-                order=order,
-                product=item['product'],
-                quantity=item['quantity'],
-                price=item['price'],
-            )
+        # CryptoCloud API so‘rovi
+        payload = {
+            "shop_id": settings.CRYPTOCLOUD_SHOP_ID,
+            "amount": float(total),
+            "currency": "USD",
+            "order_id": billing_id,
+            "email": email,
+            "success_url": "https://76628715a526.ngrok-free.app/payments/success",
+            "fail_url": "https://76628715a526.ngrok-free.app/payments/failed",
+            "callback_url": "https://76628715a526.ngrok-free.app/payments/callback",
+        }
 
-        # Clear cart
-        cart.clear()
-        
-        messages.success(request, f"Заказ получен. Номер: {order.order_number}")
-        return redirect('asic:home')
+        headers = {
+            "Authorization": f"Token {settings.CRYPTOCLOUD_API_KEY}",
+            "Content-Type": "application/json"
+        }
 
-    # For GET request - show checkout page with options
+        try:
+            response = requests.post("https://api.cryptocloud.plus/v2/invoice/create", json=payload, headers=headers, timeout=15)
+            result = response.json()
+            print("Payment init result:", result)
+
+            if result.get("status") == "success" and result.get("result") and result["result"].get("link"):
+                return redirect(result["result"]["link"])
+            else:
+                messages.error(request, "Ошибка при создании платёжной ссылки.")
+
+        except requests.exceptions.RequestException as e:
+            messages.error(request, f"Ошибка соединения с сервером: {e}")
+            print("RequestException during payment init:", e)
+        except ValueError as e:
+            messages.error(request, f"Ошибка обработки ответа сервера: {e}")
+            print("JSON decode error:", e)
+
+        return redirect("asic:checkout")
+
     context = {
         'cart': cart,
         'cart_total': cart.get_total_price(),
-        'delivery_types': Order.DELIVERY_TYPES,
-        'document_types': Order.DOCUMENT_TYPES,
         'delivery_types': [
             ('air', f"Авиадоставка - {delivery_settings.air_delivery_rate} $"),
             ('sea', f"Морская доставка - {delivery_settings.sea_delivery_rate} $")
@@ -246,12 +260,12 @@ def checkout(request):
         'delivery_settings': delivery_settings,
     }
     return render(request, 'checkout.html', context)
+
 from datetime import datetime
 
 def generate_order_number():
     # Masalan: ORD-202507221845-XXXX
     return f"ORD-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}"
-
 
 @login_required
 def profile_view(request):

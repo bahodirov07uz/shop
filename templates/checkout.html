@@ -140,6 +140,11 @@
   <div class="card p-4">
     <h2 class="fw-bold mb-4" style="color:#11d560;">Оформление заказа</h2>
 
+    {% if messages %}
+      {% for i in messages %}
+        <h1>{{i}}</h1>
+      {% endfor %}
+    {% endif %}
     <div class="row g-4">
       <!-- LEFT: Form -->
       <div class="col-md-6">

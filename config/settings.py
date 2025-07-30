@@ -22,11 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
+CRYPTOCLOUD_API_KEY = config("CRYPTOCLOUD_API_KEY")
+CRYPTOCLOUD_SHOP_ID = config("CRYPTOCLOUD_SHOP_ID")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")])
+ALLOWED_HOSTS =  config("ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")])
 
 
 # Application definition
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'asic.apps.AsicConfig',
+    'payments.apps.PaymentsConfig',
     'import_export',
     'allauth',
     'allauth.account',
@@ -68,7 +72,7 @@ EMAIL_HOST_USER = 'info@china-asic.com'
 EMAIL_HOST_PASSWORD = 'asic-China2025?'
 DEFAULT_FROM_EMAIL = 'info@china-asic.com'
 
-CSRF_TRUSTED_ORIGINS = ['https://701664f74387.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://a72e3940cbc5.ngrok-free.app']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -56,7 +56,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True,null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    coins = models.ManyToManyField('Coin', related_name='products',null=True,blank=True)  
+    coins = models.ManyToManyField('Coin', related_name='products',blank=True)  
     
     @property
     def current_price(self):
