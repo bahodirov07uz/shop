@@ -1,3 +1,4 @@
+#developed by t.me/m16uzb
 from pathlib import Path
 from decouple import config
 

@@ -1,3 +1,4 @@
+
 import uuid
 from django.db import transaction
 from django.shortcuts import render,redirect,get_object_or_404
@@ -217,9 +218,9 @@ def checkout(request):
             "currency": "USD",
             "order_id": billing_id,
             "email": email,
-            "success_url": "https://76628715a526.ngrok-free.app/payments/success",
-            "fail_url": "https://76628715a526.ngrok-free.app/payments/failed",
-            "callback_url": "https://76628715a526.ngrok-free.app/payments/callback",
+            "success_url": "https://china-asic.com/payments/success",
+            "fail_url": "https://china-asic.com/payments/failed",
+            "callback_url": "https://china-asic.com/payments/callback",
         }
 
         headers = {
