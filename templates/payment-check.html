@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% block content %}
+<title>Оплата и доставка - CHINA-ASIC.RU</title>
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.7;
+    }
+
+    .container1 {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+
+
+    .content {
+        padding: 40px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        color: #2c3e50;
+        margin-bottom: 40px;
+        text-align: center;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .page-title:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background-color: #3498db;
+    }
+
+    .section {
+        display: flex;
+        align-items: center;
+        margin-bottom: 60px;
+    }
+
+    .section.reverse {
+        flex-direction: row-reverse;
+    }
+
+    .section-image {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .section-image img {
+        width: 100%;
+        max-width: 700px;
+        max-height: 380px;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .section-text {
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    .about-section {
+        margin-top: 80px;
+        text-align: center;
+    }
+
+    .about-title {
+        font-size: 24px;
+        color: #2c3e50;
+        margin-bottom: 30px;
+    }
+
+
+
+    .contact-item {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+    .contact-item i {
+        margin-right: 15px;
+        color: #3498db;
+        width: 20px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 900px) {
+
+        .section,
+        .section.reverse {
+            flex-direction: column;
+        }
+
+        .section-image,
+        .section-content {
+            padding: 15px;
+        }
+
+        .section-image img {
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .nav {
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            padding: 10px 15px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .header p {
+            font-size: 16px;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+
+        .section-title {
+            font-size: 20px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<div class="container1">
+    <div class="content">
+        <h2 class="page-title">Оплата и доставка</h2>
+
+        <!-- First Section (Image left, text right) -->
+        <div class="section">
+            <div class="section-image">
+                <img src="https://asia24.media/upload/iblock/51c/8fefrq32v7sur030bdn1b3h6c4rylbcs.jpeg"
+                    alt="Bitmain Payment">
+            </div>
+            <div class="section-content">
+                <h3 class="section-title">Оплата осуществляется Bitmain</h3>
+                <p class="section-text">
+                    Оплата осуществляется напрямую компании Bitmain — ведущего производителя майнингового оборудования,
+                    известного своими высококачественными и эффективными майнерами серии Antminer.
+                </p>
+                <p>
+                    Доставка осуществляется напрямую от компании Bitmain — производителя, который гарантирует высокое
+                    качество упаковки и быструю обработку заказов.
+                </p>
+                <p>
+                    С момента своего основания в 2013 году, Bitmain зарекомендовала себя как надежный поставщик
+                    майнингового оборудования по всему миру. Благодаря налаженной логистике и партнерству с ведущими
+                    транспортными компаниями, доставка осуществляется в кратчайшие сроки в любую страну.
+                </p>
+                <p>
+                    Каждая партия оборудования проходит строгий контроль качества и надежно упаковывается для
+                    международной транспортировки, что исключает возможность повреждения во время доставки. Покупатели
+                    могут отслеживать свои заказы в реальном времени, получая актуальную информацию о статусе доставки
+                </p>
+            </div>
+        </div>
+
+        <!-- Second Section (Image right, text left) -->
+        <div class="section reverse">
+            <div class="section-image">
+                <img src="https://jahon-eg.uz/thumb/2/XZcDeqthU3ErCe9nq8w8Wg/r/d/mor_1.jpg" alt="Bitmain Delivery">
+            </div>
+            <div class="section-content">
+                <h3 class="section-title">Доставка осуществляется Bitmain</h3>
+                <p class="section-text">
+                    Доставка осуществляется напрямую от компании Bitmain — производителя, который гарантирует высокое
+                    качество упаковки и быструю обработку заказов.
+                </p>
+                <p>
+                    С момента своего основания в 2013 году, Bitmain зарекомендовала себя как надежный поставщик
+                    майнингового оборудования по всему миру. Благодаря налаженной логистике и партнерству с ведущими
+                    транспортными компаниями, доставка осуществляется в кратчайшие сроки в любую страну. </p>
+                <p class="section-text">
+                    Каждая партия оборудования проходит строгий контроль качества и надежно упаковывается для
+                    международной транспортировки, что исключает возможность повреждения во время доставки. Покупатели
+                    могут отслеживать свои заказы в реальном времени, получая актуальную информацию о статусе доставки
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content%}

@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Manufacturer, ProductCategory, Product,
     Order, OrderStatusHistory, Discount,
-    DeliverySettings, SiteSettings, OrderItem, BannerImage, Coin, Office
+    DeliverySettings, SiteSettings, OrderItem, BannerImage, Coin, Office,StaticPage
 )
 from import_export.admin import ExportMixin
 from .resources import ProductResource
@@ -181,4 +181,7 @@ class CoinAdmin(admin.ModelAdmin):
 
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'location', 'phone')  # Офисы
+    list_display = ('name', 'location', 'phone')  # 
+    
+    
+admin.site.register(StaticPage)

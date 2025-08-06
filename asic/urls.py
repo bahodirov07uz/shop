@@ -16,6 +16,10 @@ urlpatterns = [
     path('orders/<int:order_id>/', views.order_detail, name='order_detail'),
     path('checkout/', views.checkout, name='checkout'),
     path('about/', views.AboutPage.as_view(), name='about'),
+    path('privacy/', views.privacy, name='privacy'),
+    path('payment-deliever/', views.paymentview, name='pay_deliever'),
+    path('<slug:slug>/', views.static_page_view, name='static_page'),
+    
 
     #password reset
     path('reset_password/', auth_views.PasswordResetView.as_view(), name='reset_password'),

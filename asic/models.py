@@ -24,7 +24,11 @@ class Profile(models.Model):
     """Профиль пользователя"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь")
     phone = models.CharField(max_length=20, blank=True, verbose_name="Телефон")
-    
+    name = models.CharField(max_length=200,null=True,blank=True)
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
+    father_name = models.CharField(max_length=150, blank=True)
+
     class Meta:
         verbose_name = "Профиль"
         verbose_name_plural = "Профили"
@@ -53,8 +57,8 @@ class Product(models.Model):
     category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, verbose_name="Категория")
     price = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(0)], verbose_name="Цена")
     old_price = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(0)], null=True, blank=True, verbose_name="Старая цена")
-    hash_rate = models.CharField(max_length=100, blank=True, verbose_name="Хешрейт")
-    power_consumption = models.CharField(max_length=100, blank=True, verbose_name="Потребление энергии")
+    hash_rate = models.IntegerField(blank=True, verbose_name="Хешрейт")
+    power_consumption = models.IntegerField(blank=True, verbose_name="Потребление энергии")
     algorithm = models.CharField(max_length=100, blank=True, verbose_name="Алгоритм")
     description = models.TextField(verbose_name="Описание")
     specifications = models.TextField(blank=True, verbose_name="Характеристики")
@@ -327,3 +331,12 @@ class Office(models.Model):
     
     def __str__(self):
         return self.name
+    
+    
+class StaticPage(models.Model):
+    slug = models.SlugField(unique=True)  # misol: privacy-policy
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.title

@@ -2,16 +2,150 @@
 {% load static %}
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/catalog.css' %}">
-    <!-- Header -->
-    <!-- Main Content -->
+    <style>
+        /* Asosiy yashil rang */
+        :root {
+            --primary-color: #28a745;
+            --primary-hover: #218838;
+        }
+        
+        .btn-primary, .btn-primary-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover, .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+        
+        .product-badge {
+            background-color: var(--primary-color);
+        }
+        
+        /* Range slider uchun yangi CSS */
+        .range-slider-container {
+            margin: 20px 0;
+        }
+        
+        .range-slider {
+            position: relative;
+            height: 5px;
+            margin: 15px 0;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .range-slider .track {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+        }
+        
+        .range-slider input[type="range"] {
+            position: absolute;
+            width: 100%;
+            height: 5px;
+            background: none;
+            pointer-events: none;
+            -webkit-appearance: none;
+            z-index: 2;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .range-slider input[type="range"]::-webkit-slider-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            pointer-events: auto;
+            -webkit-appearance: none;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        
+        .range-slider input[type="range"]::-moz-range-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            pointer-events: auto;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .range-value {
+            background: #f8f9fa;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+        }
+        
+        /* Mahsulot kartalari uchun stil */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .product-body {
+            padding: 15px;
+        }
+        
+   
+        /* Filter groups */
+        .filter-group {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+    </style>
+
     <section class="py-4">
         <div class="container">
             <div class="row">
-                <!-- Filters Sidebar -->
+                <!-- Filtrlar paneli (desktop) -->
                 <div class="col-lg-3 mb-4 d-none d-lg-block">
                     <div class="filters-card">
-                        <form method="get" class="filters-card">
-                            <!-- Manufacturer Filter -->
+                        <form method="get" id="filter-form">
+                            <!-- Ishlab chiqaruvchilar -->
                             <div class="filter-group">
                                 <div class="filter-title">Производитель</div>
                                 {% for man in manufacturers %}
@@ -22,11 +156,14 @@
                                                value="{{ man.id }}"
                                                id="manufacturer-{{ man.id }}"
                                                {% if man.id|stringformat:"s" in selected_manufacturers %}checked{% endif %}>
-                                        <label class="form-check-label" for="manufacturer-{{ man.id }}">{{ man.name }}</label>
+                                        <label class="form-check-label" for="manufacturer-{{ man.id }}">
+                                            {{ man.name }} 
+                                        </label>
                                     </div>
                                 {% endfor %}
                             </div>
-                            <!-- Algorithm Filter -->
+                            
+                            <!-- Algoritmlar -->
                             <div class="filter-group mt-3">
                                 <div class="filter-title">Алгоритм</div>
                                 {% for algo in algorithms %}
@@ -41,216 +178,548 @@
                                     </div>
                                 {% endfor %}
                             </div>
-                            <!-- Price Filter -->
+                            
+                            <!-- Coinlar -->
                             <div class="filter-group mt-3">
-                                <div class="filter-title">Цена</div>
+                                <div class="filter-title">Монеты</div>
+                                {% for coin in coins %}
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="coin"
+                                               value="{{ coin.id }}"
+                                               id="coin-{{ coin.id }}"
+                                               {% if coin.id|stringformat:"s" in selected_coins %}checked{% endif %}>
+                                        <label class="form-check-label" for="coin-{{ coin.id }}">
+                                            {{ coin.name }} ({{ coin.product_count }})
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Hash rate filtr -->
+                            <div class="filter-group">
+                                <div class="filter-title">Хешрейт (TH/s)</div>
+                                <div class="range-slider-container">
+                                    <div class="range-values">
+                                        <span class="range-value" id="hashrate-min-value">{{ selected_min_hashrate }}</span>
+                                        <span class="range-value" id="hashrate-max-value">{{ selected_max_hashrate }}</span>
+                                    </div>
+                                    <div class="range-slider">
+                                        <div class="track" id="hashrate-track"></div>
+                                        <input type="range" 
+                                            min="{{ min_hashrate }}" 
+                                            max="{{ max_hashrate }}" 
+                                            value="{{ selected_min_hashrate }}" 
+                                                class="slider" 
+                                            id="hashrate-range-min">
+
+                                        <input type="range" 
+                                            min="{{ min_hashrate }}" 
+                                            max="{{ max_hashrate }}" 
+                                            value="{{ selected_max_hashrate }}" 
+                                            class="slider" 
+                                            id="hashrate-range-max">
+
+                                    </div>
+                                    <input type="hidden" name="min_hashrate" id="hashrate-min" value="{{ selected_min_hashrate }}">
+                                    <input type="hidden" name="max_hashrate" id="hashrate-max" value="{{ selected_max_hashrate }}">
+                                </div>
+                            </div>
+                            
+                            <!-- Quvvat sarfi filtr - TUZATILDI -->
+                            <div class="filter-group">
+                                <div class="filter-title">Потребление (Вт)</div>
+                                <div class="range-slider-container">
+                                    <div class="range-values">
+                                        <span class="range-value" id="power-min-value">{{ selected_min_power }}</span>
+                                        <span class="range-value" id="power-max-value">{{ selected_max_power }}</span>
+                                    </div>
+                                    <div class="range-slider">
+                                        <div class="track" id="power-track"></div>
+                                        <input type="range"
+                                               min="{{ min_power }}"
+                                               max="{{ max_power }}"
+                                               value="{{ selected_min_power }}"
+                                               class="slider"
+                                               id="power-range-min">
+
+                                        <input type="range"
+                                               min="{{ min_power }}"
+                                               max="{{ max_power }}"
+                                               value="{{ selected_max_power }}"
+                                               class="slider"
+                                               id="power-range-max">
+                                    </div>
+                                    <input type="hidden" name="min_power" id="power-min" value="{{ selected_min_power }}">
+                                    <input type="hidden" name="max_power" id="power-max" value="{{ selected_max_power }}">
+                                </div>
+                            </div>
+                            
+                            <!-- Narx filtr -->
+                            <div class="filter-group">
+                                <div class="filter-title">Цена ($)</div>
                                 <div class="row">
                                     <div class="col-6">
-                                        <input type="number"
-                                               name="price_from"
-                                               class="form-control"
-                                               placeholder="от"
-                                               value="{{ price_from }}">
+                                        <input type="number" name="price_from" class="form-control" 
+                                               placeholder="от" value="{{ price_from }}">
                                     </div>
                                     <div class="col-6">
-                                        <input type="number"
-                                               name="price_to"
-                                               class="form-control"
-                                               placeholder="до"
-                                               value="{{ price_to }}">
+                                        <input type="number" name="price_to" class="form-control" 
+                                               placeholder="до" value="{{ price_to }}">
                                     </div>
                                 </div>
                             </div>
-                            <!-- Stock Filter -->
-                            <div class="filter-group mt-3">
+                            
+                            <!-- Sotuvda bor filtr -->
+                            <div class="filter-group">
                                 <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="in_stock"
-                                           value="1"
-                                           id="in-stock"
-                                           {% if in_stock %}checked{% endif %}>
+                                    <input class="form-check-input" type="checkbox" name="in_stock" 
+                                           value="1" id="in-stock" {% if in_stock %}checked{% endif %}>
                                     <label class="form-check-label" for="in-stock">В наличии</label>
                                 </div>
                             </div>
-                            <!-- Submit Button -->
-                            <div class="filter-group mt-4">
+                            
+                            <!-- Filtrlarni qo'llash -->
+                            <div class="filter-group">
                                 <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
+                                <a href="{% url 'asic:catalog' %}" class="btn btn-outline-secondary w-100 mt-2">Сбросить</a>
                             </div>
                         </form>
                     </div>
                 </div>
-                <!-- Products Grid -->
+                
+                <!-- Mahsulotlar -->
                 <div class="col-lg-9">
                     <div class="mb-2">
-                        <form method="get" class="filters-card">
+                        <form method="get">
+                            <!-- Barcha filtrlarni saqlab qolish uchun hidden inputlar -->
+                            {% for manufacturer in selected_manufacturers %}
+                                <input type="hidden" name="manufacturer" value="{{ manufacturer }}">
+                            {% endfor %}
+                            {% for algorithm in selected_algorithms %}
+                                <input type="hidden" name="algorithm" value="{{ algorithm }}">
+                            {% endfor %}
+                            {% for coin in selected_coins %}
+                                <input type="hidden" name="coin" value="{{ coin }}">
+                            {% endfor %}
+                            {% if price_from %}
+                                <input type="hidden" name="price_from" value="{{ price_from }}">
+                            {% endif %}
+                            {% if price_to %}
+                                <input type="hidden" name="price_to" value="{{ price_to }}">
+                            {% endif %}
+                            {% if in_stock %}
+                                <input type="hidden" name="in_stock" value="{{ in_stock }}">
+                            {% endif %}
+                            <input type="hidden" name="min_hashrate" value="{{ selected_min_hashrate }}">
+                            <input type="hidden" name="max_hashrate" value="{{ selected_max_hashrate }}">
+                            <input type="hidden" name="min_power" value="{{ selected_min_power }}">
+                            <input type="hidden" name="max_power" value="{{ selected_max_power }}">
+
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-muted m-2">Найдено {{ product_count }} товара</span>
-                                <select class="form-select form-select-sm"
-                                        name="sort"
-                                        onchange="this.form.submit()"
-                                        style="width: auto">
+                                <select class="form-select form-select-sm" name="sort" onchange="this.form.submit()" style="width: auto">
                                     <option value="">По популярности</option>
-                                    <option value="price_asc"
-                                            {% if request.GET.sort == "price_asc" %}selected{% endif %}>
-                                        По цене ↑
-                                    </option>
-                                    <option value="price_desc"
-                                            {% if request.GET.sort == "price_desc" %}selected{% endif %}>
-                                        По цене ↓
-                                    </option>
-                                    <option value="new" {% if request.GET.sort == "new" %}selected{% endif %}>Новинки</option>
+                                    <option value="price_asc" {% if current_sort == "price_asc" %}selected{% endif %}>По цене ↑</option>
+                                    <option value="price_desc" {% if current_sort == "price_desc" %}selected{% endif %}>По цене ↓</option>
+                                    <option value="new" {% if current_sort == "new" %}selected{% endif %}>Новинки</option>
+                                    <option value="hashrate_desc" {% if current_sort == "hashrate_desc" %}selected{% endif %}>По хешрейту ↓</option>
+                                    <option value="power_asc" {% if current_sort == "power_asc" %}selected{% endif %}>По потреблению ↑</option>
                                 </select>
                             </div>
                         </form>
                     </div>
-                    <button class="btn btn-primary mb-2 d-block d-lg-none mb-3"
-                            style="width: 100%"
-                            onclick="openFilterModal()">Фильтровать</button>
+                    
+                    <!-- Mobil filtr tugmasi -->
+                    <button class="btn btn-primary mb-3 d-block d-lg-none" onclick="openFilterModal()">
+                        <i class="fas fa-filter me-2"></i>Фильтровать
+                    </button>
+                    
+                    <!-- Mahsulotlar ro'yxati -->
                     <div class="product-grid">
-                        {% for i in products %}
-                            <div class="product-card d-flex flex-column">
-                                <a href="{% url 'asic:detail' i.id %}">
+                        {% for product in products %}
+                            <div class="product-card">
+                                <a href="{% url 'asic:detail' product.id %}">
                                     <div style="position: relative;">
-                                        <img src="{{ i.images.url }}" alt="{{ i.name }}" class="product-image">
-                                        {% if i.is_featured %}<div class="product-badge">FEATURED</div>{% endif %}
+                                        <img src="{{ product.images.url }}" alt="{{ product.name }}" class="product-image">
+                                        {% if product.is_featured %}<div class="product-badge">FEATURED</div>{% endif %}
                                     </div>
                                 </a>
-                                <div class="product-body flex-grow-1 d-flex flex-column">
-                                    <div class="product-brand">{{ i.manufacturer.name }}</div>
-                                    <h5 class="product-title">{{ i.name }} {{ i.hash_rate }} TH/s</h5>
+                                <div class="product-body">
+                                    <div class="product-brand">{{ product.manufacturer.name }}</div>
+                                    <h5 class="product-title">{{ product.name }}</h5>
                                     <ul class="product-specs">
-                                        <li>
-                                            <span>Алгоритм:</span> <span>{{ i.algorithm }}</span>
-                                        </li>
-                                        <li>
-                                            <span>Хешрейт:</span> <span>{{ i.hash_rate }} TH/s</span>
-                                        </li>
-                                        <li>
-                                            <span>Потребление:</span> <span>{{ i.power_consumption }} Вт</span>
-                                        </li>
+                                        <li><span>Алгоритм:</span> {{ product.algorithm }}</li>
+                                        <li><span>Хешрейт:</span> {{ product.hash_rate }} TH/s</li>
+                                        <li><span>Потребление:</span> {{ product.power_consumption }} Вт</li>
                                     </ul>
-                                    <div class="product-price-container d-flex justify-content-between">
-                                        <div class="product-price text-danger">${{ i.current_price }}</div>
-                                        {% if i.has_discount %}
-                                            <div class="product-price-old text-decoration-line-through">${{ i.price }}</div>
-                                        {% else %}
-                                            <span class="text-decoration-line-through">{{ i.old_price }} USD</span>
+                                    <div class="product-price-container">
+                                        <div class="product-price text-danger">${{ product.current_price }}</div>
+                                        {% if product.has_discount %}
+                                            <div class="product-price-old text-decoration-line-through">${{ product.price }}</div>
                                         {% endif %}
                                     </div>
-                                    <!-- Tugmalarni pastga yopishtiruvchi blok -->
-                                    <div class="product-actions mt-auto">
-                                        <a href="{% url 'asic:add_buy' i.id %}">
-                                            <button class="btn btn-primary-custom">
-                                                <i class="fas fa-cart-plus me-1"></i>Купить
-                                            </button>
+                                    <div class="product-actions mt-2">
+                                        <a href="{% url 'asic:add_buy' product.id %}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-cart-plus me-1"></i>Купить
                                         </a>
-                                        <a href="{% url 'asic:add_to_cart' i.id %}">
-                                            <button class="btn btn-outline-custom">
-                                                B Kорзину
-                                            </button>
+                                        <a href="{% url 'asic:add_to_cart' product.id %}" class="btn btn-outline-secondary btn-sm">
+                                            В корзину
                                         </a>
                                     </div>
                                 </div>
                             </div>
+                      
                         {% endfor %}
                     </div>
-                    <!-- Pagination -->
-                    {% include 'partials/pagination.html' %}
+                    
+                    <!-- Paginatsiya -->
+                    {% if is_paginated %}
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">&laquo;</a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">&raquo;</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Modal ochish funksiyasi -->
-    <script>
-      function openFilterModal() {
-        const modalElement = document.getElementById('filterModal');
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-      }
-    </script>
+
+    <!-- Mobil filtr modali -->
     <div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Фильтр</h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Закрыть"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="get" class="filters-card">
-                        <!-- Manufacturer Filter -->
-                        <div class="filter-group">
-                            <div class="filter-title">Производитель</div>
-                            {% for man in manufacturers %}
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="manufacturer"
-                                           value="{{ man.id }}"
-                                           id="manufacturer-{{ man.id }}"
-                                           {% if man.id|stringformat:"s" in selected_manufacturers %}checked{% endif %}>
-                                    <label class="form-check-label" for="manufacturer-{{ man.id }}">{{ man.name }}</label>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <!-- Algorithm Filter -->
-                        <div class="filter-group mt-3">
-                            <div class="filter-title">Алгоритм</div>
-                            {% for algo in algorithms %}
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="algorithm"
-                                           value="{{ algo }}"
-                                           id="algo-{{ forloop.counter }}"
-                                           {% if algo in selected_algorithms %}checked{% endif %}>
-                                    <label class="form-check-label" for="algo-{{ forloop.counter }}">{{ algo }}</label>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <!-- Price Filter -->
-                        <div class="filter-group mt-3">
-                            <div class="filter-title">Цена</div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <input type="number"
-                                           name="price_from"
-                                           class="form-control"
-                                           placeholder="от"
-                                           value="{{ price_from }}">
-                                </div>
-                                <div class="col-6">
-                                    <input type="number"
-                                           name="price_to"
-                                           class="form-control"
-                                           placeholder="до"
-                                           value="{{ price_to }}">
+                    <!-- Filtrlar paneli (mobil) -->
+                    <div class="filters-card">
+                        <form method="get" id="mobile-filter-form">
+                            <!-- Ishlab chiqaruvchilar -->
+                            <div class="filter-group">
+                                <div class="filter-title">Производитель</div>
+                                {% for man in manufacturers %}
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="manufacturer"
+                                               value="{{ man.id }}"
+                                               id="manufacturer-mobile-{{ man.id }}"
+                                               {% if man.id|stringformat:"s" in selected_manufacturers %}checked{% endif %}>
+                                        <label class="form-check-label" for="manufacturer-mobile-{{ man.id }}">
+                                            {{ man.name }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Algoritmlar -->
+                            <div class="filter-group">
+                                <div class="filter-title">Алгоритм</div>
+                                {% for algo in algorithms %}
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="algorithm"
+                                               value="{{ algo }}"
+                                               id="algo-mobile-{{ forloop.counter }}"
+                                               {% if algo in selected_algorithms %}checked{% endif %}>
+                                        <label class="form-check-label" for="algo-mobile-{{ forloop.counter }}">{{ algo }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Coinlar -->
+                            <div class="filter-group">
+                                <div class="filter-title">Монеты</div>
+                                {% for coin in coins %}
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="coin"
+                                               value="{{ coin.id }}"
+                                               id="coin-mobile-{{ coin.id }}"
+                                               {% if coin.id|stringformat:"s" in selected_coins %}checked{% endif %}>
+                                        <label class="form-check-label" for="coin-mobile-{{ coin.id }}">
+                                            {{ coin.name }} ({{ coin.product_count }})
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Hash rate filtr -->
+                            <div class="filter-group">
+                                <div class="filter-title">Хешрейт (TH/s)</div>
+                                <div class="range-slider-container">
+                                    <div class="range-values">
+                                        <span class="range-value" id="hashrate-min-value-mobile">{{ selected_min_hashrate }}</span>
+                                        <span class="range-value" id="hashrate-max-value-mobile">{{ selected_max_hashrate }}</span>
+                                    </div>
+                                    <div class="range-slider">
+                                        <div class="track" id="hashrate-track-mobile"></div>
+                                        <input type="range" min="{{ min_hashrate }}" max="{{ max_hashrate }}" 
+                                               value="{{ selected_min_hashrate }}" class="slider" id="hashrate-range-min-mobile">
+                                        <input type="range" min="{{ min_hashrate }}" max="{{ max_hashrate }}" 
+                                               value="{{ selected_max_hashrate }}" class="slider" id="hashrate-range-max-mobile">
+                                    </div>
+                                    <input type="hidden" name="min_hashrate" id="hashrate-min-mobile" value="{{ selected_min_hashrate }}">
+                                    <input type="hidden" name="max_hashrate" id="hashrate-max-mobile" value="{{ selected_max_hashrate }}">
                                 </div>
                             </div>
-                        </div>
-                        <!-- Stock Filter -->
-                        <div class="filter-group mt-3">
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="in_stock"
-                                       value="1"
-                                       id="in-stock"
-                                       {% if in_stock %}checked{% endif %}>
-                                <label class="form-check-label" for="in-stock">В наличии</label>
+                            
+                            <!-- Quvvat sarfi filtr - TUZATILDI -->
+                            <div class="filter-group">
+                                <div class="filter-title">Потребление (Вт)</div>
+                                <div class="range-slider-container">
+                                    <div class="range-values">
+                                        <span class="range-value" id="power-min-value-mobile">{{ selected_min_power }}</span>
+                                        <span class="range-value" id="power-max-value-mobile">{{ selected_max_power }}</span>
+                                    </div>
+                                    <div class="range-slider">
+                                        <div class="track" id="power-track-mobile"></div>
+                                        <input type="range" min="{{ min_power }}" max="{{ max_power }}" 
+                                               value="{{ selected_min_power }}" class="slider" id="power-range-min-mobile">
+                                        <input type="range" min="{{ min_power }}" max="{{ max_power }}" 
+                                               value="{{ selected_max_power }}" class="slider" id="power-range-max-mobile">
+                                    </div>
+                                    <input type="hidden" name="min_power" id="power-min-mobile" value="{{ selected_min_power }}">
+                                    <input type="hidden" name="max_power" id="power-max-mobile" value="{{ selected_max_power }}">
+                                </div>
                             </div>
-                        </div>
-                        <!-- Submit Button -->
-                        <div class="filter-group mt-4">
-                            <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
-                        </div>
-                    </form>
+                            
+                            <!-- Narx filtr -->
+                            <div class="filter-group">
+                                <div class="filter-title">Цена ($)</div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="number" name="price_from" class="form-control" 
+                                               placeholder="от" value="{{ price_from }}">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" name="price_to" class="form-control" 
+                                               placeholder="до" value="{{ price_to }}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sotuvda bor filtr -->
+                            <div class="filter-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="in_stock" 
+                                           value="1" id="in-stock-mobile" {% if in_stock %}checked{% endif %}>
+                                    <label class="form-check-label" for="in-stock-mobile">В наличии</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Filtrlarni qo'llash -->
+                            <div class="filter-group">
+                                <button type="submit" class="btn btn-primary w-100">Применить фильтры</button>
+                                <a href="{% url 'asic:catalog' %}" class="btn btn-outline-secondary w-100 mt-2">Сбросить</a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-{% endblock content %}
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Debug ma'lumotlarni console ga chiqarish
+        console.log('Debug Information:');
+        console.log('Min power:', {{ min_power|default:0 }});
+        console.log('Max power:', {{ max_power|default:5000 }});
+        console.log('Selected min power:', {{ selected_min_power|default:0 }});
+        console.log('Selected max power:', {{ selected_max_power|default:5000 }});
+
+        // Range sliderlarni ishlatish
+        function initRangeSlider(prefix, min, max, currentMin, currentMax, isMobile = false) {
+            const mobileSuffix = isMobile ? '-mobile' : '';
+            const minSlider = document.getElementById(`${prefix}-range-min${mobileSuffix}`);
+            const maxSlider = document.getElementById(`${prefix}-range-max${mobileSuffix}`);
+            const minInput = document.getElementById(`${prefix}-min${mobileSuffix}`);
+            const maxInput = document.getElementById(`${prefix}-max${mobileSuffix}`);
+            const minValue = document.getElementById(`${prefix}-min-value${mobileSuffix}`);
+            const maxValue = document.getElementById(`${prefix}-max-value${mobileSuffix}`);
+            const track = document.getElementById(`${prefix}-track${mobileSuffix}`);
+            
+            console.log(`Initializing ${prefix} slider${mobileSuffix}:`);
+            console.log(`Elements found:`, {
+                minSlider: !!minSlider,
+                maxSlider: !!maxSlider,
+                minInput: !!minInput,
+                maxInput: !!maxInput,
+                minValue: !!minValue,
+                maxValue: !!maxValue,
+                track: !!track
+            });
+            
+            // Elementlarni tekshirish
+            if (!minSlider || !maxSlider || !minInput || !maxInput || !minValue || !maxValue) {
+                console.error(`Missing elements for ${prefix} slider${mobileSuffix}`);
+                return;
+            }
+            
+            // Qiymatlarni parse qilish
+            min = parseInt(min) || 0;
+            max = parseInt(max) || 5000;
+            currentMin = parseInt(currentMin) || min;
+            currentMax = parseInt(currentMax) || max;
+            
+            console.log(`Values: min=${min}, max=${max}, currentMin=${currentMin}, currentMax=${currentMax}`);
+            
+            // Boshlang'ich qiymatlar
+            minSlider.min = min;
+            minSlider.max = max;
+            maxSlider.min = min;
+            maxSlider.max = max;
+            
+            minSlider.value = currentMin;
+            maxSlider.value = currentMax;
+            minValue.textContent = currentMin;
+            maxValue.textContent = currentMax;
+            minInput.value = currentMin;
+            maxInput.value = currentMax;
+            
+            // Trackni yangilash
+            function updateTrack() {
+                const minVal = parseInt(minSlider.value);
+                const maxVal = parseInt(maxSlider.value);
+                const minPercent = ((minVal - min) / (max - min)) * 100;
+                const maxPercent = ((maxVal - min) / (max - min)) * 100;
+                
+                if (track) {
+                    track.style.left = `${minPercent}%`;
+                    track.style.width = `${maxPercent - minPercent}%`;
+                }
+                
+                console.log(`Track updated for ${prefix}: ${minPercent}% - ${maxPercent}%`);
+            }
+            
+            // Slider o'zgarishlari
+            minSlider.addEventListener('input', function() {
+                const minVal = parseInt(this.value);
+                const maxVal = parseInt(maxSlider.value);
+                
+                if (minVal > maxVal) {
+                    this.value = maxVal;
+                }
+                
+                minValue.textContent = this.value;
+                minInput.value = this.value;
+                updateTrack();
+                
+                console.log(`${prefix} min slider changed to:`, this.value);
+            });
+            
+            maxSlider.addEventListener('input', function() {
+                const minVal = parseInt(minSlider.value);
+                const maxVal = parseInt(this.value);
+                
+                if (maxVal < minVal) {
+                    this.value = minVal;
+                }
+                
+                maxValue.textContent = this.value;
+                maxInput.value = this.value;
+                updateTrack();
+                
+                console.log(`${prefix} max slider changed to:`, this.value);
+            });
+            
+            // Dastlabki trackni o'rnatish
+            updateTrack();
+            
+            console.log(`${prefix} slider${mobileSuffix} initialized successfully`);
+        }
+        
+        // Desktop sliderlarni ishga tushirish
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing sliders...');
+            
+            // Hashrate slider
+            initRangeSlider('hashrate', 
+                {{ min_hashrate|default:0 }}, 
+                {{ max_hashrate|default:1000 }}, 
+                {{ selected_min_hashrate|default:0 }}, 
+                {{ selected_max_hashrate|default:1000 }}
+            );
+            
+            // Power slider - bu yerda muammo bor edi
+            initRangeSlider('power', 
+                {{ min_power|default:0 }}, 
+                {{ max_power|default:5000 }}, 
+                {{ selected_min_power|default:0 }}, 
+                {{ selected_max_power|default:5000 }}
+            );
+            
+            // Mobile sliderlarni ishga tushirish
+            initRangeSlider('hashrate', 
+                {{ min_hashrate|default:0 }}, 
+                {{ max_hashrate|default:1000 }}, 
+                {{ selected_min_hashrate|default:0 }}, 
+                {{ selected_max_hashrate|default:1000 }}, 
+                true
+            );
+            
+            initRangeSlider('power', 
+                {{ min_power|default:0 }}, 
+                {{ max_power|default:5000 }}, 
+                {{ selected_min_power|default:0 }}, 
+                {{ selected_max_power|default:5000 }}, 
+                true
+            );
+        });
+        
+        // Modalni ochish
+        function openFilterModal() {
+            const modal = new bootstrap.Modal(document.getElementById('filterModal'));
+            modal.show();
+        }
+        
+        // Form submission debug
+        document.getElementById('filter-form').addEventListener('submit', function(e) {
+            console.log('Filter form submitting...');
+            
+            // FormData ni tekshirish
+            const formData = new FormData(this);
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+        });
+        
+        // Mobile form submission debug
+        document.getElementById('mobile-filter-form').addEventListener('submit', function(e) {
+            console.log('Mobile filter form submitting...');
+            
+            // FormData ni tekshirish
+            const formData = new FormData(this);
+            for (let [key, value] of formData.entries()) {
+                console.log(`Mobile ${key}: ${value}`);
+            }
+        });
+    </script>
+{% endblock %}

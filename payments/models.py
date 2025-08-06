@@ -15,3 +15,4 @@ class Payment(models.Model):
     invoice_link = models.URLField(blank=True, null=True)
     temp_data = models.JSONField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
