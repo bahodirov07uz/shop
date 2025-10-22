@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load form_helpers %}
+<title>{% block title %}{{ page_titles.checkout }}{% endblock %}</title>
+
 {% block content %}
 <style>
   body {
@@ -6,6 +10,9 @@
     color: #fff;
   }
 
+  .burger{
+    width: 37px;
+  }
   .bg-navbar {
     background: #fff;
     border-bottom: 1px solid #e2e2e2;
@@ -93,6 +100,12 @@
     background: #0bc04f;
   }
 
+  .btn-checkout:disabled {
+    background: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
   .order-summary {
     background: #232b39;
     border-radius: 10px;
@@ -125,6 +138,187 @@
     border-top: 1px solid #232b39;
   }
 
+  .cart-item {
+    padding: 15px;
+    border-radius: 12px;
+    background-color: #181f2a;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 15px;
+    line-height: 1.4;
+  }
+
+  .cart-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .cart-item img {
+    width: 90px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .cart-item-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .cart-item-price {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #11d560;
+    margin-bottom: 6px;
+  }
+
+  .cart-item-delivery {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 0;
+  }
+
+  .cart-empty {
+    font-size: 1.2rem;
+    text-align: center;
+    color: #888;
+    padding: 20px 0;
+  }
+
+  .delivery-details {
+    background: #181f2a;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #ccc;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    color: white;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .w-100 {
+    width: 100% !important;
+  }
+
+  .mt-2 {
+    margin-top: 0.5rem !important;
+  }
+
+  .text-muted {
+    margin-bottom: 6px;
+    text-decoration: line-through;
+    color: #aaa !important;
+  }
+
+  .text-success.small {
+    margin-bottom: 8px;
+    display: block;
+    color: #11d560 !important;
+  }
+
+  .order-summary .d-flex {
+    margin-bottom: 12px;
+    align-items: center;
+    min-height: 24px;
+  }
+
+  .order-summary .d-flex:last-child {
+    margin-bottom: 0;
+  }
+
+  .order-summary hr {
+    margin: 16px 0;
+  }
+
+  .order-summary .fs-5 {
+    margin-top: 16px !important;
+    margin-bottom: 0;
+  }
+
+  .order-summary h6 {
+    margin-bottom: 16px;
+  }
+
+  .order-summary ul {
+    margin-bottom: 20px;
+  }
+
+  .order-summary p {
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  /* Stock warning styles */
+  .stock-warning {
+    background: #ffc107;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 5px;
+    display: inline-block;
+  }
+
+  .out-of-stock {
+    background: #dc3545;
+    color: #fff;
+  }
+
+  .low-stock {
+    background: #fd7e14;
+    color: #fff;
+  }
+
+  .cart-item.stock-issue {
+    opacity: 0.7;
+    background-color: #2a1f1f;
+  }
+
+  .cart-item.low-stock-issue {
+    background-color: #2a2419;
+  }
+
+  .stock-alert {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #856404;
+  }
+
+  .stock-alert h5 {
+    color: #856404;
+    margin-bottom: 10px;
+  }
+
+  .stock-alert ul {
+    margin-bottom: 10px;
+    padding-left: 20px;
+  }
+
+  .checkout-disabled-notice {
+    background: #f8d7da;
+    border: 1px solid #f1aeb5;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 15px;
+    color: #842029;
+    text-align: center;
+    font-weight: 500;
+  }
+
   @media(max-width: 768px) {
     .card {
       padding: 1rem !important;
@@ -133,6 +327,15 @@
     .order-summary {
       padding: 14px;
     }
+
+    .cart-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .cart-item img {
+      margin-bottom: 10px;
+    }
   }
 </style>
 
@@ -140,155 +343,180 @@
   <div class="card p-4">
     <h2 class="fw-bold mb-4" style="color:#11d560;">Оформление заказа</h2>
 
-    {% if messages %}
-      {% for i in messages %}
-        <h1>{{i}}</h1>
-      {% endfor %}
-    {% endif %}
     <div class="row g-4">
       <!-- LEFT: Form -->
       <div class="col-md-6">
-        <form action="{% url 'asic:checkout' %}" id="checkoutForm" method="post">
-          {% csrf_token %}
+<form action="{% url 'asic:checkout' %}" id="checkoutForm" method="post">
+  {% csrf_token %}
 
-          <!-- Customer Information -->
-          <div class="mb-3">
-            <label class="form-label">ФИО*</label>
-            <input type="text" name="full_name" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Телефон*</label>
-            <input type="tel" name="phone" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Email*</label>
-            <input type="email" name="email" class="form-control" required>
-          </div>
+  <!-- Customer Information -->
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" class="form-control"
+           value="{{ request.user.username }}">
+  </div>
 
-          <!-- Address -->
-          <div class="mb-3">
-            <label class="form-label">Страна*</label>
-            <input type="text" name="country" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Регион*</label>
-            <input type="text" name="region" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Город*</label>
-            <input type="text" name="city" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Улица*</label>
-            <input type="text" name="street" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Дом*</label>
-            <input type="text" name="house" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Корпус</label>
-            <input type="text" name="block" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Квартира</label>
-            <input type="text" name="apartment" class="form-control">
-          </div>
+  <div class="form-group">
+    <label for="last_name">Фамилия</label>
+    <input type="text" id="last_name" name="last_name" class="form-control"
+           value="{{ request.user.profile.last_name }}">
+  </div>
 
-          <!-- Delivery -->
+    {% if applied_cart_discounts %}
+    {% for discount in applied_cart_discounts %}
+      <input type="hidden" name="discount_percentage" value="{{ discount.discount_percent|floatformat:2 }}">
+    {% endfor %}
+  {% endif %}
+  <div class="form-group">
+    <label for="first_name">Имя</label>
+    <input type="text" id="first_name" name="first_name" class="form-control"
+           value="{{ request.user.profile.first_name }}">
+  </div>
 
-          <div class="mb-3">
-            <label class="form-label">Тип доставки*</label>
-            <select name="delivery_type" class="form-select" required>
-              {% for code, name_price in delivery_types %}
-              <option value="{{ code }}">{{ name_price }}</option>
-              {% endfor %}
-            </select>
+  <div class="form-group">
+    <label for="middle_name">Отчество</label>
+    <input type="text" id="middle_name" name="middle_name" class="form-control"
+           value="{{ request.user.profile.father_name }}">
+  </div>
 
-          </div>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" class="form-control"
+           value="{{ request.user.email }}">
+  </div>
 
-          <!-- Document -->
-          <div class="mb-3">
-            <label class="form-label">Тип документа*</label>
-            <select name="document_type" class="form-select" required>
-              {% for code, name_price in document_types %}
-              <option value="{{ code }}">{{ name_price }}</option>
-              {% endfor %}
-            </select>
-          </div>
+  <div class="form-group">
+    <label for="phone">Телефон</label>
+    <input type="tel" id="phone" name="phone" class="form-control"
+           value="{{ request.user.profile.phone }}">
+  </div>
 
-          <div class="mb-3">
-            <label class="form-label">Комментарий</label>
-            <textarea name="notes" class="form-control" rows="3"></textarea>
-          </div>
+  <!-- Address -->
+  <div class="form-group">
+    <label for="country">Страна*</label>
+    <input type="text" id="country" name="country" class="form-control" 
+    value="{{ request.user.profile.country }}" required>
+  </div>
 
-          <button type="submit" class="btn btn-checkout btn-lg w-100 mt-2">Подтвердить заказ</button>
-        </form>
+  <div class="form-group">
+    <label for="address_region">Область / Регион</label>
+    <input type="text" id="address_region" name="address_region" class="form-control"
+           value="{{ request.user.profile.address_region }}">
+  </div>
+
+  <div class="form-group">
+    <label for="address_city">Город</label>
+    <input type="text" id="address_city" name="address_city" class="form-control"
+           value="{{ request.user.profile.address_city }}">
+  </div>
+
+  <div class="form-group">
+    <label for="address_street">Улица</label>
+    <input type="text" id="address_street" name="address_street" class="form-control"
+           value="{{ request.user.profile.address_street }}">
+  </div>
+
+  <div class="form-group">
+    <label for="house">Дом*</label>
+    <input type="text" id="house" name="house" class="form-control" 
+    value="{{ request.user.profile.home }}"
+    required>
+  </div>
+
+  <div class="form-group">
+    <label for="block">Корпус</label>
+    <input type="text" id="block" name="block" class="form-control">
+  </div>
+
+  <div class="form-group">
+    <label for="apartment">Квартира</label>
+    <input type="text" id="apartment" name="apartment" class="form-control">
+  </div>
+
+  <div class="form-group">
+    <label for="address_postal_code">Почтовый индекс</label>
+    <input type="text" id="address_postal_code" name="address_postal_code" class="form-control"
+           value="{{ request.user.profile.address_postal_code }}">
+  </div>
+
+  <!-- Delivery -->
+  <div class="form-group">
+    <label for="deliveryType">Тип доставки*</label>
+    <select name="delivery_type" id="deliveryType" class="form-control" required>
+      {% for code, name in delivery_types %}
+      <option value="{{ code }}" data-rate="{{ code|get_delivery_rate:delivery_settings }}">
+        {{ name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Document -->
+  <div class="form-group">
+    <label for="documentType">Тип документа*</label>
+    <select name="document_type" id="documentType" class="form-control" required>
+      {% for code, name in document_types %}
+      <option value="{{ code }}" data-percentage="{{ code|get_document_percentage:delivery_settings }}">
+        {{ name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="notes">Комментарий</label>
+    <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+  </div>
+
+<button type="submit" class="btn btn-checkout btn-lg w-100 mt-2">Подтвердить заказ</button>
+</form>
       </div>
 
-      <!-- RIGHT: Summary -->
       <div class="col-md-6">
         <div class="order-summary">
           <h5>Информация о доставке</h5>
           <p>
-            Доставка осуществляется Bitmain — ведущий производитель майнингового оборудования, известен своими
-            высококачественными и эффективными майнерами Antminer.
-          </p>
-          <p>
-            Компания Bitmain — бесспорный лидер по выпуску оборудования для майнинга криптовалют. С 2013-го ежегодно на
-            рынок выходит обновление ASIC'ов, задающие планку всей индустрии.
+            {{site_settings.checkout_text|linebreaksbr}}
           </p>
           <hr>
+
+          
           <h6>Ваш заказ:</h6>
-          <style>
-            .cart-item {
-              padding: 15px;
-              border-radius: 12px;
-              background-color: #181f2a;
-              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-              transition: all 0.3s ease-in-out;
-            }
 
-            .cart-item:hover {
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
-
-            .cart-item img {
-              width: 90px;
-              height: auto;
-              object-fit: cover;
-              border-radius: 8px;
-            }
-
-            .cart-item-name {
-              font-size: 1.1rem;
-              font-weight: 600;
-              color: #fff;
-            }
-
-            .cart-item-price {
-              font-size: 1rem;
-              font-weight: 500;
-              color: #11d560;
-            }
-
-            .cart-empty {
-              font-size: 1.2rem;
-              text-align: center;
-              color: #888;
-              padding: 20px 0;
-            }
-          </style>
-
-
-          <ul class="list-unstyled mb-3">
+          <ul class="list-unstyled mb-3" id="cart-items-list">
             {% for item in cart %}
-            <li class="cart-item mb-3 d-flex align-items-center">
+            <li class="cart-item d-flex align-items-center" data-quantity="{{ item.quantity }}" 
+                data-original-price="{{ item.original_price }}" data-discounted-price="{{ item.discounted_price }}">
               <img src="{{ item.product.images.url }}" alt="{{ item.product.name }}" class="me-3">
               <div>
-                <div class="cart-item-name mb-1">{{ item.product.name }}</div>
+                <div class="cart-item-name">{{ item.product.name }}</div>
+                
+                <!-- Original Price -->
+                {% if item.discounted_price != item.original_price %}
+                <div class="text-muted" style="text-decoration: line-through;">
+                  ${{ item.original_price|floatformat:2 }} × {{ item.quantity }}
+                </div>
+                {% endif %}
+                
+                <!-- Discounted Price -->
                 <div class="cart-item-price">
-                  {{ item.price }} $ × {{ item.quantity }}
+                  ${{ item.discounted_price|floatformat:2 }} × {{ item.quantity }} = ${{ item.item_total|floatformat:2 }}
+                </div>
+                
+                <!-- Discount Information -->
+                {% if item.discounted_price != item.original_price %}
+                <div class="text-success small mt-1">
+                  Экономия: ${{ item.product_discount|floatformat:2 }}
+                  {% if item.applied_discounts %}
+                  ({% for discount in item.applied_discounts %}{{ discount.discount.name }}{% if not forloop.last %}+{% endif %}{% endfor %})
+                  {% endif %}
+                </div>
+                {% endif %}
+                
+                <!-- Delivery Cost -->
+                <div class="cart-item-delivery">
+                  Доставка: $<span class="item-delivery-per-unit">{{ item.delivery_cost_per_unit|floatformat:2 }}</span> × {{ item.quantity }} = 
+                  $<span class="item-delivery-total">{{ item.total_delivery_cost|floatformat:2 }}</span>
                 </div>
               </div>
             </li>
@@ -297,74 +525,201 @@
             {% endfor %}
           </ul>
 
-
-
-          <div class="d-flex justify-content-between">
-            <span>Сумма товаров:</span>
-            <span id="cartTotal">{{ cart_total|floatformat:2 }} $</span>
+          <!-- Cart Summary -->
+          <div class="d-flex justify-content-between mt-1">
+            <span>Стоимость товаров:</span>
+            <span>$<span id="cartSubtotal">{{ cart_subtotal|floatformat:2 }}</span></span>
           </div>
+          
+          <!-- Cart Additional Discount -->
+          {% if cart_discount > 0 %}
+          <div class="d-flex justify-content-between text-success">
+            <span>Дополнительная скидка: 
+              {% if applied_cart_discounts %}
+                ({% for discount in applied_cart_discounts %}{% if discount.is_first_order %}{{ discount.discount_percent|floatformat:1 }}%{% else %} <input type="hidden" name="discount_percentage" value="{{ discount.discount_percent|floatformat:2 }}"> {{ discount.discount_percent|floatformat:1 }}%{% endif %}{% if not forloop.last %} + {% endif %}{% endfor %})
+              {% endif %}:
+            </span>
+            <span>-$<span id="cartDiscount">{{ cart_discount|floatformat:2 }}</span></span>
+          </div>
+          <input type="hidden" name="discount_percentage" value="{{ discount.discount_percent|floatformat:2 }}">
+
+          {% endif %}
+          
+          
+          <div class="d-flex justify-content-between mt-1 fw-bold">
+            <span>Итого за товары:</span>
+            <span class="text-success">$<span id="discountedCartTotal">{{ discounted_cart_total|floatformat:2 }}</span></span>
+          </div>
+          
+          <hr class="my-2">
+          
           <div class="d-flex justify-content-between mt-1">
             <span>Стоимость доставки:</span>
-            <span id="deliveryFee">0 $</span>
+            <span>$<span id="deliveryFee">{{ default_delivery_cost|floatformat:2 }}</span></span>
           </div>
-<div class="d-flex justify-content-between mt-1">
-  <span>Таможенные документы:</span>
-  <span id="documentFee">0 $</span>
-</div>
+          
+          <div class="d-flex justify-content-between mt-1">
+            <span>Таможенные документы:</span>
+            <span>$<span id="documentFee">{{ default_document_cost|floatformat:2 }}</span></span>
+          </div>
+          
           <div class="d-flex justify-content-between mt-2 fs-5">
-            <span>Итого:</span>
-            <span class="text-success fw-bold" id="grandTotal">{{ cart_total|floatformat:2 }} $</span>
+            <span>Итого к оплате:</span>
+            <span class="text-success fw-bold">
+              $<span id="grandTotal">{{ final_checkout_total|floatformat:2 }}</span>
+            </span>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   </div>
 </div>
-</div>
+
 {% block extra_js %}
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const deliverySelect = document.querySelector('select[name="delivery_type"]');
-    const documentSelect = document.querySelector('select[name="document_type"]');
+document.addEventListener('DOMContentLoaded', function() {
+    const deliverySelect = document.getElementById('deliveryType');
+    const documentSelect = document.getElementById('documentType');
     const deliveryFeeElement = document.getElementById('deliveryFee');
-    const documentFeeElement = document.getElementById('documentFee'); // Yangi element
+    const documentFeeElement = document.getElementById('documentFee');
     const grandTotalElement = document.getElementById('grandTotal');
-    const cartTotal = parseFloat('{{ cart_total|default:0 }}');
+    const checkoutForm = document.getElementById('checkoutForm');
+    
+    // Fixed values from backend - MUHIM: vergulni nuqtaga almashtirish kerak!
+    const parseLocalizedFloat = (value) => {
+        if (typeof value === 'string') {
+            // Vergulni nuqtaga almashtirish va bo'sh joylarni olib tashlash
+            return parseFloat(value.replace(',', '.').replace(/\s/g, ''));
+        }
+        return parseFloat(value);
+    };
+    
+    const cartSubtotal = parseLocalizedFloat('{{ cart_subtotal|default:0 }}');
+    const cartDiscount = parseLocalizedFloat('{{ cart_discount|default:0 }}');
+    const discountedCartTotal = parseLocalizedFloat('{{ discounted_cart_total|default:0 }}');
+    
+    console.log('=== CHECKOUT INITIALIZATION ===');
+    console.log('Cart Subtotal:', cartSubtotal);
+    console.log('Cart Discount:', cartDiscount);
+    console.log('Discounted Cart Total:', discountedCartTotal);
+    console.log('Type of discountedCartTotal:', typeof discountedCartTotal);
+    
+    // Cart items data
+    const cartItems = [];
+    document.querySelectorAll('.cart-item[data-quantity]').forEach(item => {
+        cartItems.push({
+            quantity: parseInt(item.dataset.quantity),
+            element: item
+        });
+    });
+    
+    console.log('Cart Items Count:', cartItems.length);
 
     function updateTotals() {
-        const selectedDelivery = deliverySelect.value;
-        const selectedDocument = documentSelect.value;
-
-        let deliveryFee = 0;
-        let documentFee = 0;
-
-        if (selectedDelivery === 'air') {
-            deliveryFee = parseFloat('{{ delivery_settings.air_delivery_rate|default:0 }}');
-        } else if (selectedDelivery === 'sea') {
-            deliveryFee = parseFloat('{{ delivery_settings.sea_delivery_rate|default:0 }}');
-        }
-
-        if (selectedDocument === 'gtd_rb') {
-            documentFee = parseFloat('{{ delivery_settings.gtd_rb_cost|default:0 }}');
-        } else if (selectedDocument === 'dt_rf') {
-            documentFee = parseFloat('{{ delivery_settings.dt_rf_cost|default:0 }}');
-        }
-
-        const total = cartTotal + deliveryFee + documentFee;
-
-        deliveryFeeElement.textContent = deliveryFee.toFixed(2) + ' $';
-        documentFeeElement.textContent = documentFee.toFixed(2) + ' $'; // Yangi qator
-        grandTotalElement.textContent = total.toFixed(2) + ' $';
+        // Get delivery rate
+        const deliveryOption = deliverySelect.options[deliverySelect.selectedIndex];
+        const deliveryRatePerUnit = parseFloat(deliveryOption.dataset.rate) || 0;
+        
+        // Get document percentage
+        const documentOption = documentSelect.options[documentSelect.selectedIndex];
+        const documentPercentage = parseFloat(documentOption.dataset.percentage) || 0;
+        
+        console.log('=== CALCULATION ===');
+        console.log('Delivery Rate Per Unit:', deliveryRatePerUnit);
+        console.log('Document Percentage:', documentPercentage);
+        
+        let totalDeliveryCost = 0;
+        
+        // Update delivery cost for each item
+        cartItems.forEach(item => {
+            const itemDeliveryCost = deliveryRatePerUnit * item.quantity;
+            totalDeliveryCost += itemDeliveryCost;
+            
+            // Update UI
+            const perUnitElement = item.element.querySelector('.item-delivery-per-unit');
+            const totalElement = item.element.querySelector('.item-delivery-total');
+            
+            if (perUnitElement) perUnitElement.textContent = deliveryRatePerUnit.toFixed(2);
+            if (totalElement) totalElement.textContent = itemDeliveryCost.toFixed(2);
+        });
+        
+        // Calculate document cost based on ORIGINAL cart subtotal (not discounted)
+        const documentCost = cartSubtotal * (documentPercentage / 100);
+        
+        // MUHIM: Final total = discounted cart + delivery + document
+        const grandTotal = discountedCartTotal + totalDeliveryCost + documentCost;
+        
+        console.log('Discounted Cart Total:', discountedCartTotal, '(type:', typeof discountedCartTotal + ')');
+        console.log('Total Delivery Cost:', totalDeliveryCost);
+        console.log('Document Cost:', documentCost);
+        console.log('Formula:', discountedCartTotal, '+', totalDeliveryCost, '+', documentCost, '=', grandTotal);
+        console.log('GRAND TOTAL:', grandTotal);
+        console.log('===================');
+        
+        // Update UI
+        deliveryFeeElement.textContent = totalDeliveryCost.toFixed(2);
+        documentFeeElement.textContent = documentCost.toFixed(2);
+        grandTotalElement.textContent = grandTotal.toFixed(2);
+        
+        // Store for form submission
+        window.checkoutTotals = {
+            deliveryFee: totalDeliveryCost,
+            documentFee: documentCost,
+            grandTotal: grandTotal
+        };
     }
 
-    deliverySelect.addEventListener('change', updateTotals);
-    documentSelect.addEventListener('change', updateTotals);
+    // Form submission handler
+    checkoutForm.addEventListener('submit', function(e) {
+        console.log('=== FORM SUBMISSION ===');
+        
+        if (window.checkoutTotals) {
+            // Remove existing hidden fields
+            const existingFields = checkoutForm.querySelectorAll(
+                'input[name="delivery_fee"], input[name="document_fee"], input[name="grand_total"]'
+            );
+            existingFields.forEach(field => field.remove());
+            
+            // Add new hidden fields
+            const fields = [
+                { name: 'delivery_fee', value: window.checkoutTotals.deliveryFee },
+                { name: 'document_fee', value: window.checkoutTotals.documentFee },
+                { name: 'grand_total', value: window.checkoutTotals.grandTotal }
+            ];
+            
+            fields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field.name;
+                input.value = field.value.toFixed(2);
+                checkoutForm.appendChild(input);
+                console.log('Added hidden field:', field.name, '=', field.value.toFixed(2));
+            });
+            
+            console.log('Form submission values:', window.checkoutTotals);
+        } else {
+            console.error('ERROR: checkoutTotals not found!');
+        }
+        
+        console.log('======================');
+    });
+
+    // Event listeners
+    deliverySelect.addEventListener('change', function() {
+        console.log('Delivery type changed to:', this.value);
+        updateTotals();
+    });
+    
+    documentSelect.addEventListener('change', function() {
+        console.log('Document type changed to:', this.value);
+        updateTotals();
+    });
+    
+    // Initial calculation
     updateTotals();
 });
 </script>
-
 {% endblock %}
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 {% endblock content %}

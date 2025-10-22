@@ -1,0 +1,811 @@
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+✅ Все заказы обновлены
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+✅ Все заказы обновлены
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+Traceback (most recent call last):
+  File "/home/devuser/shop/manage.py", line 22, in <module>
+    main()
+  File "/home/devuser/shop/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/base.py", line 416, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/base.py", line 460, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/devuser/shop/asic/management/commands/update_orders.py", line 16, in handle
+    days_passed = (now.date() - order.last_status_update.date()).days
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'date'
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+Traceback (most recent call last):
+  File "/home/devuser/shop/manage.py", line 22, in <module>
+    main()
+  File "/home/devuser/shop/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/base.py", line 416, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/base.py", line 460, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/devuser/shop/asic/management/commands/update_orders.py", line 21, in handle
+    if rule.starts_when == "immediately" and days_passed >= 0:
+       ^^^^^^^^^^^^^^^^
+AttributeError: 'OrderStatusRule' object has no attribute 'starts_when'
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+✅ Заказ ORD000084: 1 kun → processing
+✅ Заказ ORD000083: 1 kun → processing
+✅ Заказ zvxfb: 1 kun → processing
+✅ Заказ aefrgtbswsw1212: 1 kun → processing
+🎯 4 ta buyurtma yangilandi
+Traceback (most recent call last):
+  File "/home/devuser/shop/manage.py", line 22, in <module>
+    main()
+  File "/home/devuser/shop/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/base.py", line 416, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/base.py", line 457, in execute
+    self.check(**check_kwargs)
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/management/base.py", line 492, in check
+    all_issues = checks.run_checks(
+                 ^^^^^^^^^^^^^^^^^^
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/checks/registry.py", line 89, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 136, in check_custom_error_handlers
+    handler = resolver.resolve_error_handler(status_code)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 732, in resolve_error_handler
+    callback = getattr(self.urlconf_module, "handler%s" % view_type, None)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 711, in urlconf_module
+    return import_module(self.urlconf_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/devuser/shop/config/urls.py", line 26, in <module>
+    path('', include('asic.urls')),
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/home/devuser/shop/venv/lib/python3.12/site-packages/django/urls/conf.py", line 39, in include
+    urlconf_module = import_module(urlconf_module)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/devuser/shop/asic/urls.py", line 3, in <module>
+    from . import views
+  File "/home/devuser/shop/asic/views.py", line 914
+    logger.debug(f"CryptoCloud payload: {payload}")
+TabError: inconsistent use of tabs and spaces in indentation
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+✅ Заказ ORD000084: 2 kun → shipped
+✅ Заказ ORD000083: 2 kun → shipped
+✅ Заказ zvxfb: 2 kun → shipped
+✅ Заказ aefrgtbswsw1212: 2 kun → shipped
+🎯 4 ta buyurtma yangilandi
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+✅ Заказ ORD000111: 1 kun → processing
+✅ Заказ ORD000084: 1 kun → processing
+✅ Заказ ORD000083: 1 kun → processing
+✅ Заказ zvxfb: 1 kun → processing
+✅ Заказ aefrgtbswsw1212: 1 kun → processing
+🎯 5 ta buyurtma yangilandi
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+✅ Заказ ORD000111: 1 kun → shipped
+✅ Заказ ORD000084: 1 kun → shipped
+✅ Заказ ORD000083: 1 kun → shipped
+✅ Заказ zvxfb: 1 kun → shipped
+✅ Заказ aefrgtbswsw1212: 1 kun → shipped
+🎯 5 ta buyurtma yangilandi
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 4 активных правил:
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Заказ 2222222: создан 2025-10-05, основа: 2025-10-05, прошло 1 дней, текущий статус: processing
+✅ Заказ 2222222: 1 дней → shipped (был: processing)
+🔍 Заказ ORD000111: создан 2025-10-03, основа: 2025-10-05, прошло 1 дней, текущий статус: customs
+✅ Заказ ORD000111: 1 дней → shipped (был: customs)
+🔍 Заказ ORD000084: создан 2025-09-30, основа: 2025-10-05, прошло 1 дней, текущий статус: delivering
+✅ Заказ ORD000084: 1 дней → shipped (был: delivering)
+🔍 Заказ ORD000083: создан 2025-09-30, основа: 2025-10-05, прошло 1 дней, текущий статус: delivering
+✅ Заказ ORD000083: 1 дней → shipped (был: delivering)
+🔍 Заказ zvxfb: создан 2025-09-29, основа: 2025-10-05, прошло 1 дней, текущий статус: delivering
+✅ Заказ zvxfb: 1 дней → shipped (был: delivering)
+🔍 Заказ aefrgtbswsw1212: создан 2025-09-29, основа: 2025-10-05, прошло 1 дней, текущий статус: delivering
+✅ Заказ aefrgtbswsw1212: 1 дней → shipped (был: delivering)
+🎯 6 ta buyurtma yangilandi
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 4 активных правил:
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Заказ ORD000116: создан 2025-10-06, основа: 2025-10-06, прошло 1 дней, текущий статус: new
+✅ Заказ ORD000116: 1 дней → shipped (был: new)
+🔍 Заказ 2222222: создан 2025-10-05, основа: 2025-10-06, прошло 1 дней, текущий статус: shipped
+➖ Заказ 2222222: 1 дней → без изменений (shipped)
+🔍 Заказ ORD000111: создан 2025-10-03, основа: 2025-10-06, прошло 1 дней, текущий статус: delivering
+✅ Заказ ORD000111: 1 дней → shipped (был: delivering)
+🔍 Заказ ORD000084: создан 2025-09-30, основа: 2025-10-06, прошло 1 дней, текущий статус: delivering
+✅ Заказ ORD000084: 1 дней → shipped (был: delivering)
+🔍 Заказ ORD000083: создан 2025-09-30, основа: 2025-10-06, прошло 1 дней, текущий статус: delivering
+✅ Заказ ORD000083: 1 дней → shipped (был: delivering)
+🔍 Заказ zvxfb: создан 2025-09-29, основа: 2025-10-06, прошло 1 дней, текущий статус: delivering
+✅ Заказ zvxfb: 1 дней → shipped (был: delivering)
+🔍 Заказ aefrgtbswsw1212: создан 2025-09-29, основа: 2025-10-06, прошло 1 дней, текущий статус: delivering
+✅ Заказ aefrgtbswsw1212: 1 дней → shipped (был: delivering)
+🎯 6 ta buyurtma yangilandi
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 5 активных правил:
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 9 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000123: создан: 2025-10-07, прошло 1 дней, текущий статус: new
+✅ Заказ ORD000123: 1 дней → shipped (был: new)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 1 дней, текущий статус: new
+✅ Заказ aefrgtbswsw1212qwd: 1 дней → shipped (был: new)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 2 дней, текущий статус: shipped
+✅ Заказ ORD000116: 2 дней → customs (был: shipped)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 3 дней, текущий статус: shipped
+✅ Заказ 2222222: 3 дней → delivering (был: shipped)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 5 дней, текущий статус: delivering
+✅ Заказ ORD000111: 5 дней → sorting (был: delivering)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 8 дней, текущий статус: delivering
+✅ Заказ ORD000084: 8 дней → sorting (был: delivering)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 8 дней, текущий статус: delivering
+✅ Заказ ORD000083: 8 дней → sorting (был: delivering)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 9 дней, текущий статус: delivering
+✅ Заказ zvxfb: 9 дней → sorting (был: delivering)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 9 дней, текущий статус: delivering
+✅ Заказ aefrgtbswsw1212: 9 дней → sorting (был: delivering)
+🎯 9 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 5 активных правил:
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 9 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000123: создан: 2025-10-07, прошло 2 дней, текущий статус: shipped
+✅ Заказ ORD000123: 2 дней → customs (был: shipped)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 2 дней, текущий статус: shipped
+✅ Заказ aefrgtbswsw1212qwd: 2 дней → customs (был: shipped)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 3 дней, текущий статус: customs
+✅ Заказ ORD000116: 3 дней → delivering (был: customs)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 4 дней, текущий статус: delivering
+✅ Заказ 2222222: 4 дней → sorting (был: delivering)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 6 дней, текущий статус: sorting
+➖ Заказ ORD000111: 6 дней → без изменений (sorting)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 9 дней, текущий статус: sorting
+➖ Заказ ORD000084: 9 дней → без изменений (sorting)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 9 дней, текущий статус: sorting
+➖ Заказ ORD000083: 9 дней → без изменений (sorting)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 10 дней, текущий статус: sorting
+➖ Заказ zvxfb: 10 дней → без изменений (sorting)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 10 дней, текущий статус: sorting
+➖ Заказ aefrgtbswsw1212: 10 дней → без изменений (sorting)
+🎯 4 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 11 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 1 дней, текущий статус: new
+✅ Заказ ORD000126: 1 дней → shipped (был: new)
+🔍 Заказ ORD000123: создан: 2025-10-07, прошло 3 дней, текущий статус: processing
+✅ Заказ ORD000123: 3 дней → delivering (был: processing)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 3 дней, текущий статус: sorting
+✅ Заказ ORD000121: 3 дней → delivering (был: sorting)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 3 дней, текущий статус: customs
+✅ Заказ aefrgtbswsw1212qwd: 3 дней → delivering (был: customs)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 4 дней, текущий статус: delivering
+✅ Заказ ORD000116: 4 дней → sorting (был: delivering)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 5 дней, текущий статус: sorting
+➖ Заказ 2222222: 5 дней → без изменений (sorting)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 7 дней, текущий статус: sorting
+✅ Заказ ORD000111: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 10 дней, текущий статус: sorting
+✅ Заказ ORD000084: 10 дней → pickup_ready (был: sorting)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 10 дней, текущий статус: sorting
+✅ Заказ ORD000083: 10 дней → pickup_ready (был: sorting)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 11 дней, текущий статус: sorting
+✅ Заказ zvxfb: 11 дней → pickup_ready (был: sorting)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 11 дней, текущий статус: sorting
+✅ Заказ aefrgtbswsw1212: 11 дней → pickup_ready (был: sorting)
+🎯 10 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 11 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 2 дней, текущий статус: shipped
+✅ Заказ ORD000126: 2 дней → customs (был: shipped)
+🔍 Заказ ORD000123: создан: 2025-10-07, прошло 4 дней, текущий статус: delivering
+✅ Заказ ORD000123: 4 дней → sorting (был: delivering)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 4 дней, текущий статус: delivering
+✅ Заказ ORD000121: 4 дней → sorting (был: delivering)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 4 дней, текущий статус: delivering
+✅ Заказ aefrgtbswsw1212qwd: 4 дней → sorting (был: delivering)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 5 дней, текущий статус: sorting
+➖ Заказ ORD000116: 5 дней → без изменений (sorting)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 6 дней, текущий статус: sorting
+➖ Заказ 2222222: 6 дней → без изменений (sorting)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 8 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 8 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 11 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 11 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 11 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 11 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 12 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 12 дней → без изменений (pickup_ready)
+🎯 4 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 11 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 3 дней, текущий статус: customs
+✅ Заказ ORD000126: 3 дней → delivering (был: customs)
+🔍 Заказ ORD000123: создан: 2025-10-07, прошло 5 дней, текущий статус: sorting
+➖ Заказ ORD000123: 5 дней → без изменений (sorting)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 5 дней, текущий статус: sorting
+➖ Заказ ORD000121: 5 дней → без изменений (sorting)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 5 дней, текущий статус: sorting
+➖ Заказ aefrgtbswsw1212qwd: 5 дней → без изменений (sorting)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 6 дней, текущий статус: sorting
+➖ Заказ ORD000116: 6 дней → без изменений (sorting)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 7 дней, текущий статус: sorting
+✅ Заказ 2222222: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 9 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 9 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 12 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 12 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 13 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 13 дней → без изменений (pickup_ready)
+🎯 2 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 11 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 4 дней, текущий статус: delivering
+✅ Заказ ORD000126: 4 дней → sorting (был: delivering)
+🔍 Заказ ORD000123: создан: 2025-10-07, прошло 6 дней, текущий статус: sorting
+➖ Заказ ORD000123: 6 дней → без изменений (sorting)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 6 дней, текущий статус: sorting
+➖ Заказ ORD000121: 6 дней → без изменений (sorting)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 6 дней, текущий статус: sorting
+➖ Заказ aefrgtbswsw1212qwd: 6 дней → без изменений (sorting)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 7 дней, текущий статус: sorting
+✅ Заказ ORD000116: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 8 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 8 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 10 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 10 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 13 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 13 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 14 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 14 дней → без изменений (pickup_ready)
+🎯 2 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 12 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000133: создан: 2025-10-13, прошло 1 дней, текущий статус: processing
+✅ Заказ ORD000133: 1 дней → shipped (был: processing)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 5 дней, текущий статус: sorting
+➖ Заказ ORD000126: 5 дней → без изменений (sorting)
+🔍 Заказ ORD000123: создан: 2025-10-07, прошло 7 дней, текущий статус: sorting
+✅ Заказ ORD000123: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 7 дней, текущий статус: sorting
+✅ Заказ ORD000121: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 7 дней, текущий статус: sorting
+✅ Заказ aefrgtbswsw1212qwd: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 8 дней, текущий статус: pickup_ready
+➖ Заказ ORD000116: 8 дней → без изменений (pickup_ready)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 9 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 9 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 11 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 11 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 14 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 14 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 15 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 15 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 15 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 15 дней → без изменений (pickup_ready)
+🎯 4 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 14 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000144: создан: 2025-10-14, прошло 1 дней, текущий статус: processing
+✅ Заказ ORD000144: 1 дней → shipped (был: processing)
+🔍 Заказ ORD000135: создан: 2025-10-14, прошло 1 дней, текущий статус: processing
+✅ Заказ ORD000135: 1 дней → shipped (был: processing)
+🔍 Заказ ORD000133: создан: 2025-10-13, прошло 2 дней, текущий статус: shipped
+✅ Заказ ORD000133: 2 дней → customs (был: shipped)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 6 дней, текущий статус: sorting
+➖ Заказ ORD000126: 6 дней → без изменений (sorting)
+🔍 Заказ ORD000123: создан: 2025-10-07, прошло 8 дней, текущий статус: pickup_ready
+➖ Заказ ORD000123: 8 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 8 дней, текущий статус: pickup_ready
+➖ Заказ ORD000121: 8 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 8 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212qwd: 8 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 9 дней, текущий статус: pickup_ready
+➖ Заказ ORD000116: 9 дней → без изменений (pickup_ready)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 10 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 10 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 12 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 15 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 15 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 15 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 15 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 16 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 16 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 16 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 16 дней → без изменений (pickup_ready)
+🎯 3 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 12 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000135: создан: 2025-10-14, прошло 2 дней, текущий статус: shipped
+✅ Заказ ORD000135: 2 дней → customs (был: shipped)
+🔍 Заказ ORD000133: создан: 2025-10-13, прошло 3 дней, текущий статус: customs
+✅ Заказ ORD000133: 3 дней → delivering (был: customs)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 7 дней, текущий статус: sorting
+✅ Заказ ORD000126: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 9 дней, текущий статус: pickup_ready
+➖ Заказ ORD000121: 9 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 9 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212qwd: 9 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 10 дней, текущий статус: pickup_ready
+➖ Заказ ORD000116: 10 дней → без изменений (pickup_ready)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 11 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 11 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 13 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 16 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 16 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 16 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 16 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 17 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 17 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 17 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 17 дней → без изменений (pickup_ready)
+🎯 3 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 12 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000135: создан: 2025-10-14, прошло 3 дней, текущий статус: customs
+✅ Заказ ORD000135: 3 дней → delivering (был: customs)
+🔍 Заказ ORD000133: создан: 2025-10-13, прошло 4 дней, текущий статус: delivering
+✅ Заказ ORD000133: 4 дней → sorting (был: delivering)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 8 дней, текущий статус: pickup_ready
+➖ Заказ ORD000126: 8 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 10 дней, текущий статус: pickup_ready
+➖ Заказ ORD000121: 10 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 10 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212qwd: 10 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 11 дней, текущий статус: pickup_ready
+➖ Заказ ORD000116: 11 дней → без изменений (pickup_ready)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 12 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 14 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 17 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 17 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 17 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 17 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 18 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 18 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 18 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 18 дней → без изменений (pickup_ready)
+🎯 2 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 12 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000135: создан: 2025-10-14, прошло 4 дней, текущий статус: delivering
+✅ Заказ ORD000135: 4 дней → sorting (был: delivering)
+🔍 Заказ ORD000133: создан: 2025-10-13, прошло 5 дней, текущий статус: sorting
+➖ Заказ ORD000133: 5 дней → без изменений (sorting)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 9 дней, текущий статус: pickup_ready
+➖ Заказ ORD000126: 9 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 11 дней, текущий статус: pickup_ready
+➖ Заказ ORD000121: 11 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 11 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212qwd: 11 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ ORD000116: 12 дней → без изменений (pickup_ready)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 13 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 15 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 15 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 18 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 18 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 18 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 18 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 19 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 19 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 19 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 19 дней → без изменений (pickup_ready)
+🎯 1 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 12 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000135: создан: 2025-10-14, прошло 5 дней, текущий статус: sorting
+➖ Заказ ORD000135: 5 дней → без изменений (sorting)
+🔍 Заказ ORD000133: создан: 2025-10-13, прошло 6 дней, текущий статус: sorting
+➖ Заказ ORD000133: 6 дней → без изменений (sorting)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 10 дней, текущий статус: pickup_ready
+➖ Заказ ORD000126: 10 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ ORD000121: 12 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212qwd: 12 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ ORD000116: 13 дней → без изменений (pickup_ready)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 14 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 16 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 16 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 19 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 19 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 19 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 19 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 20 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 20 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 20 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 20 дней → без изменений (pickup_ready)
+🎯 0 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 12 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000135: создан: 2025-10-14, прошло 6 дней, текущий статус: sorting
+➖ Заказ ORD000135: 6 дней → без изменений (sorting)
+🔍 Заказ ORD000133: создан: 2025-10-13, прошло 7 дней, текущий статус: sorting
+✅ Заказ ORD000133: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 11 дней, текущий статус: pickup_ready
+➖ Заказ ORD000126: 11 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ ORD000121: 13 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 13 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212qwd: 13 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ ORD000116: 14 дней → без изменений (pickup_ready)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 15 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 15 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 17 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 17 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 20 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 20 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 20 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 20 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 21 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 21 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 21 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 21 дней → без изменений (pickup_ready)
+🎯 1 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 12 заказов (исключая отмененные и завершенные)
+🔍 Заказ ORD000135: создан: 2025-10-14, прошло 7 дней, текущий статус: sorting
+✅ Заказ ORD000135: 7 дней → pickup_ready (был: sorting)
+🔍 Заказ ORD000133: создан: 2025-10-13, прошло 8 дней, текущий статус: pickup_ready
+➖ Заказ ORD000133: 8 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000126: создан: 2025-10-09, прошло 12 дней, текущий статус: pickup_ready
+➖ Заказ ORD000126: 12 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000121: создан: 2025-10-07, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ ORD000121: 14 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212qwd: создан: 2025-10-07, прошло 14 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212qwd: 14 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000116: создан: 2025-10-06, прошло 15 дней, текущий статус: pickup_ready
+➖ Заказ ORD000116: 15 дней → без изменений (pickup_ready)
+🔍 Заказ 2222222: создан: 2025-10-05, прошло 16 дней, текущий статус: pickup_ready
+➖ Заказ 2222222: 16 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000111: создан: 2025-10-03, прошло 18 дней, текущий статус: pickup_ready
+➖ Заказ ORD000111: 18 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000084: создан: 2025-09-30, прошло 21 дней, текущий статус: pickup_ready
+➖ Заказ ORD000084: 21 дней → без изменений (pickup_ready)
+🔍 Заказ ORD000083: создан: 2025-09-30, прошло 21 дней, текущий статус: pickup_ready
+➖ Заказ ORD000083: 21 дней → без изменений (pickup_ready)
+🔍 Заказ zvxfb: создан: 2025-09-29, прошло 22 дней, текущий статус: pickup_ready
+➖ Заказ zvxfb: 22 дней → без изменений (pickup_ready)
+🔍 Заказ aefrgtbswsw1212: создан: 2025-09-29, прошло 22 дней, текущий статус: pickup_ready
+➖ Заказ aefrgtbswsw1212: 22 дней → без изменений (pickup_ready)
+🎯 1 заказов обновлено
+System check identified some issues:
+
+WARNINGS:
+?: (ckeditor.W001) django-ckeditor bundles CKEditor 4.22.1 which isn't supported anymore and which does have unfixed security issues, see for example https://ckeditor.com/cke4/release/CKEditor-4.24.0-LTS . You should consider strongly switching to a different editor (maybe CKEditor 5 respectively django-ckeditor-5 after checking whether the CKEditor 5 license terms work for you) or switch to the non-free CKEditor 4 LTS package. See https://ckeditor.com/ckeditor-4-support/ for more on this. (Note! This notice has been added by the django-ckeditor developers and we are not affiliated with CKSource and were not involved in the licensing change, so please refrain from complaining to us. Thanks.)
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+asic.About_page.statistics: (fields.W340) null has no effect on ManyToManyField.
+🔍 Найдено 6 активных правил:
+   - 7 дней → pickup_ready
+   - 4 дней → sorting
+   - 3 дней → delivering
+   - 2 дней → customs
+   - 1 дней → shipped
+   - 0 дней → processing
+🔍 Обрабатывается 0 заказов (исключая отмененные и завершенные)
+🎯 0 заказов обновлено

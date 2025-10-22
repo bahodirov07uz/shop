@@ -4,6 +4,12 @@
 {% load form_helpers %}
 {% load static %}
 {% block content %}
+<title>{% block title %}{{ page_titles.login }}{% endblock %}</title>
+{% if site_settings.favicon %}
+<link rel="icon" href="{{ site_settings.favicon.url }}" type="image/x-icon">
+{% else %}
+<link rel="icon" href="{% static 'default-favicon.ico' %}" type="image/x-icon">
+{% endif %}
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+<title>{% block title %}{{ page_titles.home }}{% endblock %}</title>
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 
@@ -26,23 +27,13 @@
             bottom: 0;
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
 
-                {
-                % if active_banner %
-            }
-
+            {% if active_banner %}
             background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
             url('{{ active_banner.banner.url }}');
-
-                {
-                % else %
-            }
-
+            {% else %}
             background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-            url('{% static "attached_assets/miners.png" %}');
-
-                {
-                % endif %
-            }
+            url('{{active_banner.banner.url}}');
+            {% endif %}
 
             background-position: center;
             background-size: cover;
@@ -117,15 +108,9 @@
             height: auto;
             animation: float 6s ease-in-out infinite;
 
-                {
-                % if active_banner %
-            }
-
+            {% if active_banner %}
             content: url('{{ active_banner.banner.url }}');
-
-                {
-                % endif %
-            }
+            {% endif %}
         }
 
         @keyframes float {
@@ -143,16 +128,140 @@
         }
 
         /* Fallback if no active banner */
-            {
-            % if not active_banner %
-        }
-
+        {% if not active_banner %}
         .hero-asic img {
-            content: url('{% static "attached_assets/miners.png" %}');
+            content: url('{{active_banner.banner.url}}');
         }
+        {% endif %}
+    }
 
-            {
-            % endif %
+    /* Brands Section Styles */
+    .brands-section {
+        padding: 80px 0;
+        background: var(--light-bg, #f8f9fa);
+    }
+
+    .brands-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .brands-grid {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .brand-item {
+        flex: 1;
+    }
+
+    .brand-logo-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+        width: 100%;
+        max-width: 180px;
+        margin: 0 auto;
+        padding: 10px;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .brand-logo-wrapper:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        border-color: #dee2e6;
+    }
+
+    .brand-logo {
+        max-height: calc(100% - 10px);
+        max-width: calc(100% - 10px);
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        object-position: center;
+        transition: opacity 0.3s ease;
+    }
+
+    .brands-section .section-title {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 2rem;
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    /* Desktop - all items in one row with equal spacing */
+    @media (min-width: 992px) {
+        .brands-grid {
+            justify-content: space-between;
+            flex-wrap: nowrap;
+        }
+        
+        .brand-item {
+            flex: 1;
+            max-width: 180px;
+        }
+    }
+
+    /* Tablet - wrap to multiple rows if needed */
+    @media (max-width: 991px) and (min-width: 768px) {
+        .brands-grid {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .brand-item {
+            flex: 0 0 auto;
+            margin-bottom: 20px;
+        }
+        
+        .brand-logo-wrapper {
+            max-width: 150px;
+            height: 90px;
+        }
+        
+        .brand-logo {
+            max-height: calc(100% - 8px);
+            max-width: calc(100% - 8px);
+        }
+    }
+
+    /* Mobile - wrap to multiple rows */
+    @media (max-width: 767px) {
+        .brands-grid {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .brand-item {
+            flex: 0 0 auto;
+            margin-bottom: 15px;
+        }
+        
+        .brand-logo-wrapper {
+            max-width: 140px;
+            height: 85px;
+            padding: 10px;
+        }
+        
+        .brand-logo {
+            max-height: calc(100% - 8px);
+            max-width: calc(100% - 8px);
+        }
+        
+        .brands-section .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
         }
     }
 </style>
@@ -191,58 +300,31 @@
         </div>
     </div>
 </section>
+
 <!-- Features Section -->
 <section id="features" class="features-section">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="section-title">Почему выбирают нас</h2>
+                <h2 class="section-title">{{active_banner.benefit_title}}</h2>
                 <p class="section-subtitle">
-                    Мы предлагаем комплексные решения для майнинга с полной технической поддержкой
+                    {{active_banner.benefit_text}}
                 </p>
             </div>
         </div>
 
         <div class="row g-4">
+            {% for i in cards %}
             <div class="col-md-6 col-lg-3">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
+                        <i class="{{i.icon}}"></i>
                     </div>
-                    <h4>Гарантия качества</h4>
-                    <p>Официальная гарантия от производителей на все оборудование</p>
+                    <h4>{{i.title}}</h4>
+                    <p>{{i.text}}</p>
                 </div>
             </div>
-
-            <div class="col-md-6 col-lg-3">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shipping-fast"></i>
-                    </div>
-                    <h4>Быстрая доставка</h4>
-                    <p>Доставка в 50+ стран мира. Экспресс-доставка за 3-5 дней</p>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <h4>Поддержка 24/7</h4>
-                    <p>Техническая поддержка и консультации в любое время суток</p>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-certificate"></i>
-                    </div>
-                    <h4>Сертификация</h4>
-                    <p>Только сертифицированное оборудование от официальных поставщиков</p>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
@@ -269,8 +351,8 @@
                             <h5 class="product-title">{{i.name}}</h5>
                             <div class="product-price">$ {{i.price}}</div>
                             <ul class="product-specs">
-                                <li><i class="fas fa-bolt text-primary me-2"></i>Хешрейт: {{i.hash_rate}} TH/s</li>
-                                <li><i class="fas fa-plug text-primary me-2"></i>Потребление: {{i.power_consumption}} W
+                                <li><i class="fas fa-bolt text-primary me-2"></i>Хешрейт: {{i.hash_rate}} {{i.get_hash_unit_display}}</li>
+                                <li><i class="fas fa-plug text-primary me-2"></i>Потребление: {{i.power_consumption}} Вт/ч
                                 </li>
                                 <li><i class="fas fa-microchip text-primary me-2"></i>Алгоритм: {{i.algorithm}}</li>
                             </ul>
@@ -290,43 +372,30 @@
             <a href="{% url 'asic:catalog'%}" class="btn-primary-custom">
                 <i class="fas fa-th me-2"></i>Посмотреть все модели
             </a>
-        </div>
+            </div>
     </div>
 </section>
 
 <!-- Brands Section -->
 <section class="brands-section">
-    <div class="container">
+    <div class="container brands-container">
         <div class="row">
             <div class="col-12">
-                <h3 class="text-center mb-5">Официальные партнеры</h3>
+                <h3 class="section-title">Официальные партнеры</h3>
             </div>
         </div>
-        <div class="row align-items-center justify-content-center">
-            <div class="col-6 col-md-2 text-center mb-4">
-                <img src="https://logos-world.net/wp-content/uploads/2021/02/Bitmain-Logo.png" alt="Bitmain"
-                    class="brand-logo">
-            </div>
-            <div class="col-6 col-md-2 text-center mb-4">
-                <div style="background: #f8fafc; padding: 15px; border-radius: 10px;">
-                    <span style="font-weight: 700; font-size: 1.2rem; color: #1e293b;">CANAAN</span>
+        <div class="brands-grid">
+            {% for i in partners %}
+            <div class="brand-item">
+                <div class="brand-logo-wrapper">
+                    <img src="{{ i.logo.url }}" alt="{{ i.name|default:'Partner Logo' }}" class="brand-logo">
                 </div>
             </div>
-            <div class="col-6 col-md-2 text-center mb-4">
-                <div style="background: #f8fafc; padding: 15px; border-radius: 10px;">
-                    <span style="font-weight: 700; font-size: 1.2rem; color: #3b82f6;">IceRiver</span>
-                </div>
-            </div>
-            <div class="col-6 col-md-2 text-center mb-4">
-                <div style="background: #f8fafc; padding: 15px; border-radius: 10px;">
-                    <span style="font-weight: 700; font-size: 1.2rem; color: #dc2626;">WhatsMiner</span>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
 
 <!-- Stats Section -->
-
 
 {% endblock content %}

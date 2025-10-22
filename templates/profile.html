@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+<title>{% block title %}{{ page_titles.profile }}{% endblock %}</title>
 {% block content %}
 <style>
     .container {
@@ -225,6 +226,7 @@
         <div class="profile-nav">
             <a href="#" class="active">Профиль</a>
             <a href="{% url 'asic:cart_detail'%}">Корзина</a>
+            <a href="{% url 'asic:order_list' %}">Заказы</a>
         </div>
 
         <div class="profile-section">
@@ -233,15 +235,15 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="first_name">Username</label>
-                    <input type="text" id="first_name" name="first_name" value="{{ request.user.username }}">
-                </div>
-                <div class="form-group">
-                    <label for="last_name">Имя</label>
-                    <input type="text" id="last_name" name="last_name" value="{{ request.user.profile.last_name }}">
+                    <input type="text" id="first_name" name="username" value="{{ request.user.username }}">
                 </div>
                 <div class="form-group">
                     <label for="last_name">Фамилия</label>
-                    <input type="text" id="last_name" name="last_name" value="{{ request.user.profile.first_name }}">
+                    <input type="text" id="last_name" name="last_name" value="{{ request.user.profile.last_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Имя</label>
+                    <input type="text" id="last_name" name="first_name" value="{{ request.user.profile.first_name }}">
                 </div>
                 <div class="form-group">
                     <label for="middle_name">Отчество</label>
@@ -257,49 +259,74 @@
                     <label for="phone">Телефон</label>
                     <input type="tel" id="phone" name="phone" value="{{ request.user.profile.phone }}">
                 </div>
+                <div class="form-group">
+                    <label for="country">Страна</label>
+                    <input type="text" id="country" name="country" value="{{ request.user.profile.country }}">
+                </div>
+                <div class="form-group">
+                    <label for="address_region">Область / Регион</label>
+                    <input type="text" id="address_region" name="address_region"
+                        value="{{ request.user.profile.address_region }}">
+                </div>
+                <div class="form-group">
+                    <label for="address_city">Город</label>
+                    <input type="text" id="address_city" name="address_city"
+                        value="{{ request.user.profile.address_city }}">
+                </div>
+                <div class="form-group">
+                    <label for="address_street">Улица</label>
+                    <input type="text" id="address_street" name="address_street"
+                        value="{{ request.user.profile.address_street }}">
+                </div>
+                <div class="form-group">
+                    <label for="home">Дом</label>
+                    <input type="text" id="home" name="home"
+                        value="{{ request.user.profile.home }}">
+                </div>
+                <div class="form-group">
+                    <label for="address_postal_code">Почтовый индекс</label>
+                    <input type="text" id="address_postal_code" name="address_postal_code"
+                        value="{{ request.user.profile.address_postal_code }}">
+                </div>
                 <button type="submit" class="btn">Сохранить изменения</button>
             </form>
         </div>
 
-        <div class="profile-section">
-            <h2>История заказов</h2>
-            <div style="overflow-x: auto;">
-                <table class="order-history">
-                    <thead>
-                        <tr>
-                            <th>Номер заказа</th>
-                            <th>Дата</th>
-                            <th>Товары</th>
-                            <th>Сумма</th>
-                            <th>Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in orders %}
-                        <tr>
-                            <td><a href="{% url 'asic:order_detail' order.id %}">#{{ order.order_number }}</a></td>
-                            <td>{{ order.created_at|date:"d.m.Y" }}</td>
-                            <td>
-                                {% for item in order.items.all %}
-                                {{ item.product.name }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>${{ order.total }}</td>
-                            <td>{{ order.get_status_display }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" style="text-align: center;">Нет заказов</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 </div>
 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('toggle-address');
+        const addressFields = document.getElementById('address-fields');
+
+        toggleBtn.addEventListener('click', function () {
+            if (addressFields.style.display === 'none' || addressFields.style.display === '') {
+                addressFields.style.display = 'block';
+                toggleBtn.textContent = 'Скрыть адрес';
+            } else {
+                addressFields.style.display = 'none';
+                toggleBtn.textContent = 'Показать адрес';
+            }
+        });
+    });
+</script>
 <style>
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 15px;
+        transition: border 0.3s ease;
+    }
+
+    .form-group input:focus {
+        border-color: #22c55e;
+        outline: none;
+    }
+
     .mobile-profile {
         padding: 20px 15px;
         display: flex;

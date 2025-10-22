@@ -1,10 +1,16 @@
 {% extends "base.html" %}
-
+<title>{% block title %}{{ page.title }}{% endblock %}</title>
 {% block content %}
-  <div class="container py-4">
-    <h1>{{ page.title }}</h1>
-    <div class="mt-3">
-      {{ page.content|safe }}
-    </div>
+<div class="container py-4">
+  <h1>{{ page.title }}</h1>
+  <div class="mt-3">
+    {% if page.raw_html %}
+    {{ page.raw_html|safe }}
+    {% else %}
+    {{ page.rich_content|safe }}
+    {% endif %}
+
   </div>
+</div>
+
 {% endblock %}

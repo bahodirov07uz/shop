@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 <link rel="stylesheet" href="{% static 'css/order.css' %}">
@@ -20,11 +21,11 @@
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Способ доставки:</span>
-                        <span class="detail-value">{{ order.get_delivery_type_display }}</span>
+                        <span class="detail-value">{{ order.get_dynamic_delivery_name }}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Тип документа:</span>
-                        <span class="detail-value">{{ order.get_document_type_display }}</span>
+                        <span class="detail-value">{{ order.get_dynamic_document_name }}</span>
                     </div>
                 </div>
 
@@ -42,11 +43,7 @@
                     <div class="detail-row">
                         <span class="detail-label">Статус оплаты:</span>
                         <span class="detail-value">
-                            {% if order.payment_status == 'paid' %}
-                            <span style="color: #27ae60;">Оплачен</span>
-                            {% else %}
-                            <span style="color: #e74c3c;">Ожидает оплаты</span>
-                            {% endif %}
+                            <span style="color: #27ae60;">{{order.payment_status}}</span>
                         </span>
                     </div>
                     {% if order.payment_id %}
@@ -135,11 +132,17 @@
         </div>
 
         <div class="actions">
-            <a href="" class="btn btn-outline">Вернуться к заказам</a>
+            <a href="{% url 'asic:home' %}" class="btn btn-outline">Вернуться на главную</a>
+
             {% if order.status == 'new' %}
-            <a href="#" class="btn btn-primary">Оплатить заказ</a>
+            <a href="{% url 'asic:cancel_order' order.id %}" class="btn btn-danger">
+                Отменить заказ
+            </a>
+            {% else %}
+            <span class="text-muted">Заказ отменить нельзя</span>
             {% endif %}
         </div>
+
     </div>
 </div>
 {% endblock content %}

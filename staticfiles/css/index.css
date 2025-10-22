@@ -164,9 +164,6 @@
 }
  .brand-logo {
      height: 60px;
-     opacity: 0.6;
-     transition: opacity 0.3s ease;
-     filter: grayscale(100%);
 }
  .brand-logo:hover {
      opacity: 1;

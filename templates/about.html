@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
+<title>{% block title %}{{ page_titles.about }}{% endblock %}</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
@@ -65,7 +65,7 @@
         right: 0;
         width: 50%;
         height: 100%;
-        background: url('https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80') center/cover;
+        background: url('{{settings.banner_bg.url}}') center/cover;
         opacity: 0.1;
         z-index: 1;
     }
@@ -460,74 +460,40 @@
 <section class="hero-section">
     <div class="container">
         <div class="hero-content animate-in">
-            <h1 class="hero-title ">О Компании <span style="color: #059669;">CHINA-ASIC.RU</span></h1>
-            <p class="hero-subtitle">Ведущий поставщик майнингового оборудования с безупречной репутацией и
-                многолетним опытом в криптоиндустрии</p>
+            <h1 class="hero-title ">{{settings.about_title}}</h1>
+            <p class="hero-subtitle">{{settings.about_subtitle}}</p>
 
             <div class="hero-stats">
+                {% for i in settings.statistics.all %}
                 <div class="stat-item">
-                    <span class="stat-number">10+</span>
-                    <span class="stat-label">Лет на рынк</span>
+                    <span class="stat-number">{{i.number}}</span>
+                    <span class="stat-label">{{i.text}}</span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-number">5000+</span>
-                    <span class="stat-label">Довольных клиентов</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">Техподдержка</span>
-                </div>
+                {% endfor %}
+                
             </div>
         </div>
+        <img src="{{site_settings.logo}}" alt="">
     </div>
 </section>
-
 <!-- About Content -->
 <section class="section">
     <div class="container">
         <div class="section-header animate-in">
-            <h2 class="section-title">Наши преимущества</h2>
-            <p class="section-subtitle">Мы предоставляем комплексные решения для майнинга с гарантией качества и
-                профессиональной поддержкой</p>
+            <h2 class="section-title">{{settings.benefit_title}}</h2>
+            <p class="section-subtitle">{{settings.benefit_text}}</p>
         </div>
 
         <div class="content-grid">
+            {% for i in about_cards %}
             <div class="content-card animate-in">
                 <div class="card-icon">
-                    <i class="bi bi-award"></i>
+                    <i class="{{i.icon}}"></i>
                 </div>
-                <h3 class="card-title">Лидер индустрии</h3>
-                <p class="card-text">Компания Bitmain — безусловный лидер по выпуску оборудования для майнинга
-                    криптовалют. С 2013 года ежегодно на рынок выходят обновленные АСИКи, задающие планку всей
-                    индустрии.</p>
+                <h3 class="card-title">{{i.title}}</h3>
+                <p class="card-text">{{i.text}}</p>
             </div>
-
-            <div class="content-card animate-in">
-                <div class="card-icon">
-                    <i class="bi bi-truck"></i>
-                </div>
-                <h3 class="card-title">Быстрая доставка</h3>
-                <p class="card-text">Собственные склады позволяют обеспечить быструю доставку и наличие актуальных
-                    моделей оборудования. Доставка осуществляется ведущими логистическими компаниями.</p>
-            </div>
-
-            <div class="content-card animate-in">
-                <div class="card-icon">
-                    <i class="bi bi-shield-check"></i>
-                </div>
-                <h3 class="card-title">Гарантия качества</h3>
-                <p class="card-text">Все оборудование проходит тщательную проверку качества. Мы предоставляем
-                    официальную гарантию и техническую поддержку на всю продукцию.</p>
-            </div>
-
-            <div class="content-card animate-in">
-                <div class="card-icon">
-                    <i class="bi bi-headset"></i>
-                </div>
-                <h3 class="card-title">24/7 Поддержка</h3>
-                <p class="card-text">Наша команда экспертов готова помочь вам в любое время. Мы предоставляем
-                    консультации по выбору оборудования и решению технических вопросов.</p>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
@@ -538,20 +504,11 @@
         <div class="feature-section animate-in">
             <div class="feature-grid">
                 <div>
-                    <img src="{% static 'attached_assets/team.png' %}" alt="Команда профессионалов"
+                    <img src="{{settings.card1_img.url}}" alt="Команда профессионалов"
                         class="feature-image">
                 </div>
                 <div class="feature-content">
-                    <h3>Команда экспертов</h3>
-                    <p class="card-text">Наша команда состоит из опытных специалистов, которые глубоко понимают
-                        технологии блокчейн и майнинга. Мы следим за всеми новинками рынка и помогаем клиентам
-                        выбрать оптимальное решение.</p>
-                    <ul class="feature-list">
-                        <li>Многолетний опыт в криптоиндустрии</li>
-                        <li>Глубокие технические знания</li>
-                        <li>Индивидуальный подход к каждому клиенту</li>
-                        <li>Постоянное обучение и развитие</li>
-                    </ul>
+                    <p>{{settings.card1 | linebreaksbr }}</p>
                 </div>
             </div>
         </div>
@@ -559,19 +516,10 @@
         <div class="feature-section animate-in">
             <div class="feature-grid">
                 <div class="feature-content">
-                    <h3>Современная логистика</h3>
-                    <p class="card-text">Собственные логистические мощности позволяют нам контролировать весь
-                        процесс доставки от склада до клиента. Мы гарантируем сохранность оборудования и минимальные
-                        сроки доставки.</p>
-                    <ul class="feature-list">
-                        <li>Собственные складские комплексы</li>
-                        <li>Надежная упаковка и страхование</li>
-                        <li>Отслеживание доставки в реальном времени</li>
-                        <li>Доставка по всему миру</li>
-                    </ul>
+                    <p>{{settings.card2 | linebreaksbr }}</p>
                 </div>
                 <div>
-                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    <img src="{{settings.card2_img.url}}"
                         alt="Современный склад" class="feature-image">
                 </div>
             </div>
@@ -583,10 +531,8 @@
 <section class="section">
     <div class="container">
         <div class="trust-section animate-in">
-            <h3 class="trust-title">Почему нам доверяют</h3>
-            <p class="trust-text">MineStream — это, прежде всего, люди. Мы команда энтузиастов и профессионалов,
-                которые знают мир майнинга изнутри. Каждый из наших специалистов имеет многолетний опыт и может
-                предложить вам лучшие решения для развития вашего майнингового бизнеса.</p>
+            <h3 class="trust-title">{{settings.why_us_title}}</h3>
+            <p class="trust-text">{{settings.why_us}}</p>
         </div>
     </div>
 </section>
@@ -595,8 +541,8 @@
 <section class="section">
     <div class="container">
         <div class="section-header animate-in">
-            <h2 class="section-title">Наши офисы</h2>
-            <p class="section-subtitle">Мы находимся в ключевых городах России для вашего удобства</p>
+            <h2 class="section-title">{{settings.office_title}}</h2>
+            <p class="section-subtitle">{{settings.office_text}}</p>
         </div>
 
         <div class="office-grid">
@@ -626,14 +572,12 @@
             </div>
 
             <div class="office-map">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2604.639996399441!2d30.322438980669432!3d59.93363586455222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46963105fce55555%3A0xc23a69107480631a!2z0KDQsNGB0YjQuNGE0YDQvtCy0LrQsCDQsNGD0LTQuNC-0LfQsNC_0LjRgdC10Lkg0LIg0YLQtdC60YHRgg!5e0!3m2!1sru!2s!4v1754346928413!5m2!1sru!2s"
-                    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                {{site_settings.iframe_code | safe }}
             </div>
         </div>
 
     </div>
+
 </section>
 
 <style>
@@ -706,6 +650,175 @@
         border: 0;
         border-radius: 10px;
     }
+
+/* ====== Mobile-first tweaks (put this AFTER your current styles) ====== */
+
+/* Tablet va pastroq ekranlar */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .office-grid {
+    gap: 24px;
+  }
+}
+
+/* Mobil (≤768px) — hammasi to‘liq kenglikda */
+@media (max-width: 768px) {
+  /* Global spacing va tipografiya */
+  .container {
+    padding: 0 12px;
+    max-width: 100%;
+  }
+
+  .section {
+    padding: 2rem 0;
+  }
+
+  /* Hero */
+  .hero-section {
+    padding: 3rem 0 2rem;
+  }
+  .hero-title {
+    font-size: 1.9rem;
+    line-height: 1.2;
+  }
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  .hero-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Gridlarni 1 ustunga tushiramiz */
+  .content-grid,
+  .feature-grid,
+  .office-grid {
+    display: block !important; /* ustunlik uchun */
+  }
+
+  /* Office bloklari — 100% width */
+  .office-grid {
+    width: 100%;
+  }
+
+  .office-list,
+  .office-map {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Har bir ofis kartasi — vertikal */
+  .office-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  /* Rasm to‘liq kenglikda chiqadi */
+  .office-image {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 220px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  .office-content {
+    padding: 0;
+  }
+
+  .office-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .office-info {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+
+  .social-links {
+    gap: 8px;
+  }
+
+  /* Xarita 100% kenglik + yetarlicha balandlik */
+  .office-map iframe {
+    width: 100% !important;
+    height: 420px !important;      /* zaruratga qarab 360–480px */
+    min-height: 360px;
+    border: 0;
+    border-radius: 10px;
+    display: block;
+  }
+
+  /* Feature sections */
+  .feature-section {
+    padding: 1.5rem;
+    margin: 1.25rem 0;
+  }
+
+  .feature-image {
+    width: 100%;
+    height: auto;
+    max-height: 280px;
+    border-radius: 14px;
+  }
+
+  .feature-content h3 {
+    font-size: 1.4rem;
+    margin-top: 1rem;
+
+  }
+
+  /* Cards */
+  .content-card {
+    padding: 1.25rem;
+  }
+
+  .card-title {
+    font-size: 1.15rem;
+  }
+
+  .card-text {
+    font-size: 0.98rem;
+  }
+}
+
+/* Kichik mobil (≤480px) — yanada ixchamroq */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .hero-title {
+    font-size: 1.7rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .office-card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .office-image {
+    max-height: 200px;
+  }
+
+  .office-map iframe {
+    height: 380px !important;
+    min-height: 320px;
+  }
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -734,15 +847,6 @@
             observer.observe(el);
         });
 
-        // Add loading states for images
-        const images = document.querySelectorAll('img');
-        images.forEach(img => {
-            img.addEventListener('load', function () {
-                this.style.opacity = '1';
-            });
-            img.style.opacity = '0';
-            img.style.transition = 'opacity 0.3s ease';
-        });
 
         // Smooth scrolling for internal links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

@@ -36,7 +36,7 @@ def save_name_to_profile(request, user, **kwargs):
 def send_welcome_email(sender, instance, created, **kwargs):
     if created:
         send_mail(
-            subject="Xush kelibsiz!",
+            subject="Добро пожаловать!",
             message=f"Здравствуйте {instance.username}, добро пожаловать на china-asic.com!",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[instance.email],

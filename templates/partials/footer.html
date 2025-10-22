@@ -1,0 +1,132 @@
+<footer id="contact" class="footer">
+    <div class="containerfoot">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                {% if site_settings.logo %}
+                <a class="navbar-brand" href="{% url 'asic:home' %}">
+                    <img src="{{ site_settings.logo.url }}" alt="" style="max-height: 60px;
+                                                max-width: 200px">
+                </a>
+                {% else %}
+                <h5 class="mb-3">
+                    <i class="fas fa-microchip me-2 text-primary"></i>CHINA-ASIC.RU
+                </h5>
+                {% endif %}
+                <p class="">
+                    {{site_settings.footer_text}}
+                </p>
+                <div class="social-links">
+                    {% if site_settings.telegram %}
+                    <a href="{{ site_settings.telegram }}" target="_blank"><i class="fab fa-telegram"></i></a>
+                    {% endif %}
+
+                    {% if site_settings.whatsapp %}
+                    <a href="{{ site_settings.whatsapp }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    {% endif %}
+
+                    {% if site_settings.vkontakte %}
+                    <a href="{{ site_settings.vkontakte }}" target="_blank"><i class="fab fa-vk"></i></a>
+                    {% endif %}
+
+                    {% if site_settings.youtube %}
+                    <a href="{{ site_settings.youtube }}" target="_blank"><i class="fab fa-youtube"></i></a>
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h6 class="mb-3">Информация</h6>
+                <ul class="footer-links">
+                    <li>
+                        <a href="{% url 'asic:about' %}">О компании</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'asic:catalog' %}">Каталог</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'asic:pay_deliever' %}">Оплата и доставка</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'asic:cart_detail' %}">Корзина</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'asic:privacy' %}">Политика конфиденциальности</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <h6 class="mb-3">Контакты</h6>
+                <div class="contact-info">
+                    <p>
+                        <i class="fas fa-phone text-primary me-2"></i>{{ site_settings.phone }}
+                    </p>
+                    <p>
+                        <i class="fas fa-envelope text-primary me-2"></i>{{ site_settings.email }}
+                    </p>
+                    <p>
+                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                        {{ site_settings.location }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+
+<style>
+    .footer {
+        background-color: #111;
+        /* qora fon to‘liq kenglik */
+        color: #fff;
+    }
+
+    .containerfoot {
+        max-width: 1200px;
+        /* kontent kengligini cheklash */
+        margin: 0 auto;
+        /* markazga olish */
+        padding: 50px 20px;
+        /* tepaga va yonlarga bo‘sh joy */
+    }
+
+    .containerfoot a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .containerfoot a:hover {
+        text-decoration: underline;
+    }
+
+    .footer .social-links a {
+        font-size: 20px;
+        margin-right: 10px;
+    }
+
+    .footer .footer-links {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer .footer-links li {
+        margin-bottom: 8px;
+    }
+
+    .footer .footer-links a {
+        color: #fff;
+    }
+
+    .footer .footer-links a:hover {
+        text-decoration: underline;
+    }
+
+    .footer .contact-info p {
+        margin-bottom: 8px;
+    }
+
+    .footer hr {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+</style>

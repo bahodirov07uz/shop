@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<title>Оплата и доставка - CHINA-ASIC.RU</title>
+<title>{% block title %}{{ page_titles.payment_deliver }}{% endblock %}</title>
 <style>
     * {
         box-sizing: border-box;
@@ -173,52 +173,23 @@
         <!-- First Section (Image left, text right) -->
         <div class="section">
             <div class="section-image">
-                <img src="https://asia24.media/upload/iblock/51c/8fefrq32v7sur030bdn1b3h6c4rylbcs.jpeg"
+                <img src="{{settings.payment_image.url}}"
                     alt="Bitmain Payment">
             </div>
             <div class="section-content">
-                <h3 class="section-title">Оплата осуществляется Bitmain</h3>
-                <p class="section-text">
-                    Оплата осуществляется напрямую компании Bitmain — ведущего производителя майнингового оборудования,
-                    известного своими высококачественными и эффективными майнерами серии Antminer.
-                </p>
-                <p>
-                    Доставка осуществляется напрямую от компании Bitmain — производителя, который гарантирует высокое
-                    качество упаковки и быструю обработку заказов.
-                </p>
-                <p>
-                    С момента своего основания в 2013 году, Bitmain зарекомендовала себя как надежный поставщик
-                    майнингового оборудования по всему миру. Благодаря налаженной логистике и партнерству с ведущими
-                    транспортными компаниями, доставка осуществляется в кратчайшие сроки в любую страну.
-                </p>
-                <p>
-                    Каждая партия оборудования проходит строгий контроль качества и надежно упаковывается для
-                    международной транспортировки, что исключает возможность повреждения во время доставки. Покупатели
-                    могут отслеживать свои заказы в реальном времени, получая актуальную информацию о статусе доставки
-                </p>
+                <h3 class="section-title">{{settings.payment_title}}</h3>
+                <p>{{settings.payment_pay |linebreaks }}</p>
             </div>
         </div>
 
         <!-- Second Section (Image right, text left) -->
         <div class="section reverse">
             <div class="section-image">
-                <img src="https://jahon-eg.uz/thumb/2/XZcDeqthU3ErCe9nq8w8Wg/r/d/mor_1.jpg" alt="Bitmain Delivery">
+                <img src="{{settings.delivery_image.url}}" alt="Bitmain Delivery">
             </div>
             <div class="section-content">
-                <h3 class="section-title">Доставка осуществляется Bitmain</h3>
-                <p class="section-text">
-                    Доставка осуществляется напрямую от компании Bitmain — производителя, который гарантирует высокое
-                    качество упаковки и быструю обработку заказов.
-                </p>
-                <p>
-                    С момента своего основания в 2013 году, Bitmain зарекомендовала себя как надежный поставщик
-                    майнингового оборудования по всему миру. Благодаря налаженной логистике и партнерству с ведущими
-                    транспортными компаниями, доставка осуществляется в кратчайшие сроки в любую страну. </p>
-                <p class="section-text">
-                    Каждая партия оборудования проходит строгий контроль качества и надежно упаковывается для
-                    международной транспортировки, что исключает возможность повреждения во время доставки. Покупатели
-                    могут отслеживать свои заказы в реальном времени, получая актуальную информацию о статусе доставки
-                </p>
+                <h3 class="section-title">{{settings.payment_del_title}}</h3>
+                <p>{{settings.payment_del | linebreaks}}</p>
             </div>
         </div>
     </div>
