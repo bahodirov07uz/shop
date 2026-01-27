@@ -5,12 +5,12 @@ from .models import (
     DeliverySettings, SiteSettings, OrderItem, 
     BannerImage, Coin, Office, StaticPage, 
     Cards, TemplateEdit, About_page, PayCheck, 
-    Privacy, Profile,OrderStatusRule, AboutStat
+    Privacy, Profile, OrderStatusRule, AboutStat
 )
 from import_export.admin import ImportExportModelAdmin
 from .resources import ProductResource
 
-# ===== ПРОИЗВОДИТЕЛИ =====
+# ===== ISHLAB CHIQARUVCHILAR =====
 @admin.register(Manufacturer)
 class ManufacturerAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_active')
@@ -20,8 +20,8 @@ class ManufacturerAdmin(admin.ModelAdmin):
     ordering = ('name',)
     
     class Meta:
-        verbose_name = 'Производитель'
-        verbose_name_plural = 'Производители'
+        verbose_name = 'Ishlab chiqaruvchi'
+        verbose_name_plural = 'Ishlab chiqaruvchilar'
 
 
 from django.contrib import admin
@@ -37,11 +37,10 @@ class DeliveryInfoAdmin(admin.ModelAdmin):
         "sea_title",
         "updated_at",
     )
-    # Admin sahifasida qulay tahrirlash uchun
     fieldsets = (
         (None, {
             "fields": (
-                ("title","main_text"),
+                ("title", "main_text"),
                 ("courier_title", "air_title", "sea_title"),
                 ("free_shipping_text", "paid_shipping_text"),
                 ("important_info_title", "important_info_body"),
@@ -52,7 +51,7 @@ class DeliveryInfoAdmin(admin.ModelAdmin):
     ordering = ("-updated_at",)
 
 
-# ===== КАТЕГОРИИ ТОВАРОВ =====
+# ===== MAHSULOT KATEGORIYALARI =====
 @admin.register(ProductCategory)
 class ProductCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent')
@@ -62,10 +61,10 @@ class ProductCategoryAdmin(admin.ModelAdmin):
     ordering = ('name',)
     
     class Meta:
-        verbose_name = 'Категория товара'
-        verbose_name_plural = 'Категории товаров'
+        verbose_name = 'Mahsulot kategoriyasi'
+        verbose_name_plural = 'Mahsulot kategoriyalari'
 
-# ===== ТОВАРЫ =====
+# ===== MAHSULOTLAR =====
 @admin.register(Product)
 class ProductAdmin(ImportExportModelAdmin):
     resource_class = ProductResource
@@ -80,10 +79,10 @@ class ProductAdmin(ImportExportModelAdmin):
     ordering = ('-created_at',)
     
     class Meta:
-        verbose_name = 'Товар'
-        verbose_name_plural = 'Товары'
+        verbose_name = 'Mahsulot'
+        verbose_name_plural = 'Mahsulotlar'
 
-# ===== ЗАКАЗЫ =====
+# ===== BUYURTMALAR =====
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
@@ -94,8 +93,8 @@ class OrderItemInline(admin.TabularInline):
         return False
     
     class Meta:
-        verbose_name = 'Позиция заказа'
-        verbose_name_plural = 'Позиции заказа'
+        verbose_name = 'Buyurtma pozitsiyasi'
+        verbose_name_plural = 'Buyurtma pozitsiyalari'
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -109,48 +108,48 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
 
     actions = ['set_status_new', 'set_status_processing', 'set_status_shipped',
-               'set_status_ready', 'set_status_completed', 'set_status_cancelled']  # 🔥 qo‘shildi
+               'set_status_ready', 'set_status_completed', 'set_status_cancelled']
 
     def items_count(self, obj):
         return obj.items.count()
-    items_count.short_description = 'Количество товаров'
+    items_count.short_description = 'Mahsulotlar soni'
 
     def items_list(self, obj):
         return ", ".join([f"{item.product.name} ({item.quantity})" for item in obj.items.all()])
-    items_list.short_description = 'Состав заказа'
+    items_list.short_description = 'Buyurtma tarkibi'
 
-    # === BULK ACTIONS ===
+    # === OMMAVIY AMALLAR ===
     def set_status_new(self, request, queryset):
         queryset.update(status='new')
-    set_status_new.short_description = "Изменить статус на: Новый заказ"
+    set_status_new.short_description = "Holatni o'zgartirish: Yangi buyurtma"
 
     def set_status_processing(self, request, queryset):
         queryset.update(status='processing')
-    set_status_processing.short_description = "Изменить статус на: В обработке"
+    set_status_processing.short_description = "Holatni o'zgartirish: Ishlov berilmoqda"
 
     def set_status_shipped(self, request, queryset):
         queryset.update(status='shipped')
-    set_status_shipped.short_description = "Изменить статус на: Отправлен"
+    set_status_shipped.short_description = "Holatni o'zgartirish: Yuborildi"
 
     def set_status_ready(self, request, queryset):
         queryset.update(status='ready')
-    set_status_ready.short_description = "Изменить статус на: Готов к отправке"
+    set_status_ready.short_description = "Holatni o'zgartirish: Yuborishga tayyor"
 
     def set_status_completed(self, request, queryset):
         queryset.update(status='completed')
-    set_status_completed.short_description = "Изменить статус на: Завершен"
+    set_status_completed.short_description = "Holatni o'zgartirish: Yakunlandi"
 
     def set_status_cancelled(self, request, queryset):
         queryset.update(status='cancelled')
-    set_status_cancelled.short_description = "Изменить статус на: Отменен"
+    set_status_cancelled.short_description = "Holatni o'zgartirish: Bekor qilindi"
 
 
 from .models import OrderStatusRule
 
 @admin.register(OrderStatusRule)
 class OrderStatusRuleAdmin(admin.ModelAdmin):
-    list_display = ("status", "days_after",'order_priority', "is_active")
-    list_editable = ("days_after",'order_priority', "is_active")
+    list_display = ("status", "days_after", 'order_priority', "is_active")
+    list_editable = ("days_after", 'order_priority', "is_active")
     ordering = ("days_after",)
     
     def get_queryset(self, request):
@@ -166,13 +165,13 @@ class OrderItemAdmin(admin.ModelAdmin):
     
     def order_status(self, obj):
         return obj.order.status
-    order_status.short_description = 'Статус заказа'
+    order_status.short_description = 'Buyurtma holati'
     
     class Meta:
-        verbose_name = 'Позиция заказа'
-        verbose_name_plural = 'Позиции заказа'
+        verbose_name = 'Buyurtma pozitsiyasi'
+        verbose_name_plural = 'Buyurtma pozitsiyalari'
 
-# ===== ИСТОРИЯ СТАТУСОВ ЗАКАЗОВ =====
+# ===== BUYURTMA HOLATLARI TARIXI =====
 @admin.register(OrderStatusHistory)
 class OrderStatusHistoryAdmin(admin.ModelAdmin):
     list_display = ('order', 'status', 'created_at')
@@ -181,22 +180,22 @@ class OrderStatusHistoryAdmin(admin.ModelAdmin):
     autocomplete_fields = ('order',)
     
     class Meta:
-        verbose_name = 'История статуса заказа'
-        verbose_name_plural = 'История статусов заказов'
+        verbose_name = 'Buyurtma holati tarixi'
+        verbose_name_plural = 'Buyurtma holatlari tarixi'
 
-# ===== СКИДКИ =====
+# ===== CHEGIRMALAR =====
 
 @admin.register(Discount)
 class DiscountAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-	'value',
+        'value',
         'min_order_amount',
         'max_order_amount',
         'is_active',
         'is_additional',
     )
-    list_editable = ('value','min_order_amount', 'max_order_amount', 'is_active', 'is_additional')
+    list_editable = ('value', 'min_order_amount', 'max_order_amount', 'is_active', 'is_additional')
     
     search_fields = ('name',)
     filter_horizontal = ('categories', 'products', 'manufacturers')
@@ -204,11 +203,11 @@ class DiscountAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
     class Meta:
-        verbose_name = 'Скидка'
-        verbose_name_plural = 'Скидки'
+        verbose_name = 'Chegirma'
+        verbose_name_plural = 'Chegirmalar'
 
 
-# ===== НАСТРОЙКИ ДОСТАВКИ (ПЛАТЕЖИ) =====
+# ===== YETKAZIB BERISH SOZLAMALARI =====
 @admin.register(DeliverySettings)
 class DeliverySettingsAdmin(admin.ModelAdmin):
     list_display = ('air_delivery_rate', 'sea_delivery_rate', 'gtd_rb_cost', 'dt_rf_cost', 'is_active')
@@ -216,20 +215,20 @@ class DeliverySettingsAdmin(admin.ModelAdmin):
     ordering = ('-id',)
     
     class Meta:
-        verbose_name = 'Настройка доставки'
-        verbose_name_plural = 'Настройки доставки'
+        verbose_name = 'Yetkazib berish sozlamasi'
+        verbose_name_plural = 'Yetkazib berish sozlamalari'
 
-# ===== НАСТРОЙКИ САЙТА (АККАУНТЫ) =====
+# ===== SAYT SOZLAMALARI =====
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ('site_name', 'email', 'phone', 'telegram', 'whatsapp', 'vkontakte')
     ordering = ('site_name',)
     
     class Meta:
-        verbose_name = 'Настройка сайта'
-        verbose_name_plural = 'Настройки сайта'
+        verbose_name = 'Sayt sozlamasi'
+        verbose_name_plural = 'Sayt sozlamalari'
 
-# ===== ПРОФИЛИ ПОЛЬЗОВАТЕЛЕЙ (АККАУНТЫ) =====
+# ===== FOYDALANUVCHI PROFILLARI =====
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone', 'name', 'email')
@@ -242,10 +241,10 @@ class ProfileAdmin(admin.ModelAdmin):
     email.short_description = 'Email'
     
     class Meta:
-        verbose_name = 'Профиль'
-        verbose_name_plural = 'Профили'
+        verbose_name = 'Profil'
+        verbose_name_plural = 'Profillar'
 
-# ===== ОФИСЫ (АККАУНТЫ В СОЦСЕТЯХ) =====
+# ===== OFISLAR =====
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
     list_display = ('name', 'location', 'phone', 'email', 'telegram', 'whatsapp', 'vkontakte')
@@ -253,10 +252,10 @@ class OfficeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'location', 'phone')
     
     class Meta:
-        verbose_name = 'Офис'
-        verbose_name_plural = 'Офисы'
+        verbose_name = 'Ofis'
+        verbose_name_plural = 'Ofislar'
 
-# ===== БАННЕРЫ =====
+# ===== BANNERLAR =====
 @admin.register(BannerImage)
 class BannerAdmin(admin.ModelAdmin):
     list_display = ('title', 'is_active')
@@ -266,21 +265,21 @@ class BannerAdmin(admin.ModelAdmin):
     
     def activate_selected(self, request, queryset):
         if queryset.count() > 1:
-            self.message_user(request, "Можно активировать только один баннер одновременно.", level='ERROR')
+            self.message_user(request, "Bir vaqtning o'zida faqat bitta bannerni faollashtirish mumkin.", level='ERROR')
             return
         
         banner = queryset.first()
         banner.is_active = True
         banner.save()
-        self.message_user(request, f"Активирован баннер: {banner.title}")
+        self.message_user(request, f"Faollashtirildi: {banner.title}")
     
-    activate_selected.short_description = "Активировать выбранный баннер"
+    activate_selected.short_description = "Tanlangan bannerni faollashtirish"
     
     def deactivate_selected(self, request, queryset):
         updated = queryset.update(is_active=False)
-        self.message_user(request, f"Деактивировано {updated} баннеров")
+        self.message_user(request, f"{updated} ta banner o'chirildi")
     
-    deactivate_selected.short_description = "Деактивировать выбранные баннеры"
+    deactivate_selected.short_description = "Tanlangan bannerlarni o'chirish"
     
     def save_model(self, request, obj, form, change):
         if obj.is_active:
@@ -288,19 +287,19 @@ class BannerAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
     
     class Meta:
-        verbose_name = 'Баннер'
-        verbose_name_plural = 'Баннеры'
+        verbose_name = 'Banner'
+        verbose_name_plural = 'Bannerlar'
 
-# ===== МОНЕТЫ =====
+# ===== TANGALAR =====
 @admin.register(Coin)
 class CoinAdmin(admin.ModelAdmin):
     list_display = ('name', 'symbol')
     
     class Meta:
-        verbose_name = 'Монета'
-        verbose_name_plural = 'Монеты'
+        verbose_name = 'Tanga'
+        verbose_name_plural = 'Tangalar'
 
-# ===== СТАТИЧЕСКИЕ СТРАНИЦЫ =====
+# ===== STATIK SAHIFALAR =====
 @admin.register(StaticPage)
 class StaticPageAdmin(admin.ModelAdmin):
     list_display = ('slug', 'title')
@@ -308,10 +307,10 @@ class StaticPageAdmin(admin.ModelAdmin):
     search_fields = ('title', 'slug')
     
     class Meta:
-        verbose_name = 'Статическая страница'
-        verbose_name_plural = 'Статические страницы'
+        verbose_name = 'Statik sahifa'
+        verbose_name_plural = 'Statik sahifalar'
 
-# ===== КАРТОЧКИ =====
+# ===== KARTALAR =====
 @admin.register(Cards)
 class CardsAdmin(admin.ModelAdmin):
     list_display = ("title", "text", "icon", "is_about")
@@ -319,49 +318,47 @@ class CardsAdmin(admin.ModelAdmin):
     search_fields = ("title", "text")
     
     class Meta:
-        verbose_name = 'Карточка'
-        verbose_name_plural = 'Карточки'
+        verbose_name = 'Karta'
+        verbose_name_plural = 'Kartalar'
 
-# ===== РЕДАКТИРОВАНИЕ ШАБЛОНОВ =====
-
-# ===== СТРАНИЦА "О НАС" =====
+# ===== "BIZ HAQIMIZDA" SAHIFASI =====
 @admin.register(About_page)
 class AboutPageAdmin(admin.ModelAdmin):
     list_display = ('about_title', 'benefit_title')
     filter_horizontal = ('statistics',)
     
     class Meta:
-        verbose_name = 'Страница "О нас"'
-        verbose_name_plural = 'Страницы "О нас"'
+        verbose_name = '"Biz haqimizda" sahifasi'
+        verbose_name_plural = '"Biz haqimizda" sahifalari'
 
-# ===== ОПЛАТА И ДОСТАВКА =====
+# ===== TO'LOV VA YETKAZIB BERISH =====
 @admin.register(PayCheck)
 class PayCheckAdmin(admin.ModelAdmin):
     list_display = ("id",)
     
     class Meta:
-        verbose_name = 'Оплата и доставка'
-        verbose_name_plural = 'Оплата и доставка'
+        verbose_name = "To'lov va yetkazib berish"
+        verbose_name_plural = "To'lov va yetkazib berish"
 
-# ===== ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ =====
+# ===== MAXFIYLIK SIYOSATI =====
 @admin.register(Privacy)
 class PrivacyAdmin(admin.ModelAdmin):
     list_display = ("title",)
     search_fields = ("title", "text")
     
     class Meta:
-        verbose_name = 'Политика конфиденциальности'
-        verbose_name_plural = 'Политики конфиденциальности'
+        verbose_name = 'Maxfiylik siyosati'
+        verbose_name_plural = 'Maxfiylik siyosati'
 
-# ===== СТАТИСТИКА О НАС =====
+# ===== BIZ HAQIMIZDA STATISTIKA =====
 @admin.register(AboutStat)
 class AboutStatAdmin(admin.ModelAdmin):
     list_display = ("number", "text")
     search_fields = ("number", "text")
     
     class Meta:
-        verbose_name = 'Статистика о нас'
-        verbose_name_plural = 'Статистика о нас'
+        verbose_name = 'Biz haqimizda statistika'
+        verbose_name_plural = 'Biz haqimizda statistika'
 
 
 from .models import PageTitle
@@ -371,61 +368,60 @@ class PageTitleAdmin(admin.ModelAdmin):
     list_display = ['id']
 
 
-# Устанавливаем русские названия для моделей в админ-панели
-Manufacturer._meta.verbose_name = 'Производитель'
-Manufacturer._meta.verbose_name_plural = 'Производители'
+# Model nomlarini o'zbek tiliga o'zgartirish
+Manufacturer._meta.verbose_name = 'Ishlab chiqaruvchi'
+Manufacturer._meta.verbose_name_plural = 'Ishlab chiqaruvchilar'
 
-ProductCategory._meta.verbose_name = 'Категория товара'
-ProductCategory._meta.verbose_name_plural = 'Категории товаров'
+ProductCategory._meta.verbose_name = 'Mahsulot kategoriyasi'
+ProductCategory._meta.verbose_name_plural = 'Mahsulot kategoriyalari'
 
-Product._meta.verbose_name = 'Товар'
-Product._meta.verbose_name_plural = 'Товары'
+Product._meta.verbose_name = 'Mahsulot'
+Product._meta.verbose_name_plural = 'Mahsulotlar'
 
-Order._meta.verbose_name = 'Заказ'
-Order._meta.verbose_name_plural = 'Заказы'
+Order._meta.verbose_name = 'Buyurtma'
+Order._meta.verbose_name_plural = 'Buyurtmalar'
 
-OrderItem._meta.verbose_name = 'Позиция заказа'
-OrderItem._meta.verbose_name_plural = 'Позиции заказа'
+OrderItem._meta.verbose_name = 'Buyurtma pozitsiyasi'
+OrderItem._meta.verbose_name_plural = 'Buyurtma pozitsiyalari'
 
-OrderStatusHistory._meta.verbose_name = 'История статуса заказа'
-OrderStatusHistory._meta.verbose_name_plural = 'История статусов заказов'
+OrderStatusHistory._meta.verbose_name = 'Buyurtma holati tarixi'
+OrderStatusHistory._meta.verbose_name_plural = 'Buyurtma holatlari tarixi'
 
-Discount._meta.verbose_name = 'Скидка'
-Discount._meta.verbose_name_plural = 'Скидки'
+Discount._meta.verbose_name = 'Chegirma'
+Discount._meta.verbose_name_plural = 'Chegirmalar'
 
-DeliverySettings._meta.verbose_name = 'Настройка доставки'
-DeliverySettings._meta.verbose_name_plural = 'Настройки доставки'
+DeliverySettings._meta.verbose_name = 'Yetkazib berish sozlamasi'
+DeliverySettings._meta.verbose_name_plural = 'Yetkazib berish sozlamalari'
 
-SiteSettings._meta.verbose_name = 'Настройка сайта'
-SiteSettings._meta.verbose_name_plural = 'Настройки сайта'
+SiteSettings._meta.verbose_name = 'Sayt sozlamasi'
+SiteSettings._meta.verbose_name_plural = 'Sayt sozlamalari'
 
-Profile._meta.verbose_name = 'Профиль'
-Profile._meta.verbose_name_plural = 'Профили'
+Profile._meta.verbose_name = 'Profil'
+Profile._meta.verbose_name_plural = 'Profillar'
 
-BannerImage._meta.verbose_name = 'Баннер'
-BannerImage._meta.verbose_name_plural = 'Баннеры'
+BannerImage._meta.verbose_name = 'Banner'
+BannerImage._meta.verbose_name_plural = 'Bannerlar'
 
-Coin._meta.verbose_name = 'Монета'
-Coin._meta.verbose_name_plural = 'Монеты'
+Coin._meta.verbose_name = 'Tanga'
+Coin._meta.verbose_name_plural = 'Tangalar'
 
-Office._meta.verbose_name = 'Офис'
-Office._meta.verbose_name_plural = 'Офисы'
+Office._meta.verbose_name = 'Ofis'
+Office._meta.verbose_name_plural = 'Ofislar'
 
-StaticPage._meta.verbose_name = 'Статическая страница'
-StaticPage._meta.verbose_name_plural = 'Статические страницы'
+StaticPage._meta.verbose_name = 'Statik sahifa'
+StaticPage._meta.verbose_name_plural = 'Statik sahifalar'
 
-Cards._meta.verbose_name = 'Карточка'
-Cards._meta.verbose_name_plural = 'Карточки'
+Cards._meta.verbose_name = 'Karta'
+Cards._meta.verbose_name_plural = 'Kartalar'
 
+About_page._meta.verbose_name = '"Biz haqimizda" sahifasi'
+About_page._meta.verbose_name_plural = '"Biz haqimizda" sahifalari'
 
-About_page._meta.verbose_name = 'Страница "О нас"'
-About_page._meta.verbose_name_plural = 'Страницы "О нас"'
+PayCheck._meta.verbose_name = "To'lov va yetkazib berish"
+PayCheck._meta.verbose_name_plural = "To'lov va yetkazib berish"
 
-PayCheck._meta.verbose_name = 'Оплата и доставка'
-PayCheck._meta.verbose_name_plural = 'Оплата и доставка'
+Privacy._meta.verbose_name = 'Maxfiylik siyosati'
+Privacy._meta.verbose_name_plural = 'Maxfiylik siyosati'
 
-Privacy._meta.verbose_name = 'Политика конфиденциальности'
-Privacy._meta.verbose_name_plural = 'Политики конфиденциальности'
-
-AboutStat._meta.verbose_name = 'Статистика о нас'
-AboutStat._meta.verbose_name_plural = 'Статистика о нас'
+AboutStat._meta.verbose_name = 'Biz haqimizda statistika'
+AboutStat._meta.verbose_name_plural = 'Biz haqimizda statistika'

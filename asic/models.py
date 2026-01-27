@@ -479,7 +479,7 @@ class AboutStat(models.Model):
     text  = models.CharField(max_length=10)
 
 class About_page(models.Model):
-    banner_bg = models.ImageField(upload_to='media/sitesettings', verbose_name='Banner')
+    banner_bg = models.ImageField(upload_to='media/sitesettings', verbose_name='Banner',null=True)
     about_title = models.TextField(verbose_name='About title',null=True,blank=True)
     about_subtitle = models.TextField(verbose_name='About subtitle',null=True,blank=True)
     benefit_title = models.TextField(verbose_name='преимущества title',null=True,blank=True)

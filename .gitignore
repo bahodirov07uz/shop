@@ -6,5 +6,5 @@ media/
 *.jpg
 *.png
 *.jpeg
-# Secret environment variables
 .env
+env

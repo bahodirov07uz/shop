@@ -1,4 +1,3 @@
-max buviyni ami
 
 #developed by t.me/m16uzb
 from pathlib import Path
@@ -74,7 +73,7 @@ EMAIL_HOST_USER = 'info@china-asic.com'
 EMAIL_HOST_PASSWORD = 'asic-China2025?'
 DEFAULT_FROM_EMAIL = 'info@china-asic.com'
 
-CSRF_TRUSTED_ORIGINS = ['https://b8ffd7bca38c.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://c8bb71f933fe.ngrok-free.app']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -112,16 +111,24 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': config('DB_NAME'),
+#         'USER': config('DB_USER'),
+#         'PASSWORD': config('DB_PASSWORD'),
+#         'HOST': config('DB_HOST', default='localhost'),
+#         'PORT': config('DB_PORT', default='3306'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='3306'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-}
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -145,7 +152,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'uz'
 
 
 TIME_ZONE = 'UTC'

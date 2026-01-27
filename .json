@@ -1,0 +1,680 @@
+{
+  "status": "success",
+  "result": [
+    {
+      "currency": {
+        "id": 4,
+        "code": "USDT_TRC20",
+        "short_code": "USDT",
+        "name": "Tether",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDT.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDT_TRC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDT_STROKE.svg",
+        "order": 1,
+        "obj_network": {
+          "code": "TRC20",
+          "id": 4,
+          "icon": "https://cdn.cryptocloud.plus/img/network/TRC20.svg",
+          "fullname": "Tron"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 15,
+        "code": "USDD_TRC20",
+        "short_code": "USDD",
+        "name": "USDD",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDD.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDD_TRC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDD_STROKE.svg",
+        "order": 2,
+        "obj_network": {
+          "code": "TRC20",
+          "id": 15,
+          "icon": "https://cdn.cryptocloud.plus/img/network/TRC20.svg",
+          "fullname": "Tron"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 18,
+        "code": "TRX",
+        "short_code": "TRX",
+        "name": "TRX",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/TRX.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency/TRX.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/TRX_STROKE.svg",
+        "order": 3,
+        "obj_network": {
+          "code": "TRC20",
+          "id": 18,
+          "icon": "https://cdn.cryptocloud.plus/img/network/TRC20.svg",
+          "fullname": "Tron"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 10,
+        "code": "USDT_ERC20",
+        "short_code": "USDT",
+        "name": "Tether",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDT.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDT_ERC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDT_STROKE.svg",
+        "order": 4,
+        "obj_network": {
+          "code": "ERC20",
+          "id": 10,
+          "icon": "https://cdn.cryptocloud.plus/img/network/ERC.svg",
+          "fullname": "Ethereum"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 11,
+        "code": "USDC_ERC20",
+        "short_code": "USDC",
+        "name": "USD Coin",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDC.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDC_ERC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDC_STROKE.svg",
+        "order": 5,
+        "obj_network": {
+          "code": "ERC20",
+          "id": 11,
+          "icon": "https://cdn.cryptocloud.plus/img/network/ERC.svg",
+          "fullname": "Ethereum"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 12,
+        "code": "TUSD_ERC20",
+        "short_code": "TUSD",
+        "name": "TrueUSD",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/TUSD.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/TUSD_ERC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/TUSD_STROKE.svg",
+        "order": 6,
+        "obj_network": {
+          "code": "ERC20",
+          "id": 12,
+          "icon": "https://cdn.cryptocloud.plus/img/network/ERC.svg",
+          "fullname": "Ethereum"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 1,
+        "code": "BTC",
+        "short_code": "BTC",
+        "name": "Bitcoin",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/BTC.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency/BTC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/ВТС_STROKE.svg",
+        "order": 7,
+        "obj_network": {
+          "code": "bitcoin",
+          "id": 1,
+          "icon": "https://cdn.cryptocloud.plus/img/currency/BTC.svg",
+          "fullname": "Bitcoin"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 2,
+        "code": "LTC",
+        "short_code": "LTC",
+        "name": "Litecoin",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/LTC.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency/LTC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/LTC_STROKE.svg",
+        "order": 8,
+        "obj_network": {
+          "code": "litecoin",
+          "id": 2,
+          "icon": "https://cdn.cryptocloud.plus/img/network/LTC.svg",
+          "fullname": "Litecoin"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 3,
+        "code": "ETH",
+        "short_code": "ETH",
+        "name": "Ethereum",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/ETH.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency/ETH.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/ETH_STROKE.svg",
+        "order": 9,
+        "obj_network": {
+          "code": "ERC20",
+          "id": 3,
+          "icon": "https://cdn.cryptocloud.plus/img/network/ERC.svg",
+          "fullname": "Ethereum"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 24,
+        "code": "SHIB_ERC20",
+        "short_code": "SHIB",
+        "name": "SHIB",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/SHIB.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/SHIB_ERC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/SHIB_STROKE.svg",
+        "order": 11,
+        "obj_network": {
+          "code": "ERC20",
+          "id": 24,
+          "icon": "https://cdn.cryptocloud.plus/img/network/ERC.svg",
+          "fullname": "Ethereum"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 27,
+        "code": "BNB",
+        "short_code": "BNB",
+        "name": "BNB",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/BNB.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency/BNB.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/BNB_STROKE.svg",
+        "order": 13,
+        "obj_network": {
+          "code": "BSC",
+          "id": 27,
+          "icon": "https://cdn.cryptocloud.plus/img/network/BSC.svg",
+          "fullname": "BNB Smart Chain"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 30,
+        "code": "USDT_BSC",
+        "short_code": "USDT",
+        "name": "Tether",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDT.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDT_BSC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDT_STROKE.svg",
+        "order": 14,
+        "obj_network": {
+          "code": "BSC",
+          "id": 30,
+          "icon": "https://cdn.cryptocloud.plus/img/network/BSC.svg",
+          "fullname": "BNB Smart Chain"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 33,
+        "code": "USDC_BSC",
+        "short_code": "USDC",
+        "name": "USD Coin",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDC.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDC_BSC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDC_STROKE.svg",
+        "order": 15,
+        "obj_network": {
+          "code": "BSC",
+          "id": 33,
+          "icon": "https://cdn.cryptocloud.plus/img/network/BSC.svg",
+          "fullname": "BNB Smart Chain"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 36,
+        "code": "TUSD_BSC",
+        "short_code": "TUSD",
+        "name": "TrueUSD",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/TUSD.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/TUSD_BSC.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/TUSD_STROKE.svg",
+        "order": 16,
+        "obj_network": {
+          "code": "BSC",
+          "id": 36,
+          "icon": "https://cdn.cryptocloud.plus/img/network/BSC.svg",
+          "fullname": "BNB Smart Chain"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 39,
+        "code": "TON",
+        "short_code": "TON",
+        "name": "Ton",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/TON.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency/TON.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/TON_STROKE.svg",
+        "order": 17,
+        "obj_network": {
+          "code": "TON",
+          "id": 39,
+          "icon": "https://cdn.cryptocloud.plus/img/network/TON.svg",
+          "fullname": "Ton"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 42,
+        "code": "USDT_TON",
+        "short_code": "USDT",
+        "name": "Tether",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDT.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDT_TON.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDT_STROKE.svg",
+        "order": 18,
+        "obj_network": {
+          "code": "TON",
+          "id": 42,
+          "icon": "https://cdn.cryptocloud.plus/img/network/TON.svg",
+          "fullname": "Ton"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 45,
+        "code": "SOL",
+        "short_code": "SOL",
+        "name": "Solana",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/SOL.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency/SOL.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/SOL_STROKE.svg",
+        "order": 19,
+        "obj_network": {
+          "code": "SOL",
+          "id": 45,
+          "icon": "https://cdn.cryptocloud.plus/img/currency/SOL.svg",
+          "fullname": "Solana"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 48,
+        "code": "USDT_SOL",
+        "short_code": "USDT",
+        "name": "Tether USD",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDT.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDT_SOL.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDT_STROKE.svg",
+        "order": 20,
+        "obj_network": {
+          "code": "SOL",
+          "id": 48,
+          "icon": "https://cdn.cryptocloud.plus/img/currency/SOL.svg",
+          "fullname": "Solana"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 51,
+        "code": "USDC_SOL",
+        "short_code": "USDC",
+        "name": "USD Coin",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDC.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDC_SOL.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDC_STROKE.svg",
+        "order": 21,
+        "obj_network": {
+          "code": "SOL",
+          "id": 51,
+          "icon": "https://cdn.cryptocloud.plus/img/currency/SOL.svg",
+          "fullname": "Solana"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 54,
+        "code": "ETH_BASE",
+        "short_code": "ETH",
+        "name": "Ethereum",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/ETH.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/ETH_BASE.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/ETH_STROKE.svg",
+        "order": 22,
+        "obj_network": {
+          "code": "BASE",
+          "id": 54,
+          "icon": "https://cdn.cryptocloud.plus/img/network/BASE.svg",
+          "fullname": "Base"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 57,
+        "code": "USDC_BASE",
+        "short_code": "USDC",
+        "name": "USD Coin",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDC.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDC_BASE.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDC_STROKE.svg",
+        "order": 23,
+        "obj_network": {
+          "code": "BASE",
+          "id": 57,
+          "icon": "https://cdn.cryptocloud.plus/img/network/BASE.svg",
+          "fullname": "Base"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 60,
+        "code": "ETH_ARB",
+        "short_code": "ETH",
+        "name": "Ethereum",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/ETH.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/ETH_ARB.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/ETH_STROKE.svg",
+        "order": 24,
+        "obj_network": {
+          "code": "ARB",
+          "id": 60,
+          "icon": "https://cdn.cryptocloud.plus/img/network/ARB.svg",
+          "fullname": "Arbitrum"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 63,
+        "code": "USDT_ARB",
+        "short_code": "USDT",
+        "name": "Tether USD",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDT.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDT_ARB.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDT_STROKE.svg",
+        "order": 25,
+        "obj_network": {
+          "code": "ARB",
+          "id": 63,
+          "icon": "https://cdn.cryptocloud.plus/img/network/ARB.svg",
+          "fullname": "Arbitrum"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 66,
+        "code": "USDC_ARB",
+        "short_code": "USDC",
+        "name": "USD Coin",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDC.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDC_ARB.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDC_STROKE.svg",
+        "order": 26,
+        "obj_network": {
+          "code": "ARB",
+          "id": 66,
+          "icon": "https://cdn.cryptocloud.plus/img/network/ARB.svg",
+          "fullname": "Arbitrum"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 69,
+        "code": "ETH_OPT",
+        "short_code": "ETH",
+        "name": "Ethereum",
+        "is_email_required": false,
+        "stablecoin": false,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/ETH.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/ETH_OPT.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/ETH_STROKE.svg",
+        "order": 27,
+        "obj_network": {
+          "code": "OPT",
+          "id": 69,
+          "icon": "https://cdn.cryptocloud.plus/img/network/OPT.svg",
+          "fullname": "Optimism"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 72,
+        "code": "USDT_OPT",
+        "short_code": "USDT",
+        "name": "Tether USD",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDT.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDT_OPT.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDT_STROKE.svg",
+        "order": 28,
+        "obj_network": {
+          "code": "OPT",
+          "id": 72,
+          "icon": "https://cdn.cryptocloud.plus/img/network/OPT.svg",
+          "fullname": "Optimism"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    },
+    {
+      "currency": {
+        "id": 75,
+        "code": "USDC_OPT",
+        "short_code": "USDC",
+        "name": "USD Coin",
+        "is_email_required": false,
+        "stablecoin": true,
+        "icon_base": "https://cdn.cryptocloud.plus/img/currency/USDC.svg",
+        "icon_network": "https://cdn.cryptocloud.plus/img/currency_network/USDC_OPT.svg",
+        "icon_qr": "https://cdn.cryptocloud.plus/img/stroke/USDC_STROKE.svg",
+        "order": 29,
+        "obj_network": {
+          "code": "OPT",
+          "id": 75,
+          "icon": "https://cdn.cryptocloud.plus/img/network/OPT.svg",
+          "fullname": "Optimism"
+        },
+        "enable": true
+      },
+      "balance_crypto": 0.0,
+      "balance_usd": 0.0,
+      "available_balance": 0.0,
+      "available_balance_usd": 0.0
+    }
+  ]
+}
