@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 
 <style>
-    /* Mobile-specific styles */
     @media (max-width: 767.98px) {
         .hero-section {
             position: relative;
@@ -13,7 +12,6 @@
             padding-bottom: 80px;
             overflow: hidden;
             min-height: 500px;
-            /* Ensure enough height for content */
             display: flex;
             align-items: center;
         }
@@ -32,7 +30,7 @@
             url('{{ active_banner.banner.url }}');
             {% else %}
             background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-            url('{{active_banner.banner.url}}');
+            url('{% static 'attached_assets/team.png' %}');
             {% endif %}
 
             background-position: center;
@@ -75,7 +73,6 @@
             z-index: 1;
         }
 
-        /* Adjust other sections for mobile */
         .features-section,
         .products-section,
         .brands-section,
@@ -96,7 +93,6 @@
         }
     }
 
-    /* Desktop styles */
     @media (min-width: 768px) {
         .hero-section {
             padding: 100px 0;
@@ -114,28 +110,18 @@
         }
 
         @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
         }
 
-        /* Fallback if no active banner */
         {% if not active_banner %}
         .hero-asic img {
-            content: url('{{active_banner.banner.url}}');
+            content: url('{% static 'attached_assets/team.png' %}');
         }
         {% endif %}
     }
 
-    /* Brands Section Styles */
     .brands-section {
         padding: 80px 0;
         background: var(--light-bg, #f8f9fa);
@@ -199,66 +185,55 @@
         text-align: center;
     }
 
-    /* Desktop - all items in one row with equal spacing */
     @media (min-width: 992px) {
         .brands-grid {
             justify-content: space-between;
             flex-wrap: nowrap;
         }
-        
         .brand-item {
             flex: 1;
             max-width: 180px;
         }
     }
 
-    /* Tablet - wrap to multiple rows if needed */
     @media (max-width: 991px) and (min-width: 768px) {
         .brands-grid {
             flex-wrap: wrap;
             justify-content: center;
         }
-        
         .brand-item {
             flex: 0 0 auto;
             margin-bottom: 20px;
         }
-        
         .brand-logo-wrapper {
             max-width: 150px;
             height: 90px;
         }
-        
         .brand-logo {
             max-height: calc(100% - 8px);
             max-width: calc(100% - 8px);
         }
     }
 
-    /* Mobile - wrap to multiple rows */
     @media (max-width: 767px) {
         .brands-grid {
             flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
         }
-        
         .brand-item {
             flex: 0 0 auto;
             margin-bottom: 15px;
         }
-        
         .brand-logo-wrapper {
             max-width: 140px;
             height: 85px;
             padding: 10px;
         }
-        
         .brand-logo {
             max-height: calc(100% - 8px);
             max-width: calc(100% - 8px);
         }
-        
         .brands-section .section-title {
             font-size: 1.5rem;
             margin-bottom: 2rem;
@@ -276,14 +251,14 @@
                     <h1 class="hero-title">{{ active_banner.title }}</h1>
                     <p class="hero-subtitle">{{ active_banner.text }}</p>
                     {% else %}
-                    <h1 class="hero-title">Профессиональные ASIC майнеры</h1>
+                    <h1 class="hero-title">Zamonaviy poyabzallar to?plami</h1>
                     <p class="hero-subtitle">
-                        Ведущий поставщик оригинального криптовалютного оборудования.
-                        Доставка по всему миру, официальная гарантия производителя.
+                        Har kun uchun qulaylik. Ish, sayohat va sport uchun mos modellardan tanlang.
+                        Tez yetkazib berish va kafolatli sifat.
                     </p>
                     {% endif %}
                     <a href="{% url 'asic:catalog' %}" class="btn-primary-custom">
-                        <i class="fas fa-shopping-bag me-2"></i>Посмотреть каталог
+                        <i class="fas fa-shopping-bag me-2"></i>Katalogni ko?rish
                     </a>
                 </div>
             </div>
@@ -292,7 +267,7 @@
                     {% if active_banner %}
                     <img src="{{ active_banner.banner.url }}" alt="{{ active_banner.title }}" class="asic-image">
                     {% else %}
-                    <img src="{% static 'attached_assets/miners.png' %}" alt="ASIC Miner" class="asic-image">
+                    <img src="{% static 'attached_assets/team.png' %}" alt="Poyabzal kolleksiyasi" class="asic-image">
                     {% endif %}
 
                 </div>
@@ -306,9 +281,9 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="section-title">{{active_banner.benefit_title}}</h2>
+                <h2 class="section-title">{{ active_banner.benefit_title|default:'Nega bizni tanlaysiz' }}</h2>
                 <p class="section-subtitle">
-                    {{active_banner.benefit_text}}
+                    {{ active_banner.benefit_text|default:'Sifatli materiallar, qulay narxlar va ishonchli servis.' }}
                 </p>
             </div>
         </div>
@@ -318,10 +293,10 @@
             <div class="col-md-6 col-lg-3">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="{{i.icon}}"></i>
+                        <i class="{{ i.icon }}"></i>
                     </div>
-                    <h4>{{i.title}}</h4>
-                    <p>{{i.text}}</p>
+                    <h4>{{ i.title }}</h4>
+                    <p>{{ i.text }}</p>
                 </div>
             </div>
             {% endfor %}
@@ -334,9 +309,9 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="section-title">Популярные ASIC майнеры</h2>
+                <h2 class="section-title">Eng ommabop poyabzallar</h2>
                 <p class="section-subtitle">
-                    Лучшие модели от ведущих производителей с высокой энергоэффективностью
+                    Yangi kolleksiyalardan eng ko?p tanlangan modellarning qisqa ro?yxati.
                 </p>
             </div>
         </div>
@@ -346,21 +321,29 @@
             <div class="col-md-6 col-lg-4">
                 <a href="{% url 'asic:detail' i.id %}">
                     <div class="product-card">
-                        <img src="{{i.images.url}}" alt="Bitmain Antminer S19 Pro" class="product-image">
+                        {% if i.images %}
+                        <img src="{{ i.images.url }}" alt="{{ i.name }}" class="product-image">
+                        {% endif %}
                         <div class="product-body">
-                            <h5 class="product-title">{{i.name}}</h5>
-                            <div class="product-price">$ {{i.price}}</div>
+                            <h5 class="product-title">{{ i.name }}</h5>
+                            <div class="product-price">$ {{ i.price }}</div>
                             <ul class="product-specs">
-                                <li><i class="fas fa-bolt text-primary me-2"></i>Хешрейт: {{i.hash_rate}} {{i.get_hash_unit_display}}</li>
-                                <li><i class="fas fa-plug text-primary me-2"></i>Потребление: {{i.power_consumption}} Вт/ч
-                                </li>
-                                <li><i class="fas fa-microchip text-primary me-2"></i>Алгоритм: {{i.algorithm}}</li>
+                                <li><i class="fas fa-tag text-primary me-2"></i>Brend: {{ i.manufacturer.name }}</li>
+                                {% if i.category %}
+                                <li><i class="fas fa-layer-group text-primary me-2"></i>Kategoriya: {{ i.category.name }}</li>
+                                {% endif %}
+                                <li><i class="fas fa-box text-primary me-2"></i>Zaxira: {{ i.stock }}</li>
                             </ul>
-                            <a href="{% url 'asic:add_to_cart' i.id %}">
-                                <button class="btn btn-primary w-100">
-                                    <i class="fas fa-cart-plus me-2"></i>В корзину
+                            {% if i.default_variant %}
+                            <form method="post" action="{% url 'asic:add_to_cart' i.default_variant.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-primary w-100" type="submit">
+                                    <i class="fas fa-cart-plus me-2"></i>Savatchaga
                                 </button>
-                            </a>
+                            </form>
+                            {% else %}
+                            <button class="btn btn-outline-secondary w-100" disabled>Variant yo?q</button>
+                            {% endif %}
                         </div>
                     </div>
                 </a>
@@ -369,8 +352,8 @@
         </div>
 
         <div class="text-center mt-5">
-            <a href="{% url 'asic:catalog'%}" class="btn-primary-custom">
-                <i class="fas fa-th me-2"></i>Посмотреть все модели
+            <a href="{% url 'asic:catalog' %}" class="btn-primary-custom">
+                <i class="fas fa-th me-2"></i>Barcha modellarga o?tish
             </a>
             </div>
     </div>
@@ -381,21 +364,19 @@
     <div class="container brands-container">
         <div class="row">
             <div class="col-12">
-                <h3 class="section-title">Официальные партнеры</h3>
+                <h3 class="section-title">Hamkor brendlar</h3>
             </div>
         </div>
         <div class="brands-grid">
             {% for i in partners %}
             <div class="brand-item">
                 <div class="brand-logo-wrapper">
-                    <img src="{{ i.logo.url }}" alt="{{ i.name|default:'Partner Logo' }}" class="brand-logo">
+                    <img src="{{ i.logo.url }}" alt="{{ i.name|default:'Brend' }}" class="brand-logo">
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
 </section>
-
-<!-- Stats Section -->
 
 {% endblock content %}

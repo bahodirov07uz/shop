@@ -1,12 +1,13 @@
 from import_export import resources, fields
-from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
-from asic.models import Product, Manufacturer, ProductCategory, Coin
+from import_export.widgets import ForeignKeyWidget
+from asic.models import Product, Manufacturer, ProductCategory
 from django.utils.text import slugify
 import requests
 from django.core.files.base import ContentFile
 from urllib.parse import urlparse
 import os
-from import_export import widgets  # Import the widgets module
+import time
+from import_export import widgets
 
 class ProductCategoryOrCreateWidget(ForeignKeyWidget):
     def clean(self, value, row=None, *args, **kwargs):
@@ -36,25 +37,6 @@ class ManufacturerOrCreateWidget(ForeignKeyWidget):
 
 
 from import_export import widgets
-
-class HashUnitWidget(widgets.Widget):
-    MAPPING = {
-        'TH/s': 'TH',
-        'GH/s': 'GH',
-        'MH/s': 'MH',
-        'TH': 'TH',
-        'GH': 'GH',
-        'MH': 'MH',
-    }
-
-    def clean(self, value, row=None, *args, **kwargs):
-        if not value:
-            return None
-        value = value.strip()
-        if value not in self.MAPPING:
-            raise ValueError(f"Invalid hash_unit value: {value}")
-        return self.MAPPING[value]
-
 
 class ImageURLWidget(widgets.Widget):
     def clean(self, value, row=None, *args, **kwargs):
@@ -94,12 +76,6 @@ class ImageURLWidget(widgets.Widget):
                     
                     
 class ProductResource(resources.ModelResource):
-    hash_unit = fields.Field(
-        column_name='hash_unit',
-        attribute='hash_unit',
-        widget=HashUnitWidget()
-    )
-    
     manufacturer = fields.Field(
         column_name='manufacturer',
         attribute='manufacturer',
@@ -109,11 +85,6 @@ class ProductResource(resources.ModelResource):
         column_name='category',
         attribute='category',
         widget=ProductCategoryOrCreateWidget(ProductCategory, 'name')
-    )
-    coins = fields.Field(
-        column_name='coins',
-        attribute='coins',
-        widget=ManyToManyWidget(Coin, field='name', separator=',')
     )
     images = fields.Field(
         column_name='images',
@@ -136,13 +107,14 @@ class ProductResource(resources.ModelResource):
         import_id_fields = ['slug']
         skip_unchanged = True
         report_skipped = True
-        fields = ('name', 'slug', 'manufacturer', 'category', 'price', 'old_price',
-                 'hash_rate', 'power_consumption', 'algorithm', 'description',
-                 'specifications', 'images', 'image2', 'image3', 'stock',
-                 'is_featured', 'is_active', 'coins')
+        fields = (
+            'name', 'slug', 'manufacturer', 'category', 'price', 'old_price',
+            'description', 'specifications', 'images', 'image2', 'image3',
+            'variant_colors', 'variant_sizes', 'default_variant_stock',
+            'is_featured', 'is_active', 'meta_title', 'meta_description'
+        )
 
     def before_import_row(self, row, **kwargs):
-        # Ensure slug is created if not provided
         if 'slug' not in row or not row['slug']:
             row['slug'] = slugify(row['name'])
 

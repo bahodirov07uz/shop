@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
-<title>{% block title %}{{ page_titles.detail }}: {{product.name}}{% endblock %}</title>
+<title>{% block title %}{{ page_titles.detail }}: {{ product.name }}{% endblock %}</title>
+{% block meta_description %}{{ seo_description|default:product.description|truncatechars:160 }}{% endblock %}
+{% block og_title %}{{ seo_title|default:product.name }}{% endblock %}
+{% block og_description %}{{ seo_description|default:product.description|truncatechars:160 }}{% endblock %}
+{% if seo_image %}
+{% block og_image %}{{ seo_image }}{% endblock %}
+{% endif %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/detail.css' %}">
 
 <style>
-    /* Product Image Styles */
     .product-image-container {
         position: relative;
         width: 100%;
@@ -77,7 +82,6 @@
         border-radius: 6px;
     }
 
-    /* Product Details Styles */
     .product-badge {
         display: inline-block;
         background: linear-gradient(45deg, #28a745, #20c997);
@@ -208,7 +212,6 @@
         box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
     }
 
-    /* Tabs Styles */
     .nav-tabs {
         border-bottom: 2px solid #e9ecef;
         margin-bottom: 20px;
@@ -267,188 +270,138 @@
         background-color: #f8f9fa;
     }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
-        .product-image-container {
-            height: 300px;
-        }
-        
-        .product-title {
-            font-size: 20px;
-        }
-        
-        .new-price {
-            font-size: 24px;
-        }
-        
-        .gallery-thumb {
-            width: 60px;
-            height: 60px;
-        }
-        
-        .nav-tabs .nav-link {
-            padding: 10px 15px;
-            font-size: 14px;
-        }
+        .product-image-container { height: 300px; }
+        .product-title { font-size: 20px; }
+        .new-price { font-size: 24px; }
+        .gallery-thumb { width: 60px; height: 60px; }
+        .nav-tabs .nav-link { padding: 10px 15px; font-size: 14px; }
     }
 
     @media (max-width: 576px) {
-        .product-image-container {
-            height: 250px;
-        }
-        
-        .price-wrapper {
-            gap: 10px;
-        }
-        
-        .gallery-thumb {
-            width: 50px;
-            height: 50px;
-        }
+        .product-image-container { height: 250px; }
+        .price-wrapper { gap: 10px; }
+        .gallery-thumb { width: 50px; height: 50px; }
     }
 </style>
 
-<!-- Product Detail -->
 <section class="py-4">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 mb-4">
-                <!-- Main product image container -->
                 <div class="product-image-container">
+                    {% if product.images %}
                     <img src="{{ product.images.url }}" alt="{{ product.name }}" class="product-image" id="mainImage" onclick="toggleZoom()">
+                    {% else %}
+                    <div class="no-image-placeholder">Rasm yo?q</div>
+                    {% endif %}
                 </div>
 
-                <!-- Thumbnail gallery -->
                 <div class="product-gallery">
-                    <!-- First image -->
-                    <img src="{{ product.images.url }}" 
-                         alt="View 1" 
-                         class="gallery-thumb active"
-                         onclick="changeImage(this, '{{ product.images.url }}')">
-                    
-                    <!-- Second image -->
-                    {% if product.image2 %}
-                    <img src="{{ product.image2.url }}" 
-                         alt="View 2" 
-                         class="gallery-thumb"
-                         onclick="changeImage(this, '{{ product.image2.url }}')">
-                    {% else %}
-                    <div class="gallery-thumb no-image-placeholder">
-                        <span>No Image</span>
-                    </div>
+                    {% if product.images %}
+                    <img src="{{ product.images.url }}" alt="View 1" class="gallery-thumb active" onclick="changeImage(this, '{{ product.images.url }}')">
                     {% endif %}
-                    
-                    <!-- Third image -->
+                    {% if product.image2 %}
+                    <img src="{{ product.image2.url }}" alt="View 2" class="gallery-thumb" onclick="changeImage(this, '{{ product.image2.url }}')">
+                    {% endif %}
                     {% if product.image3 %}
-                    <img src="{{ product.image3.url }}" 
-                         alt="View 3" 
-                         class="gallery-thumb"
-                         onclick="changeImage(this, '{{ product.image3.url }}')">
-                    {% else %}
-                    <div class="gallery-thumb no-image-placeholder">
-                        <span>No Image</span>
-                    </div>
+                    <img src="{{ product.image3.url }}" alt="View 3" class="gallery-thumb" onclick="changeImage(this, '{{ product.image3.url }}')">
                     {% endif %}
                 </div>
             </div>
 
             <div class="col-lg-6">
                 {% if product.is_featured %}
-                <div class="product-badge">ХИТ</div>
-
+                <div class="product-badge">TOP</div>
                 {% endif %}
-                <div class="product-brand">{{product.manufacturer.name}}</div>
-                <h1 class="product-title">{{product.name}} {{product.hash_rate}} {{product.get_hash_unit_display }} </h1>
+                <div class="product-brand">{{ product.manufacturer.name }}</div>
+                <h1 class="product-title">{{ product.name }}</h1>
 
                 <div class="price-wrapper">
                     {% if discount_info.total_discount > 0 %}
-                    <div class="discount-badge">
-                        -{{ discount_info.total_discount_percent  }}%
-                    </div>
-
-                    <div class="new-price">
-                        ${{ discount_info.discounted_price }}
-                    </div>
-
-                    <div class="old-price">
-                        ${{ product.price }}
-                    </div>
+                    <div class="discount-badge">-{{ discount_info.total_discount_percent }}%</div>
+                    <div class="new-price">${{ discount_info.discounted_price }}</div>
+                    <div class="old-price">${{ product.price }}</div>
                     {% else %}
-                    <div class="new-price">
-                        ${{ product.price }}
-                    </div>
+                    <div class="new-price">${{ product.price }}</div>
                     {% endif %}
                 </div>
 
-                {% if product.stock > 0%}
-                <div class="availability">
+                <div class="availability" id="availabilityText">
+                    {% if default_variant and default_variant.stock > 0 %}
                     <i class="fas fa-check-circle"></i>
-                    <span>В наличии - готов к отправке</span>
+                    <span>Mavjud: {{ default_variant.stock }} ta</span>
+                    {% else %}
+                    <i class="fas fa-times-circle"></i>
+                    <span>Hozircha mavjud emas</span>
+                    {% endif %}
                 </div>
-                {% endif %}
 
                 <div class="mb-3">
-                    <strong>Основные характеристики:</strong>
+                    <strong>Asosiy ma'lumotlar:</strong>
                     <ul class="feature-list mt-2">
-                        <li><i class="fas fa-bolt"></i> Хешрейт: {{product.hash_rate}} {{product.get_hash_unit_display }} </li>
-                        <li><i class="fas fa-plug"></i> Потребление: {{product.power_consumption}} Вт/ч</li>
-                        <li><i class="fas fa-microchip"></i> Алгоритм: {{product.algorithm}}</li>
-                        {% if product.temprature %}
-                        <li><i class="fas fa-thermometer-half"></i> Рабочая температура: {{ product.temprature}}</li>
+                        {% if product.category %}
+                        <li><i class="fas fa-layer-group"></i>Kategoriya: {{ product.category.name }}</li>
                         {% endif %}
+                        <li><i class="fas fa-tag"></i>Brend: {{ product.manufacturer.name }}</li>
+                        <li><i class="fas fa-box"></i>Jami zaxira: {{ product.stock }}</li>
                     </ul>
                 </div>
 
-                <form method="post" action="{% url 'asic:add_to_cart' product.id %}">
+                {% if variants %}
+                <form method="post" id="addToCartForm" action="{% url 'asic:add_to_cart' default_variant.id %}">
                     {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Variant</label>
+                        <select class="form-select" id="variantSelect">
+                            {% for variant in variants %}
+                            <option value="{{ variant.id }}" data-stock="{{ variant.stock }}">
+                                {{ variant.color }} / {{ variant.size }} ({{ variant.sku }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
                     <div class="quantity-selector d-flex align-items-center mb-3">
-                        <strong class="me-3">Количество:</strong>
-                        <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <input type="number" class="quantity-input mx-2" name="quantity" id="quantity" value="1" min="1"
-                            max="10">
-                        <button type="button" class="quantity-btn" onclick="changeQuantity(1)">
-                            <i class="fas fa-plus"></i>
-                        </button>
+                        <strong class="me-3">Miqdor:</strong>
+                        <button type="button" class="quantity-btn" onclick="changeQuantity(-1)"><i class="fas fa-minus"></i></button>
+                        <input type="number" class="quantity-input mx-2" name="quantity" id="quantity" value="1" min="1">
+                        <button type="button" class="quantity-btn" onclick="changeQuantity(1)"><i class="fas fa-plus"></i></button>
                     </div>
 
                     <button type="submit" class="btn-primary-custom">
-                        <i class="fas fa-cart-plus me-2"></i>Добавить в корзину
+                        <i class="fas fa-cart-plus me-2"></i>Savatchaga qo?shish
                     </button>
                 </form>
+                {% else %}
+                <button class="btn btn-outline-secondary w-100" disabled>Variant yo?q</button>
+                {% endif %}
 
                 <div class="mt-3">
-                    <small class="text-muted">
-                        <i class=""></i>{{delivery.main_text|linebreaksbr}}<br>
-                    </small>
+                    <small class="text-muted">{{ delivery.main_text|linebreaksbr }}</small>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Product Info Tabs -->
 <section class="py-4">
     <div class="container">
         <ul class="nav nav-tabs" id="productTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description"
-                    type="button" role="tab">Описание</button>
+                <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">Tavsif</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button"
-                    role="tab">Характеристики</button>
+                <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab">Xususiyatlar</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button"
-                    role="tab">Доставка</button>
+                <button class="nav-link" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab">Yetkazib berish</button>
             </li>
         </ul>
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="description" role="tabpanel">
-                <h4>Описание товара</h4>
+                <h4>Mahsulot tavsifi</h4>
                 {% if product.description %}
                     {% for line in product.description.splitlines %}
                         <p>{{ line }}</p>
@@ -461,84 +414,32 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Характеристика</th>
-                                <th>Значение</th>
+                                <th>Ko?rsatkich</th>
+                                <th>Qiymat</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Производитель</td>
+                                <td>Brend</td>
                                 <td>{{ product.manufacturer.name }}</td>
                             </tr>
                             <tr>
-                                <td>Модель</td>
+                                <td>Model</td>
                                 <td>{{ product.name }}</td>
                             </tr>
-                            {% if product.hash_rate %}
+                            {% if product.category %}
                             <tr>
-                                <td>Хешрейт</td>
-                                <td>{{ product.hash_rate }} {{product.get_hash_unit_display }} </td>
-                            </tr>
-                            {% endif %}
-                            {% if product.power_consumption %}
-                            <tr>
-                                <td>Потребление электроэнергии</td>
-                                <td>{{ product.power_consumption }} Вт/ч</td>
-                            </tr>
-                            {% endif %}
-                            {% if product.algorithm %}
-                            <tr>
-                                <td>Алгоритм</td>
-                                <td>{{ product.algorithm }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if product.size %}
-                            <tr>
-                                <td>Размеры</td>
-                                <td>{{ product.size }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if product.weight %}
-                            <tr>
-                                <td>Вес</td>
-                                <td>{{ product.weight }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if product.noise_level %}
-                            <tr>
-                                <td>Уровень шума</td>
-                                <td>{{ product.noise_level }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if product.operating_temperature %}
-                            <tr>
-                                <td>Рабочая температура</td>
-                                <td>{{ product.operating_temperature }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if product.humidity %}
-                            <tr>
-                                <td>Влажность</td>
-                                <td>{{ product.humidity }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if product.coins %}
-                            <tr>
-                                <td>Криптовалюты</td>
-                                <td>
-                                    {% for coin in product.coins.all %}
-                                    <span>{{ coin.name }}{% if not forloop.last %}, {% endif %}</span>
-                                    {% endfor %}
-                                </td>
+                                <td>Kategoriya</td>
+                                <td>{{ product.category.name }}</td>
                             </tr>
                             {% endif %}
                         </tbody>
                     </table>
                 </div>
-                
+
                 {% if product.specifications %}
                 <div class="custom-characteristics mt-3 p-3" style="background-color: #f8f9fa; border: 1px solid #ddd; border-radius: 5px;">
-                    <h5>Характеристика</h5>
+                    <h5>Xususiyatlar</h5>
                     <p>{{ product.specifications|linebreaksbr }}</p>
                 </div>
                 {% endif %}
@@ -548,7 +449,7 @@
                 <h4>{{ delivery.title }}</h4>
                 <div class="row">
                     <div class="col-md-6">
-                        <h6>Способы доставки:</h6>
+                        <h6>Yetkazib berish turlari:</h6>
                         <ul class="feature-list">
                             <li>{{ delivery.courier_title }}</li>
                             <li>{{ delivery.air_title }}</li>
@@ -556,7 +457,7 @@
                         </ul>
                     </div>
                     <div class="col-md-6">
-                        <h6>Стоимость доставки:</h6>
+                        <h6>Narxlar:</h6>
                         <ul class="feature-list">
                             <li>{{ delivery.free_shipping_text }}</li>
                             <li>{{ delivery.paid_shipping_text }}</li>
@@ -566,9 +467,7 @@
 
                 <div class="alert alert-info mt-3">
                     <h6>{{ delivery.important_info_title }}</h6>
-                    <p class="mb-0">
-                        {{ delivery.important_info_body|linebreaksbr }}
-                    </p>
+                    <p class="mb-0">{{ delivery.important_info_body|linebreaksbr }}</p>
                 </div>
             </div>
         </div>
@@ -578,59 +477,62 @@
 <script>
     function changeImage(thumbElement, imageUrl) {
         const mainImage = document.getElementById('mainImage');
-        
-        // Remove active class from all thumbnails
         document.querySelectorAll('.gallery-thumb').forEach(thumb => {
             thumb.classList.remove('active');
         });
-        
-        // Add active class to clicked thumbnail
         if (thumbElement.classList.contains('gallery-thumb')) {
             thumbElement.classList.add('active');
         }
-        
-        // Change main image with smooth transition
-        mainImage.style.opacity = '0';
-        
-        setTimeout(() => {
-            mainImage.src = imageUrl;
-            mainImage.alt = thumbElement.alt;
-            mainImage.style.opacity = '1';
-        }, 200);
+        if (mainImage) {
+            mainImage.style.opacity = '0';
+            setTimeout(() => {
+                mainImage.src = imageUrl;
+                mainImage.alt = thumbElement.alt;
+                mainImage.style.opacity = '1';
+            }, 200);
+        }
     }
-    
+
     function toggleZoom() {
         const mainImage = document.getElementById('mainImage');
-        mainImage.classList.toggle('zoomed');
+        if (mainImage) {
+            mainImage.classList.toggle('zoomed');
+        }
     }
-    
+
     function changeQuantity(amount) {
         const input = document.getElementById('quantity');
         let current = parseInt(input.value);
         if (!isNaN(current)) {
             let newVal = current + amount;
             if (newVal < parseInt(input.min)) newVal = parseInt(input.min);
-            if (newVal > parseInt(input.max)) newVal = parseInt(input.max);
             input.value = newVal;
         }
     }
-    
-    // Add loading effect for images
+
     document.addEventListener('DOMContentLoaded', function() {
-        const images = document.querySelectorAll('.product-image, .gallery-thumb');
-        
-        images.forEach(img => {
-            img.addEventListener('load', function() {
-                this.style.opacity = '1';
-            });
-            
-            img.addEventListener('error', function() {
-                if (this.classList.contains('gallery-thumb')) {
-                    this.src = '/static/images/no-image.png';
-                    this.alt = 'Image not available';
+        const variantSelect = document.getElementById('variantSelect');
+        const form = document.getElementById('addToCartForm');
+        const availability = document.getElementById('availabilityText');
+
+        if (variantSelect && form) {
+            const updateVariant = () => {
+                const selected = variantSelect.options[variantSelect.selectedIndex];
+                const variantId = selected.value;
+                const stock = parseInt(selected.dataset.stock || '0');
+                form.action = form.action.replace(/\d+\/$/, `${variantId}/`);
+
+                if (availability) {
+                    if (stock > 0) {
+                        availability.innerHTML = `<i class="fas fa-check-circle"></i><span>Mavjud: ${stock} ta</span>`;
+                    } else {
+                        availability.innerHTML = `<i class="fas fa-times-circle"></i><span>Hozircha mavjud emas</span>`;
+                    }
                 }
-            });
-        });
+            };
+            updateVariant();
+            variantSelect.addEventListener('change', updateVariant);
+        }
     });
 </script>
 

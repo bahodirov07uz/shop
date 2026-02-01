@@ -1,4 +1,5 @@
-from .models import SiteSettings,StaticPage,TemplateEdit,Cards
+from .models import SiteSettings, StaticPage, TemplateEdit, Cards, PageTitle
+
 
 def site_settings(request):
     try:
@@ -14,43 +15,40 @@ def site_settings(request):
         cards = None
         about_cards = None
     return {
-        'site_settings': settings,
-        'pages':pages,
-        'template_settings':template_edit,
-        'cards':cards,
-        'about_cards':about_cards
+        "site_settings": settings,
+        "pages": pages,
+        "template_settings": template_edit,
+        "cards": cards,
+        "about_cards": about_cards,
     }
-    
-from .models import PageTitle
+
 
 def page_titles(request):
-    titles = {}
     try:
         pt = PageTitle.objects.first()
         titles = {
-            "home": pt.home or "Главная страница",
-            "catalog": pt.catalog or "Каталог",
-            "detail": pt.detail or "Детали продукта",
-            "about": pt.about or "О нас",
-            "profile": pt.profile or "Профиль",
-            "cart": pt.cart or "Корзина",
-            "checkout": pt.checkout or "Оформление заказа",
-            "login": pt.login or "Login",
-            "register": pt.register or "Register",
-            "privacy": pt.privacy or "Политика конфиденциальности",
-            "payment_deliver": pt.payment_deliver or "Оплата и доставка",
+            "home": pt.home or "Bosh sahifa",
+            "catalog": pt.catalog or "Katalog",
+            "detail": pt.detail or "Mahsulot tafsiloti",
+            "about": pt.about or "Biz haqimizda",
+            "profile": pt.profile or "Profil",
+            "cart": pt.cart or "Savatcha",
+            "checkout": pt.checkout or "Buyurtma rasmiylash",
+            "login": pt.login or "Kirish",
+            "register": pt.register or "Royxatdan otish",
+            "privacy": pt.privacy or "Maxfiylik siyosati",
+            "payment_deliver": pt.payment_deliver or "Tolov va yetkazib berish",
         }
-    except:
-        # Agar hech narsa DBda bo‘lmasa ham default ishlaydi
+    except Exception:
         titles = {
-            "home": "Главная страница",
-            "catalog": "Каталог",
-            "detail": "Детали продукта",
-            "about": "О нас",
-            "profile": "Профиль",
-            "cart": "Корзина",
-            "checkout": "Оформление заказа",
-            "privacy": "Политика конфиденциальности",
-            "payment_deliver": "Оплата и доставка",
+            "home": "Bosh sahifa",
+            "catalog": "Katalog",
+            "detail": "Mahsulot tafsiloti",
+            "about": "Biz haqimizda",
+            "profile": "Profil",
+            "cart": "Savatcha",
+            "checkout": "Buyurtma rasmiylash",
+            "privacy": "Maxfiylik siyosati",
+            "payment_deliver": "Tolov va yetkazib berish",
         }
     return {"page_titles": titles}

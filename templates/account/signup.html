@@ -3,139 +3,62 @@
 {% load account socialaccount %}
 {% load form_helpers %}
 {% load static %}
-
 {% block content %}
 <title>{% block title %}{{ page_titles.register }}{% endblock %}</title>
-<div class="container mt-5">
-  <div class="card shadow-sm mx-auto" style="max-width: 500px;">
-    <div class="card-body">
-      <h3 class="text-center mb-4">Регистрация</h3>
+{% if site_settings.favicon %}
+<link rel="icon" href="{{ site_settings.favicon.url }}" type="image/x-icon">
+{% else %}
+<link rel="icon" href="{% static 'default-favicon.ico' %}" type="image/x-icon">
+{% endif %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-5">
 
-      <form method="POST" action="{% url 'account_signup' %}">
-        {% csrf_token %}
-        
-        <!-- Custom form rendering with proper Bootstrap classes -->
-        {% for field in form %}
-          <div class="mb-3">
-            <label for="{{ field.id_for_label }}" class="form-label">
-              {{ field.label }}
-              {% if field.field.required %}
-                <span class="text-danger">*</span>
-              {% endif %}
-            </label>
-            
-            {% if field.field.widget.input_type == 'password' %}
-              <input type="password" 
-                     class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                     id="{{ field.id_for_label }}" 
-                     name="{{ field.name }}" 
-                     value="{{ field.value|default:'' }}"
-                     {% if field.field.required %}required{% endif %}
-                     placeholder="{{ field.label }}">
-            {% elif field.field.widget.input_type == 'email' %}
-              <input type="email" 
-                     class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                     id="{{ field.id_for_label }}" 
-                     name="{{ field.name }}" 
-                     value="{{ field.value|default:'' }}"
-                     {% if field.field.required %}required{% endif %}
-                     placeholder="{{ field.label }}">
-            {% else %}
-              <input type="text" 
-                     class="form-control {% if field.errors %}is-invalid{% endif %}" 
-                     id="{{ field.id_for_label }}" 
-                     name="{{ field.name }}" 
-                     value="{{ field.value|default:'' }}"
-                     {% if field.field.required %}required{% endif %}
-                     placeholder="{{ field.label }}">
-            {% endif %}
-          
-            
-            {% if field.errors %}
-              <div class="invalid-feedback">
-                {% for error in field.errors %}
-                  {{ error }}
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-        {% endfor %}
+          <h3 class="mb-4 text-center">Ro?yxatdan o?tish</h3>
 
-        <!-- Display non-field errors -->
-        {% if form.non_field_errors %}
-          <div class="alert alert-danger" role="alert">
-            {% for error in form.non_field_errors %}
-              {{ error }}
-            {% endfor %}
-          </div>
-        {% endif %}
+          <form method="POST" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
 
-        <button type="submit" class="btn btn-primary w-100 mt-3">
-          Зарегистрироваться
-        </button>
-      </form>
+            <div class="mb-3">
+              <label for="id_email" class="form-label">Email</label>
+              {{ form.email|add_class:"form-control" }}
+              {{ form.email.errors }}
+            </div>
 
-      <p class="mt-3 text-center">
-        Уже есть аккаунт?
-        <a href="{% url 'account_login' %}" class="text-decoration-none">Войти</a>
-      </p>
+            <div class="mb-3">
+              <label for="id_username" class="form-label">Login</label>
+              {{ form.username|add_class:"form-control" }}
+              {{ form.username.errors }}
+            </div>
 
-      <hr class="my-4">
-      <p class="mb-3 text-center text-muted">Или войдите через</p>
+            <div class="mb-3">
+              <label for="id_password1" class="form-label">Parol</label>
+              {{ form.password1|add_class:"form-control" }}
+              {{ form.password1.errors }}
+            </div>
 
-      {% providers_media_js %}
-      <div class="d-grid">
-            <a href="{% provider_login_url 'google' %}"
-              class="btn btn-light border shadow-sm d-flex align-items-center justify-content-center gap-2 py-2 px-3"
-              style="max-width: 300px; margin: 0 auto;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-google"
-                viewBox="0 0 16 16">
-                <path
-                  d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z" />
-              </svg>
-              <span class="fw-semibold">Продолжить через Google</span>
-            </a>
+            <div class="mb-3">
+              <label for="id_password2" class="form-label">Parolni tasdiqlang</label>
+              {{ form.password2|add_class:"form-control" }}
+              {{ form.password2.errors }}
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Ro?yxatdan o?tish</button>
+            </div>
+          </form>
+
+          <p class="mt-4 text-center">
+            Akkauntingiz bormi?
+            <a href="{% url 'account_login' %}" class="text-decoration-none text-info">Kirish</a>
+          </p>
+
+        </div>
       </div>
-
     </div>
   </div>
 </div>
-
-<!-- Additional CSS for better styling -->
-<style>
-.card {
-  border: none;
-  border-radius: 15px;
-}
-
-.form-control {
-  border-radius: 8px;
-  padding: 12px;
-  border: 1px solid #dee2e6;
-}
-
-.form-control:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
-
-.btn-primary {
-  border-radius: 8px;
-  padding: 12px;
-  font-weight: 500;
-}
-
-.btn-outline-secondary {
-  border-radius: 8px;
-  padding: 12px;
-  border: 1px solid #dee2e6;
-  color: #6c757d;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-  color: #6c757d;
-}
-</style>
 {% endblock %}

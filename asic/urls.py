@@ -12,9 +12,9 @@ urlpatterns = [
     path('profile/', views.profile_view, name="profile"),
     path('detail/<int:pk>/', views.ProductDetailView.as_view(), name="detail"),
     path('order-cancel/<int:order_id>/', views.cancel_order, name='cancel_order'),
-    path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
-    path('buy-cart/add/<int:product_id>/', views.add_cart_buy, name='add_buy'),
-    path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('cart/add/<int:variant_id>/', views.add_to_cart, name='add_to_cart'),
+    path('buy-cart/add/<int:variant_id>/', views.add_cart_buy, name='add_buy'),
+    path('cart/remove/<int:variant_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/', views.cart_detail, name='cart_detail'),
     path('orders/<int:order_id>/', views.order_detail, name='order_detail'),
     path('checkout/', views.checkout, name='checkout'),
@@ -22,7 +22,7 @@ urlpatterns = [
     path('privacy/', views.privacy, name='privacy'),
     path('payment-deliever/', views.paymentview, name='pay_deliever'),
     path('orders/', views.order_list, name='order_list'),
-    path('cart/update/<int:product_id>/', views.update_cart_quantity, name='update_cart_quantity'),    
+    path('cart/update/<int:variant_id>/', views.update_cart_quantity, name='update_cart_quantity'),    
 
     #password reset
     path('reset_password/', auth_views.PasswordResetView.as_view(), name='reset_password'),

@@ -1,8 +1,6 @@
-Здравствуйте, {{ user_display }}!
+Assalomu alaykum!
 
-Для подтверждения аккаунта перейдите по ссылке. Это ваш адрес электронной почты: {{ email }}
-
-Ссылка для подтверждения:
+Akkauntingizni tasdiqlash uchun quyidagi havolani bosing:
 {{ activate_url }}
 
-Если вы не создавали этот аккаунт, просто проигнорируйте это письмо.
+Agar siz ro?yxatdan o?tmagan bo?lsangiz, bu xabarni e?tiborsiz qoldiring.

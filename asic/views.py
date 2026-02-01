@@ -1,20 +1,39 @@
 import uuid
-from django.db import transaction
-from django.shortcuts import render,redirect,get_object_or_404
-from django.views.generic import TemplateView,DetailView,ListView
-from .models import Product,Manufacturer,Order,OrderItem,DeliverySettings,BannerImage,Profile,Office,StaticPage,PayCheck,About_page,Privacy,Discount
-from django.core.paginator import Paginator
-from .cart import Cart
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from decimal import Decimal,InvalidOperation
-from django.urls import reverse
-from django.conf import settings
-from django.views.decorators.http import require_POST
-from payments.models import Payment
+from decimal import Decimal, InvalidOperation
+
 import requests
-from django.db.models import Max,Min,Count
-from .utils import calculate_product_discount,calculate_cart_total_discount
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.db.models import Max, Min, Count, Q
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.views.decorators.http import require_POST
+from django.views.generic import DetailView, ListView
+
+from payments.models import Payment
+from .cart import Cart
+from .models import (
+    About_page,
+    BannerImage,
+    DeliveryInfo,
+    DeliverySettings,
+    Discount,
+    Manufacturer,
+    Office,
+    Order,
+    OrderItem,
+    PayCheck,
+    Privacy,
+    Product,
+    ProductVariant,
+    Profile,
+    StaticPage,
+    ProductCategory
+)
+from .utils import calculate_product_discount, calculate_cart_total_discount
 
 class HomeView(ListView):
     template_name = "index.html"
@@ -22,22 +41,16 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         active_banner = BannerImage.objects.filter(is_active=True).first()
-        context['products'] = Product.objects.all()[:3]
+        context['products'] = Product.objects.filter(is_active=True).prefetch_related('variants')[:8]
+        context['categories'] = ProductCategory.objects.filter(
+            product__is_active=True
+        ).distinct().order_by("name")
         context['partners'] = Manufacturer.objects.filter(is_active=True)[:8]
         context['active_banner'] = active_banner
+        for product in context['products']:
+            product.default_variant = product.variants.filter(is_active=True).order_by('id').first()
 
         return context
-
-from django.views.generic import ListView
-from django.db.models import Q
-from .models import Product, Manufacturer, Coin
-
-from django.db.models import Min, Max, Q, Count
-from django.views.generic import ListView
-from .models import Product, Manufacturer, Coin
-
-from django.db.models import Min, Max, Count, Q
-from django.conf import settings
 
 class CatalogView(ListView):
     template_name = "catalog.html"
@@ -46,26 +59,22 @@ class CatalogView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        queryset = Product.objects.filter(is_active=True).select_related('manufacturer')
+        queryset = (
+            Product.objects.filter(is_active=True)
+            .select_related("manufacturer", "category")
+            .prefetch_related("variants")
+        )
 
-        # Parametrlarni olish
         manufacturers = self.request.GET.getlist("manufacturer")
-        algorithms = self.request.GET.getlist("algorithm")
-        coins = self.request.GET.getlist("coin")
+        categories = self.request.GET.getlist("category")
+        colors = self.request.GET.getlist("color")
+        sizes = self.request.GET.getlist("size")
         price_from = self.request.GET.get("price_from")
         price_to = self.request.GET.get("price_to")
         in_stock = self.request.GET.get("in_stock")
         sort = self.request.GET.get("sort")
 
-        # Yangi filtrlar
-        min_hashrate = self.request.GET.get("min_hashrate")
-        max_hashrate = self.request.GET.get("max_hashrate")
-        min_power = self.request.GET.get("min_power")
-        max_power = self.request.GET.get("max_power")
-
-        # Filtrlarni qo'llash
         if manufacturers:
-            # String yoki int qiymatlarni handle qilish
             manufacturer_ids = []
             for m in manufacturers:
                 try:
@@ -75,28 +84,26 @@ class CatalogView(ListView):
             if manufacturer_ids:
                 queryset = queryset.filter(manufacturer__id__in=manufacturer_ids)
 
-        if algorithms:
-            # Bo'sh qiymatlarni filtrlash
-            valid_algorithms = [a for a in algorithms if a.strip()]
-            if valid_algorithms:
-                queryset = queryset.filter(algorithm__in=valid_algorithms)
-
-        if coins:
-            # Coin filtrini to'g'rilash
-            coin_ids = []
-            for c in coins:
+        if categories:
+            category_ids = []
+            for c in categories:
                 try:
-                    coin_ids.append(int(c))
+                    category_ids.append(int(c))
                 except (ValueError, TypeError):
                     pass
-            if coin_ids:
-                queryset = queryset.filter(coins__id__in=coin_ids)
+            if category_ids:
+                queryset = queryset.filter(category__id__in=category_ids)
 
-        # Price filtrlari
+        if colors:
+            queryset = queryset.filter(variants__color__in=colors, variants__is_active=True)
+
+        if sizes:
+            queryset = queryset.filter(variants__size__in=sizes, variants__is_active=True)
+
         if price_from:
             try:
                 price_from_val = float(price_from)
-                if price_from_val >= 0:  # Manfiy qiymatlarni rad etish
+                if price_from_val >= 0:
                     queryset = queryset.filter(price__gte=price_from_val)
             except (ValueError, TypeError):
                 pass
@@ -104,60 +111,20 @@ class CatalogView(ListView):
         if price_to:
             try:
                 price_to_val = float(price_to)
-                if price_to_val > 0:  # Nol va manfiy qiymatlarni rad etish
+                if price_to_val > 0:
                     queryset = queryset.filter(price__lte=price_to_val)
             except (ValueError, TypeError):
                 pass
 
-        # Stock filtri
-        if in_stock and in_stock.lower() in ['true', '1', 'on']:
-            queryset = queryset.filter(stock__gt=0)
+        if in_stock and in_stock.lower() in ["true", "1", "on"]:
+            queryset = queryset.filter(variants__stock__gt=0, variants__is_active=True)
 
-        # Hashrate filtrlari
-        if min_hashrate:
-            try:
-                min_hashrate_val = float(min_hashrate)
-                if min_hashrate_val >= 0:
-                    queryset = queryset.filter(hash_rate__gte=min_hashrate_val)
-            except (ValueError, TypeError):
-                pass
-
-        if max_hashrate:
-            try:
-                max_hashrate_val = float(max_hashrate)
-                if max_hashrate_val > 0:
-                    queryset = queryset.filter(hash_rate__lte=max_hashrate_val)
-            except (ValueError, TypeError):
-                pass
-
-        # Power filtrlari
-        if min_power:
-            try:
-                min_power_val = float(min_power)
-                if min_power_val >= 0:
-                    queryset = queryset.filter(power_consumption__gte=min_power_val)
-            except (ValueError, TypeError):
-                pass
-
-        if max_power:
-            try:
-                max_power_val = float(max_power)
-                if max_power_val > 0:
-                    queryset = queryset.filter(power_consumption__lte=max_power_val)
-            except (ValueError, TypeError):
-                pass
-
-        # Sorting
         if sort == "price_asc":
             queryset = queryset.order_by("price", "id")
         elif sort == "price_desc":
             queryset = queryset.order_by("-price", "id")
         elif sort == "new":
             queryset = queryset.order_by("-created_at", "id")
-        elif sort == "hashrate_asc":
-            queryset = queryset.order_by("hash_rate", "id")
-        elif sort == "hashrate_desc":
-            queryset = queryset.order_by("-hash_rate", "id")
         else:
             queryset = queryset.order_by("-is_featured", "-created_at", "id")
 
@@ -166,20 +133,12 @@ class CatalogView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # AJAX so'rov uchun JSON response
-        if self.request.GET.get('get_filter_data'):
-            return self.get_ajax_filter_data()
-
-        # Optimized queryset
         filtered_products = self.get_queryset()
 
-        # Ma'lumotlarni cache qilish
         context['product_count'] = filtered_products.count()
 
-        # Dynamic filtr ma'lumotlari
         context.update(self.get_dynamic_filter_data())
 
-        # Price range
         try:
             price_range = Product.objects.filter(is_active=True).aggregate(
                 min_price=Min('price'),
@@ -191,83 +150,21 @@ class CatalogView(ListView):
             context['min_price'] = 0
             context['max_price'] = 10000
 
-        # Hashrate va Power ranges
-        try:
-            if filtered_products.exists():
-                hashrate_range = filtered_products.aggregate(
-                    min_hr=Min('hash_rate'),
-                    max_hr=Max('hash_rate')
-                )
-                power_range = filtered_products.aggregate(
-                    min_pw=Min('power_consumption'),
-                    max_pw=Max('power_consumption')
-                )
-
-                context['min_hashrate'] = max(0, int(hashrate_range['min_hr'] or 0))
-                context['max_hashrate'] = int(hashrate_range['max_hr'] or 10000)
-                context['min_power'] = max(0, int(power_range['min_pw'] or 0))
-                context['max_power'] = int(power_range['max_pw'] or 5000)
-            else:
-                # Fallback values
-                all_products = Product.objects.filter(is_active=True)
-                if all_products.exists():
-                    ranges = all_products.aggregate(
-                        min_hr=Min('hash_rate'),
-                        max_hr=Max('hash_rate'),
-                        min_pw=Min('power_consumption'),
-                        max_pw=Max('power_consumption')
-                    )
-                    context['min_hashrate'] = max(0, int(ranges['min_hr'] or 0))
-                    context['max_hashrate'] = int(ranges['max_hr'] or 10000)
-                    context['min_power'] = max(0, int(ranges['min_pw'] or 0))
-                    context['max_power'] = int(ranges['max_pw'] or 5000)
-                else:
-                    # Default values
-                    context['min_hashrate'] = 0
-                    context['max_hashrate'] = 10000
-                    context['min_power'] = 0
-                    context['max_power'] = 5000
-        except (ValueError, TypeError):
-            # Default values on error
-            context['min_hashrate'] = 0
-            context['max_hashrate'] = 10000
-            context['min_power'] = 0
-            context['max_power'] = 5000
-
-        # Current slider values
-        try:
-            context['selected_min_hashrate'] = int(
-                self.request.GET.get("min_hashrate", context['min_hashrate'])
-            )
-            context['selected_max_hashrate'] = int(
-                self.request.GET.get("max_hashrate", context['max_hashrate'])
-            )
-            context['selected_min_power'] = int(
-                self.request.GET.get("min_power", context['min_power'])
-            )
-            context['selected_max_power'] = int(
-                self.request.GET.get("max_power", context['max_power'])
-            )
-        except (ValueError, TypeError):
-            context['selected_min_hashrate'] = context['min_hashrate']
-            context['selected_max_hashrate'] = context['max_hashrate']
-            context['selected_min_power'] = context['min_power']
-            context['selected_max_power'] = context['max_power']
-
-        # Saqlangan filtrlar
         context.update({
             "selected_manufacturers": self.request.GET.getlist("manufacturer"),
-            "selected_algorithms": self.request.GET.getlist("algorithm"),
-            "selected_coins": self.request.GET.getlist("coin"),
+            "selected_categories": self.request.GET.getlist("category"),
+            "selected_colors": self.request.GET.getlist("color"),
+            "selected_sizes": self.request.GET.getlist("size"),
             "price_from": self.request.GET.get("price_from", ""),
             "price_to": self.request.GET.get("price_to", ""),
             "in_stock": self.request.GET.get("in_stock", ""),
             "current_sort": self.request.GET.get("sort", ""),
         })
 
-        # Filter statistics
-        context['filter_stats'] = self.get_filter_statistics()
         context['partners'] = Manufacturer.objects.filter(is_active=True)[:8]
+        for product in context['products']:
+            product.default_variant = product.variants.filter(is_active=True).order_by('id').first()
+
         if settings.DEBUG:
             context['debug_info'] = {
                 'total_products': Product.objects.filter(is_active=True).count(),
@@ -278,186 +175,29 @@ class CatalogView(ListView):
         return context
 
     def get_dynamic_filter_data(self):
-        """Dynamic filtr ma'lumotlarini olish"""
         filtered_products = self.get_queryset()
 
-        # Joriy tanlangan filtrlarni olish
-        selected_manufacturers = self.request.GET.getlist("manufacturer")
-        selected_algorithms = self.request.GET.getlist("algorithm")
-        selected_coins = self.request.GET.getlist("coin")
-
-        # Manufacturers - faqat filtrlangan productlar asosida
         manufacturers = Manufacturer.objects.filter(
             product__in=filtered_products
-        ).distinct().order_by('name').values('id', 'name')
+        ).distinct().order_by('name').annotate(count=Count('product', distinct=True))
 
-        # Algorithms - faqat filtrlangan productlar asosida
-        algorithms = filtered_products.filter(
-            algorithm__isnull=False
-        ).exclude(algorithm__exact='').values_list('algorithm', flat=True).distinct()
+        categories = ProductCategory.objects.filter(
+            product__in=filtered_products
+        ).distinct().order_by('name').annotate(count=Count('product', distinct=True))
 
-        algorithms_list = sorted([a for a in algorithms if a and a.strip()])
+        variants = ProductVariant.objects.filter(
+            product__in=filtered_products, is_active=True
+        )
 
-        # Coins - faqat filtrlangan productlar asosida
-        coins = Coin.objects.filter(
-            products__in=filtered_products
-        ).distinct().order_by('name').values('id', 'name')
+        colors = variants.values('color').annotate(count=Count('id')).order_by('color')
+        sizes = variants.values('size').annotate(count=Count('id')).order_by('size')
 
         return {
             'manufacturers': manufacturers,
-            'algorithms': algorithms_list,
-            'coins': coins,
+            'categories': categories,
+            'colors': colors,
+            'sizes': sizes,
         }
-
-    def get_ajax_filter_data(self):
-        """AJAX so'rov uchun dynamic filter ma'lumotlari"""
-        from django.http import JsonResponse
-
-        # Joriy filtrlangan queryset
-        base_queryset = self.get_queryset()
-
-        # Ma'lumotlarni olish
-        manufacturers = self.get_manufacturers_data(base_queryset)
-        algorithms = self.get_algorithms_data(base_queryset)
-        coins = self.get_coins_data(base_queryset)
-
-        return JsonResponse({
-            'manufacturers': manufacturers,
-            'algorithms': algorithms,
-            'coins': coins,
-        })
-
-    def get_manufacturers_data(self, queryset):
-        """Manufacturer ma'lumotlari"""
-        manufacturers = Manufacturer.objects.filter(
-            product__in=queryset
-        ).distinct().annotate(
-            count=Count('product', filter=Q(product__is_active=True))
-        ).values('id', 'name', 'count')
-
-        return list(manufacturers)
-
-    def get_algorithms_data(self, queryset):
-        """Algorithm ma'lumotlari"""
-        # Faqat filtrlangan productlarning algorithmlarini olish
-        algorithms = queryset.exclude(
-            algorithm__isnull=True
-        ).exclude(
-            algorithm__exact=''
-        ).values('algorithm').annotate(
-            count=Count('id')
-        ).order_by('algorithm')
-
-        return [{'name': algo['algorithm'], 'count': algo['count']}
-                for algo in algorithms if algo['algorithm']]
-
-    def get_coins_data(self, queryset):
-        """Coin ma'lumotlari"""
-        coins = Coin.objects.filter(
-            products__in=queryset
-        ).distinct().annotate(
-            count=Count('products', filter=Q(products__is_active=True))
-        ).values('id', 'name', 'count')
-
-        return list(coins)
-
-    def get_filter_statistics(self):
-        """Optimized filter statistics"""
-        try:
-            base_queryset = Product.objects.filter(is_active=True)
-
-            # Joriy filtrlardan foydalanish
-            current_manufacturers = self.request.GET.getlist("manufacturer")
-            current_algorithms = self.request.GET.getlist("algorithm")
-            current_coins = self.request.GET.getlist("coin")
-
-            # Agar filtrlangan bo'lsa, shu filtrlarga asoslangan statistikani olish
-            if current_manufacturers or current_algorithms or current_coins:
-                filtered_queryset = self.get_queryset()
-
-                # Manufacturer stats
-                manufacturer_stats = {}
-                manufacturers = Manufacturer.objects.filter(
-                    product__in=filtered_queryset
-                ).distinct()
-
-                for man in manufacturers:
-                    count = filtered_queryset.filter(manufacturer=man).count()
-                    if count > 0:
-                        manufacturer_stats[man.id] = count
-
-                # Algorithm stats
-                algorithm_stats = {}
-                algorithms = filtered_queryset.exclude(
-                    algorithm__isnull=True
-                ).exclude(
-                    algorithm__exact=''
-                ).values_list('algorithm', flat=True).distinct()
-
-                for algorithm in algorithms:
-                    if algorithm and algorithm.strip():
-                        count = filtered_queryset.filter(algorithm=algorithm).count()
-                        algorithm_stats[algorithm] = count
-
-                # Coin stats
-                coin_stats = {}
-                coins = Coin.objects.filter(
-                    products__in=filtered_queryset
-                ).distinct()
-
-                for coin in coins:
-                    count = filtered_queryset.filter(coins=coin).count()
-                    if count > 0:
-                        coin_stats[coin.id] = count
-
-                return {
-                    'manufacturers': manufacturer_stats,
-                    'algorithms': algorithm_stats,
-                    'coins': coin_stats,
-                }
-
-            # Agar filtr bo'lmasa, barcha productlar uchun statistikani olish
-            else:
-                # Manufacturer stats
-                manufacturer_stats = {}
-                for m in Manufacturer.objects.all():
-                    count = base_queryset.filter(manufacturer=m).count()
-                    if count > 0:
-                        manufacturer_stats[m.id] = count
-
-                # Algorithm stats
-                algorithm_stats = {}
-                algorithms = base_queryset.exclude(
-                    algorithm__isnull=True
-                ).exclude(
-                    algorithm__exact=''
-                ).values_list('algorithm', flat=True).distinct()
-
-                for algorithm in algorithms:
-                    if algorithm and algorithm.strip():
-                        count = base_queryset.filter(algorithm=algorithm).count()
-                        algorithm_stats[algorithm] = count
-
-                # Coin stats
-                coin_stats = {}
-                for coin in Coin.objects.all():
-                    count = base_queryset.filter(coins=coin).count()
-                    if count > 0:
-                        coin_stats[coin.id] = count
-
-                return {
-                    'manufacturers': manufacturer_stats,
-                    'algorithms': algorithm_stats,
-                    'coins': coin_stats,
-                }
-
-        except Exception as e:
-            print(f"Filter statistics error: {e}")
-            return {
-                'manufacturers': {},
-                'algorithms': {},
-                'coins': {},
-            }
 
 class ProductDetailView(DetailView):
     model = Product
@@ -470,16 +210,56 @@ class ProductDetailView(DetailView):
         discount_info = product.get_discount_info()
         context['discount_info'] = discount_info
         context['delivery'] = DeliveryInfo.objects.first()
+        variants = product.variants.filter(is_active=True).order_by("color", "size")
+        context["variants"] = variants
+        default_variant = variants.filter(stock__gt=0).first() or variants.first()
+        selected_variant = default_variant
+
+        selected_variant_id = self.request.GET.get("variant")
+        if selected_variant_id:
+            try:
+                selected_variant = variants.get(id=selected_variant_id)
+            except (ValueError, ProductVariant.DoesNotExist):
+                selected_variant = default_variant
+
+        variant_groups = []
+        for variant in variants:
+            group = next(
+                (g for g in variant_groups if g["color"].lower() == variant.color.lower()),
+                None,
+            )
+            if not group:
+                group = {
+                    "color": variant.color,
+                    "variants": [],
+                    "image_url": None,
+                }
+                variant_groups.append(group)
+            group["variants"].append(variant)
+            if not group["image_url"] and variant.image:
+                group["image_url"] = variant.image.url
+
+        fallback_image = product.images.url if product.images else ""
+        for group in variant_groups:
+            if not group.get("image_url"):
+                group["image_url"] = fallback_image
+
+        context["default_variant"] = default_variant
+        context["selected_variant"] = selected_variant
+        context["variant_groups"] = variant_groups
+        context["seo_title"] = product.meta_title or product.name
+        context["seo_description"] = product.meta_description or product.description[:160]
+        if product.images:
+            context["seo_image"] = product.images.url
         return context
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from asic.models import Product
-from .cart import Cart  # Cart klassini import qiling
+from .cart import Cart
 
 # CART
-def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+def add_to_cart(request, variant_id):
+    variant = get_object_or_404(ProductVariant, id=variant_id, is_active=True)
     cart = Cart(request)
 
     try:
@@ -489,36 +269,44 @@ def add_to_cart(request, product_id):
     except (ValueError, TypeError):
         quantity = 1
 
-    cart.add(product=product, quantity=quantity, update_quantity=False)
+    if variant.stock <= 0:
+        messages.warning(request, "Tanlangan variant hozirda yoq.")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    if quantity > variant.stock:
+        quantity = variant.stock
+
+    cart.add(variant=variant, quantity=quantity, update_quantity=False)
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
-def add_cart_buy(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+def add_cart_buy(request, variant_id):
+    variant = get_object_or_404(ProductVariant, id=variant_id, is_active=True)
     cart = Cart(request)
-    cart.add(product)
+    cart.add(variant)
 
     return redirect('asic:checkout')
 
-def remove_from_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+def remove_from_cart(request, variant_id):
+    variant = get_object_or_404(ProductVariant, id=variant_id)
     cart = Cart(request)
-    cart.remove(product)
+    cart.remove(variant)
     return redirect('asic:cart_detail')
 
-def update_cart_quantity(request, product_id):
-    """Cart'dagi mahsulot miqdorini yangilash"""
+def update_cart_quantity(request, variant_id):
+    """Cart'dagi variant miqdorini yangilash"""
     if request.method == 'POST':
-        product = get_object_or_404(Product, id=product_id)
+        variant = get_object_or_404(ProductVariant, id=variant_id)
         cart = Cart(request)
 
         try:
             quantity = int(request.POST.get('quantity', 1))
             if quantity <= 0:
                 # Agar quantity 0 yoki manfiy bo'lsa, mahsulotni o'chirish
-                cart.remove(product)
+                cart.remove(variant)
             else:
-                # Quantity'ni yangilash
-                cart.add(product=product, quantity=quantity, update_quantity=True)
+                if quantity > variant.stock:
+                    quantity = variant.stock
+                cart.add(variant=variant, quantity=quantity, update_quantity=True)
         except (ValueError, TypeError):
             pass  # Noto'g'ri qiymat bo'lsa, hech narsa qilmaslik
 
@@ -541,16 +329,17 @@ def cart_detail(request):
     valid_cart_items = []
 
     for item in cart_items:
-        if ('product' in item and
-            hasattr(item['product'], 'id') and
-            item['product'].id is not None and
-            str(item['product'].id).strip() != ''):
-
+        if (
+            "variant" in item
+            and hasattr(item["variant"], "id")
+            and item["variant"].id is not None
+            and str(item["variant"].id).strip() != ""
+        ):
             try:
-                item['remove_url'] = reverse('asic:remove_from_cart', args=[item['product'].id])
+                item["remove_url"] = reverse("asic:remove_from_cart", args=[item["variant"].id])
                 valid_cart_items.append(item)
             except Exception as e:
-                print(f"URL reverse error for product {item.get('product', 'Unknown')}: {e}")
+                print(f"URL reverse error for variant {item.get('variant', 'Unknown')}: {e}")
                 continue
         else:
             print(f"Invalid item found: {item}")
@@ -574,31 +363,28 @@ def checkout(request):
     # Stock validation - check if all cart items have sufficient stock
     stock_errors = []
     for item in cart:
-        product = item['product']
-        quantity = item['quantity']
-        # Refresh product from database to get latest stock
-        product.refresh_from_db()
+        variant = item["variant"]
+        quantity = item["quantity"]
+        variant.refresh_from_db()
 
-        if product.stock < quantity:
+        if variant.stock < quantity:
             stock_errors.append({
-                'product': product,
-                'requested': quantity,
-                'available': product.stock
+                "variant": variant,
+                "requested": quantity,
+                "available": variant.stock
             })
 
     # If there are stock errors, redirect back to cart with error messages
     if stock_errors:
         for error in stock_errors:
-            if error['available'] == 0:
-                messages.error(
-                    request,
-                    f"Товар '{error['product'].name}' закончился на складе."
-                )
+            variant = error["variant"]
+            label = f"{variant.product.name} ({variant.color}, {variant.size})"
+            if error["available"] == 0:
+                messages.error(request, f"Variant tugagan: {label}.")
             else:
                 messages.error(
                     request,
-                    f"Товар '{error['product'].name}': запрошено {error['requested']} шт., "
-                    f"доступно только {error['available']} шт."
+                    f"Variant {label}: so'raldi {error['requested']} ta, mavjud {error['available']} ta.",
                 )
         return redirect('asic:cart_detail')
 
@@ -606,20 +392,20 @@ def checkout(request):
     try:
         delivery_settings = DeliverySettings.objects.get(is_active=True)
     except DeliverySettings.DoesNotExist:
-        messages.error(request, "Настройки доставки не найдены.")
+        messages.error(request, "Yetkazib berish sozlamalari topilmadi.")
         return redirect('asic:cart_detail')
     except DeliverySettings.MultipleObjectsReturned:
         delivery_settings = DeliverySettings.objects.filter(is_active=True).first()
-        messages.warning(request, "Найдено несколько активных настроек доставки. Используется первая.")
+        messages.warning(request, "Bir nechta faol sozlama topildi. Birinchisi ishlatildi.")
 
     def calculate_delivery_cost(cart, delivery_type, delivery_settings):
         """Yetkazib berish narxini hisoblash (har bir mahsulot uchun)"""
         total_delivery = Decimal('0')
-        if delivery_type == 'air':
+        if delivery_type == 'courier':
             delivery_rate = delivery_settings.air_delivery_rate
-        elif delivery_type == 'sea':
+        elif delivery_type == 'pickup':
             delivery_rate = delivery_settings.sea_delivery_rate
-        elif delivery_type == 'auto':
+        elif delivery_type == 'express':
             delivery_rate = delivery_settings.auto_delivery_rate
         else:
             delivery_rate = delivery_settings.air_delivery_rate
@@ -632,7 +418,7 @@ def checkout(request):
 
     def calculate_document_cost(cart_total, document_type, delivery_settings):
         """Hujjat narxini hisoblash (umumiy summadan foiz)"""
-        if document_type == 'gtd_rb':
+        if document_type == 'receipt':
             percentage = delivery_settings.gtd_rb_cost
         else:  # dt_rf
             percentage = delivery_settings.dt_rf_cost
@@ -643,32 +429,29 @@ def checkout(request):
         # Before processing POST request, validate stock again
         stock_errors = []
         for item in cart:
-            product = item['product']
-            quantity = item['quantity']
+            variant = item["variant"]
+            quantity = item["quantity"]
 
-            # Refresh product from database to get latest stock info
-            product.refresh_from_db()
+            variant.refresh_from_db()
 
-            if product.stock < quantity:
+            if variant.stock < quantity:
                 stock_errors.append({
-                    'product': product,
-                    'requested': quantity,
-                    'available': product.stock
+                    "variant": variant,
+                    "requested": quantity,
+                    "available": variant.stock
                 })
 
         # If stock validation fails during POST, redirect with errors
         if stock_errors:
             for error in stock_errors:
-                if error['available'] == 0:
-                    messages.error(
-                        request,
-                        f"Товар '{error['product'].name}' закончился на складе."
-                    )
+                variant = error["variant"]
+                label = f"{variant.product.name} ({variant.color}, {variant.size})"
+                if error["available"] == 0:
+                    messages.error(request, f"Variant tugagan: {label}.")
                 else:
                     messages.error(
                         request,
-                        f"Товар '{error['product'].name}': запрошено {error['requested']} шт., "
-                        f"доступно только {error['available']} шт."
+                        f"Variant {label}: so'raldi {error['requested']} ta, mavjud {error['available']} ta.",
                     )
             return redirect('asic:cart_detail')
 
@@ -693,8 +476,8 @@ def checkout(request):
 
         # Order details
         notes = request.POST.get('notes', '')
-        delivery_type = request.POST.get('delivery_type', 'air')
-        document_type = request.POST.get('document_type', 'gtd_rb')
+        delivery_type = request.POST.get('delivery_type', 'courier')
+        document_type = request.POST.get('document_type', 'receipt')
 
         # Calculated prices from form
         delivery_fee_from_form = request.POST.get('delivery_fee')
@@ -705,9 +488,9 @@ def checkout(request):
         valid_delivery_types = dict(Order.DELIVERY_TYPES).keys()
         valid_document_types = dict(Order.DOCUMENT_TYPES).keys()
         if delivery_type not in valid_delivery_types:
-            delivery_type = 'air'
+            delivery_type = 'courier'
         if document_type not in valid_document_types:
-            document_type = 'gtd_rb'
+            document_type = 'receipt'
 
         # Full name yasash
         full_name_parts = []
@@ -720,12 +503,12 @@ def checkout(request):
         full_name = ' '.join(full_name_parts) if full_name_parts else username
 
         shipping_address = f"""
-        ФИО: {full_name}
-        Тел: {phone}
-        Адрес: {country}, {address_region}, {address_city}, {address_street} {house}
-        {f"Корпус: {block}" if block else ""}
-        {f"Квартира: {apartment}" if apartment else ""}
-        {f"Почтовый индекс: {address_postal_code}" if address_postal_code else ""}
+        Ism: {full_name}
+        Telefon: {phone}
+        Manzil: {country}, {address_region}, {address_city}, {address_street} {house}
+        {f"Korpus: {block}" if block else ""}
+        {f"Xonadon: {apartment}" if apartment else ""}
+        {f"Pochta indeksi: {address_postal_code}" if address_postal_code else ""}
         """.strip()
 
         # 1. Cart subtotal va individual discounts hisoblash
@@ -733,29 +516,31 @@ def checkout(request):
         cart_items_data = []
 
         for item in cart:
-            product = item['product']
-            quantity = Decimal(str(item['quantity']))
-            # Cart obyektida allaqachon discount qo'llanilgan narx bor
-            final_price = Decimal(str(item['price']))
+            product = item["product"]
+            variant = item["variant"]
+            quantity = Decimal(str(item["quantity"]))
+            final_price = Decimal(str(item["price"]))
 
-            # Mahsulot total (allaqachon discount bilan)
             item_total = final_price * quantity
             cart_subtotal += item_total
 
-            # Original price olish uchun discount ma'lumotlarini olish
-            original_discount_info = calculate_product_discount(product, product.price, Decimal('0'))
+            original_discount_info = calculate_product_discount(product, product.price, Decimal("0"))
             original_price = Decimal(str(product.price))
             product_discount = (original_price - final_price) * quantity
 
-            # Prepare cart item data for payment
             cart_items_data.append({
-                'product_id': product.id,
-                'quantity': float(quantity),
-                'original_price': float(original_price),
-                'discounted_price': float(final_price),
-                'product_discount': float(product_discount),
-                'item_total': float(item_total),
-                'applied_discounts': original_discount_info['applied_discounts']
+                "product_id": product.id,
+                "product_name": product.name,
+                "variant_id": variant.id,
+                "variant_sku": variant.sku,
+                "variant_color": variant.color,
+                "variant_size": variant.size,
+                "quantity": float(quantity),
+                "original_price": float(original_price),
+                "discounted_price": float(final_price),
+                "product_discount": float(product_discount),
+                "item_total": float(item_total),
+                "applied_discounts": original_discount_info["applied_discounts"],
             })
 
         # 2. Additional discount (is_additional=True) ni faqat cart_subtotal ga qo'llash
@@ -794,11 +579,11 @@ def checkout(request):
         billing_id = str(uuid.uuid4())
 
         # Har bir mahsulot uchun delivery cost hisoblash
-        if delivery_type == 'air':
+        if delivery_type == 'courier':
             delivery_rate = delivery_settings.air_delivery_rate
-        elif delivery_type == 'sea':
+        elif delivery_type == 'pickup':
             delivery_rate = delivery_settings.sea_delivery_rate
-        elif delivery_type == 'auto':
+        elif delivery_type == 'express':
             delivery_rate = delivery_settings.auto_delivery_rate
         else:
             delivery_rate = delivery_settings.air_delivery_rate
@@ -893,7 +678,7 @@ def checkout(request):
                 'cart_discount': float(cart_discount),
                 'delivery_cost': float(delivery_cost),
                 'document_cost': float(document_cost),
-                'document_percentage': float(delivery_settings.gtd_rb_cost if document_type == 'gtd_rb' else delivery_settings.dt_rf_cost),
+                'document_percentage': float(delivery_settings.gtd_rb_cost if document_type == 'receipt' else delivery_settings.dt_rf_cost),
                 'total': float(final_checkout_total),
                 'discount_percentage' : float(discount_percentage) if discount_percentage else 4.0,
                 'final_checkout_total': float(final_checkout_total),
@@ -953,29 +738,29 @@ def checkout(request):
     # Validate stock for GET request as well
     stock_errors = []
     for item in cart:
-        product = item['product']
-        quantity = item['quantity']
-        if product.stock < quantity:
+        variant = item["variant"]
+        quantity = item["quantity"]
+        if variant.stock < quantity:
             stock_errors.append({
-                'product': product,
-                'requested': quantity,
-                'available': product.stock
+                "variant": variant,
+                "requested": quantity,
+                "available": variant.stock
             })
 
     # If there are stock errors in GET request, show warnings and redirect to cart
     if stock_errors:
         for error in stock_errors:
-            if error['available'] == 0:
+            variant = error["variant"]
+            label = f"{variant.product.name} ({variant.color}, {variant.size})"
+            if error["available"] == 0:
                 messages.warning(
                     request,
-                    f"Товар '{error['product'].name}' закончился на складе. "
-                    f"Пожалуйста, удалите его из корзины."
+                    f"Variant tugagan: {label}."
                 )
             else:
                 messages.warning(
                     request,
-                    f"Товар '{error['product'].name}': в корзине {error['requested']} шт., "
-                    f"доступно только {error['available']} шт. Пожалуйста, измените количество."
+                    f"Variant {label}: savatda {error['requested']} ta, mavjud {error['available']} ta. Miqdorni kamaytiring."
                 )
         return redirect('asic:cart_detail')
 
@@ -1027,8 +812,8 @@ def checkout(request):
         total_discount_percent += Decimal(str(discount_info.get('discount_percent', 0)))
 
     # Delivery va document costs
-    default_delivery_cost = calculate_delivery_cost(cart, 'air', delivery_settings)
-    default_document_cost = calculate_document_cost(cart_subtotal, 'gtd_rb', delivery_settings)
+    default_delivery_cost = calculate_delivery_cost(cart, 'courier', delivery_settings)
+    default_document_cost = calculate_document_cost(cart_subtotal, 'receipt', delivery_settings)
 
     # Final total = discounted cart + delivery + document
     final_checkout_total = discounted_cart_total + default_delivery_cost + default_document_cost
@@ -1046,13 +831,13 @@ def checkout(request):
         'default_document_cost': default_document_cost,
         'default_document_percentage': delivery_settings.gtd_rb_cost,
         'delivery_types': [
-            ('air', delivery_settings.air_delivery_name),
-            ('sea', delivery_settings.sea_delivery_name),
-            ('auto', delivery_settings.auto_delivery_name)
+            ('courier', delivery_settings.air_delivery_name),
+            ('pickup', delivery_settings.sea_delivery_name),
+            ('express', delivery_settings.auto_delivery_name)
         ],
         'document_types': [
-            ('gtd_rb', delivery_settings.gtd_rb_name),
-            ('dt_rf', delivery_settings.dt_rf_name)
+            ('receipt', delivery_settings.gtd_rb_name),
+            ('invoice', delivery_settings.dt_rf_name)
         ],
         'delivery_settings': delivery_settings,
         'page_titles': {'checkout': 'Оформление заказа'},

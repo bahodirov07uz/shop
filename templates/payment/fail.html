@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ошибка оплаты</title>
+    <title>To?lov amalga oshmadi</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Manrope', sans-serif;
             background: linear-gradient(135deg, #181f2a 0%, #232b39 100%);
             color: #fff;
             text-align: center;
@@ -15,250 +15,23 @@
             margin: 0;
         }
         .container {
-            max-width: 600px;
+            max-width: 520px;
             margin: 0 auto;
             background: #21293a;
             padding: 40px;
             border-radius: 18px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
-        .fail-icon {
-            color: #dc3545;
-            font-size: 72px;
-            margin-bottom: 20px;
-            animation: shake 0.5s ease-in-out;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        h1 {
-            color: #dc3545;
-            margin-bottom: 20px;
-            font-size: 2.2rem;
-            font-weight: 700;
-        }
-        .subtitle {
-            color: #ccc;
-            margin-bottom: 30px;
-            font-size: 18px;
-            line-height: 1.5;
-        }
-        .btn {
-            background: linear-gradient(135deg, #11d560, #0bc04f);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin: 10px;
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(17, 213, 96, 0.4);
-            color: white;
-            text-decoration: none;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #dc3545;
-            color: #dc3545;
-        }
-        .btn-outline:hover {
-            background: #dc3545;
-            color: white;
-            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-        }
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid #6c757d;
-            color: #6c757d;
-        }
-        .btn-secondary:hover {
-            background: #6c757d;
-            color: white;
-            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
-        }
-        .button-group {
-            margin-top: 30px;
-        }
-        .details {
-            margin-top: 40px;
-            text-align: left;
-            background: #181f2a;
-            border-radius: 12px;
-            padding: 24px;
-        }
-        .details h3 {
-            color: #dc3545;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-        }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #2a3441;
-        }
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-        .detail-label {
-            color: #aaa;
-            font-weight: 500;
-        }
-        .detail-value {
-            color: #fff;
-            font-weight: 600;
-        }
-        .status-badge {
-            background: #dc3545;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .error-box {
-            background: #2d1b1f;
-            border-left: 4px solid #dc3545;
-            padding: 20px;
-            margin: 30px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .error-box h4 {
-            color: #dc3545;
-            margin-bottom: 10px;
-        }
-        .error-box p {
-            color: #ccc;
-            margin: 0;
-            line-height: 1.5;
-        }
-        .help-section {
-            background: #232b39;
-            border-radius: 12px;
-            padding: 24px;
-            margin-top: 30px;
-        }
-        .help-section h4 {
-            color: #11d560;
-            margin-bottom: 15px;
-        }
-        .help-section ul {
-            text-align: left;
-            color: #ccc;
-            line-height: 1.6;
-        }
-        .help-section a {
-            color: #11d560;
-            text-decoration: none;
-        }
-        .help-section a:hover {
-            text-decoration: underline;
-        }
-        @media(max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 20px;
-            }
-            .details {
-                padding: 16px;
-            }
-            .detail-row {
-                flex-direction: column;
-                gap: 5px;
-            }
-            .button-group {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-            .btn {
-                margin: 5px 0;
-            }
-        }
+        h1 { color: #dc3545; margin-bottom: 20px; font-size: 2rem; }
+        p { color: #ccc; line-height: 1.5; }
+        .btn { background: #11d560; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-block; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="fail-icon">✗</div>
-        <h1>Ошибка оплаты</h1>
-        <p class="subtitle">
-            К сожалению, мы не смогли обработать ваш платеж. 
-            Пожалуйста, попробуйте еще раз или используйте другой способ оплаты.
-        </p>
-        
-        <div class="button-group">
-            <a href="{% url 'asic:checkout' %}" class="btn">Попробовать снова</a>
-            <a href="{% url 'asic:cart_detail' %}" class="btn-outline btn">Вернуться в корзину</a>
-            <a href="{% url 'asic:catalog' %}" class="btn-secondary btn">На главную</a>
-        </div>
-
-        {% if payment %}
-        <div class="details">
-            <h3>Детали платежа</h3>
-            <div class="detail-row">
-                <span class="detail-label">ID платежа:</span>
-                <span class="detail-value">{{ payment.billing_id }}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Сумма:</span>
-                <span class="detail-value">${{ payment.amount|floatformat:2 }}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Статус:</span>
-                <span class="status-badge">Не оплачено</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Дата попытки:</span>
-                <span class="detail-value">{{ payment.created_at|date:"d.m.Y H:i" }}</span>
-            </div>
-        </div>
-        {% endif %}
-
-        <div class="error-box">
-            <h4>Возможные причины:</h4>
-            <p>
-                • Недостаточно средств на карте<br>
-                • Карта заблокирована или просрочена<br>
-                • Проблемы с интернет-соединением<br>
-                • Технические неполадки на стороне банка<br>
-                • Превышен лимит по карте
-            </p>
-        </div>
-
-        <div class="help-section">
-            <h4>Что можно сделать:</h4>
-            <ul>
-                <li>Проверьте баланс карты и лимиты</li>
-                <li>Убедитесь в правильности введенных данных</li>
-                <li>Попробуйте другую карту или способ оплаты</li>
-                <li>Обратитесь в ваш банк за разъяснениями</li>
-            </ul>
-        </div>
-
+        <h1>To?lov amalga oshmadi</h1>
+        <p>Iltimos, qayta urinib ko?ring yoki boshqa to?lov usulini tanlang.</p>
+        <a href="{% url 'asic:checkout' %}" class="btn">Qayta urinib ko?rish</a>
     </div>
-
-    <script>
-        // Auto-redirect to cart after 30 seconds if no action taken
-        setTimeout(function() {
-            if (confirm('Вы хотите вернуться в корзину для повторной попытки оплаты?')) {
-                window.location.href = "{% url 'asic:cart_detail' %}";
-            }
-        }, 30000);
-
-        // Clear any cart warnings/errors from session storage
-        if (typeof(Storage) !== "undefined") {
-            sessionStorage.removeItem('payment_failed');
-            sessionStorage.setItem('payment_failed', 'true');
-        }
-    </script>
 </body>
 </html>

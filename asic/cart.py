@@ -15,34 +15,42 @@ class Cart:
             cart = self.session[self.cart_key] = {}
         self.cart = cart
 
-    def add(self, product, quantity=1, update_quantity=False):
-        """Mahsulotni savatga qo'shish"""
-        product_id = str(product.id)
-        if product_id not in self.cart:
-            self.cart[product_id] = {
+    def add(self, variant, quantity=1, update_quantity=False):
+        """Variantni savatga qo'shish"""
+        variant_id = str(variant.id)
+        if variant_id not in self.cart:
+            self.cart[variant_id] = {
                 'quantity': 0,
-                'price': str(product.current_price)
+                'price': str(variant.product.current_price)
             }
         if update_quantity:
-            self.cart[product_id]['quantity'] = quantity
+            self.cart[variant_id]['quantity'] = quantity
         else:
-            self.cart[product_id]['quantity'] += quantity
+            self.cart[variant_id]['quantity'] += quantity
         self.save()
 
-    def remove(self, product):
-        product_id = str(product.id)
-        if product_id in self.cart:
-            del self.cart[product_id]
+    def remove(self, variant):
+        variant_id = str(variant.id)
+        if variant_id in self.cart:
+            del self.cart[variant_id]
             self.save()
 
+    def is_variant_in_cart(self, variant_id):
+        """Variant kartada borligini tekshirish"""
+        return str(variant_id) in self.cart
+
     def is_product_in_cart(self, product_id):
-        """Mahsulot kartada borligini tekshirish"""
-        return str(product_id) in self.cart
+        """Orqaga moslik uchun"""
+        return self.is_variant_in_cart(product_id)
+
+    def get_variant_quantity(self, variant_id):
+        """Variantning kartadagi miqdorini olish"""
+        variant_id = str(variant_id)
+        return self.cart.get(variant_id, {}).get('quantity', 0)
 
     def get_product_quantity(self, product_id):
-        """Mahsulotning kartadagi miqdorini olish"""
-        product_id = str(product_id)
-        return self.cart.get(product_id, {}).get('quantity', 0)
+        """Orqaga moslik uchun"""
+        return self.get_variant_quantity(product_id)
 
     def save(self):
         """Session ni saqlash"""
@@ -53,30 +61,33 @@ class Cart:
     def __iter__(self):
         """Cart ichidagi itemlarni iteratsiya qilish"""
         try:
-            Product = apps.get_model('asic', 'Product')
+            ProductVariant = apps.get_model('asic', 'ProductVariant')
         except LookupError:
             return iter([])
 
         # faqat raqamli ID larni olish
-        product_ids = []
-        for pid in self.cart.keys():
-            if str(pid).isdigit():
-                product_ids.append(int(pid))
+        variant_ids = []
+        for vid in self.cart.keys():
+            if str(vid).isdigit():
+                variant_ids.append(int(vid))
 
-        if not product_ids:
+        if not variant_ids:
             return iter([])
 
-        products = Product.objects.filter(id__in=product_ids).select_related()
-        products_dict = {str(p.id): p for p in products}
+        variants = ProductVariant.objects.filter(id__in=variant_ids).select_related("product", "product__manufacturer")
+        variants_dict = {str(v.id): v for v in variants}
 
         cart = self.cart.copy()
 
-        for product_id, item in cart.items():
-            if product_id in products_dict:
-                product = products_dict[product_id]
+        for variant_id, item in cart.items():
+            if variant_id in variants_dict:
+                variant = variants_dict[variant_id]
+                product = variant.product
                 if product:
+                    item['variant'] = variant
                     item['product'] = product
                     item['price'] = float(product.current_price)
+                    item['stock'] = variant.stock
                     item['total_price'] = item['price'] * item['quantity']
                     yield item
 
@@ -117,17 +128,17 @@ class Cart:
 
     def clean_invalid_items(self):
         """Yaroqsiz itemlarni tozalash"""
-        Product = apps.get_model('asic', 'Product')
-        valid_ids = list(Product.objects.values_list('id', flat=True))
+        ProductVariant = apps.get_model('asic', 'ProductVariant')
+        valid_ids = list(ProductVariant.objects.values_list('id', flat=True))
         valid_ids_str = [str(id) for id in valid_ids]
 
         items_to_remove = []
-        for product_id in list(self.cart.keys()):
-            if product_id not in valid_ids_str:
-                items_to_remove.append(product_id)
+        for variant_id in list(self.cart.keys()):
+            if variant_id not in valid_ids_str:
+                items_to_remove.append(variant_id)
 
-        for product_id in items_to_remove:
-            del self.cart[product_id]
+        for variant_id in items_to_remove:
+            del self.cart[variant_id]
 
         if items_to_remove:
             self.save()
