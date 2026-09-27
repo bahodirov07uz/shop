@@ -1,0 +1,95 @@
+{% load humanize %}
+{# Reusable color-specific product card. Context: `card` dict from build_color_cards(). #}
+<div class="product-card">
+    <a href="{{ card.detail_url }}">
+        {% if card.image_url %}
+        <img src="{{ card.image_url }}" alt="{{ card.product.name }}{% if card.color %} — {{ card.color }}{% endif %}" class="product-image" loading="lazy">
+        {% else %}
+        <div class="product-image d-flex align-items-center justify-content-center text-muted">Rasm yo'q</div>
+        {% endif %}
+    </a>
+    <div class="product-body">
+        <div class="text-muted small">{{ card.product.manufacturer.name }}</div>
+        <h6>{{ card.product.name }}</h6>
+        <div class="product-price">{{ card.product.price|floatformat:0|intcomma }} so'm</div>
+        {% if card.variants %}
+            {% if card.has_stock %}
+            <div class="small text-success mb-2">Mavjud: {{ card.stock }} dona</div>
+            {% else %}
+            <div class="small text-danger mb-2">Sotuvda mavjud emas</div>
+            {% endif %}
+        {% else %}
+        <div class="small text-muted mb-2">&nbsp;</div>
+        {% endif %}
+        {% if not card.variants %}
+        <button class="btn btn-outline-secondary w-100" disabled>Variant yo'q</button>
+        {% elif card.variants|length == 1 %}
+            {% with v=card.variants.0 %}
+            {% if v.stock > 0 %}
+            <form method="post" class="js-ajax-cart" action="{% url 'asic:add_to_cart' v.id %}">
+                {% csrf_token %}
+                <button class="btn btn-primary w-100" type="submit">Savatchaga</button>
+            </form>
+            {% else %}
+            <button class="btn btn-outline-secondary w-100" disabled>Sotuvda mavjud emas</button>
+            {% endif %}
+            {% endwith %}
+        {% elif card.has_stock %}
+        <button class="btn btn-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#variantModal-{{ card.key }}">Savatchaga</button>
+        {% else %}
+        <button class="btn btn-outline-secondary w-100" disabled>Sotuvda mavjud emas</button>
+        {% endif %}
+    </div>
+</div>
+
+{% if card.variants|length > 1 and card.has_stock %}
+<div class="modal fade" id="variantModal-{{ card.key }}" tabindex="-1" aria-labelledby="variantModalLabel-{{ card.key }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="variantModalLabel-{{ card.key }}">{{ card.product.name }}{% if card.color %} — {{ card.color }}{% endif %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Yopish"></button>
+            </div>
+            <form method="post" action="{% url 'asic:add_to_cart_detail' card.product.id %}" class="variant-modal-form js-ajax-cart" data-product="{{ card.product.id }}" data-preset-color="{{ card.color|escapejs }}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="d-flex gap-3 align-items-start mb-3">
+                        {% if card.image_url %}
+                        <img src="{{ card.image_url }}" alt="{{ card.product.name }}{% if card.color %} — {{ card.color }}{% endif %}" class="variant-modal-img" data-default-src="{{ card.image_url }}">
+                        {% endif %}
+                        <div>
+                            <div class="fw-semibold">{{ card.product.name }}</div>
+                            {% if card.color %}<div class="small text-muted">{{ card.color }}</div>{% endif %}
+                            <div class="small variant-modal-stock text-success">Mavjud: {{ card.stock }} dona</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold mb-2">Variantni tanlang</div>
+                    <div class="small text-muted mb-1">Rang:</div>
+                    <div class="d-flex flex-wrap gap-2 mb-3 variant-colors">
+                        <button type="button" class="btn btn-outline-secondary btn-sm variant-color active" data-color="{{ card.color|escapejs }}">{{ card.color }}</button>
+                    </div>
+                    <div class="small text-muted mb-1">Razmer:</div>
+                    <div class="d-flex flex-wrap gap-2 mb-3 variant-sizes">
+                        {% for v in card.variants %}
+                        <button type="button" class="btn btn-outline-secondary btn-sm variant-size" data-variant="{{ v.id }}" data-color="{{ v.color|escapejs }}" data-size="{{ v.size|escapejs }}" data-stock="{{ v.stock }}" data-image="{% if v.image %}{{ v.image.url }}{% else %}{{ card.image_url }}{% endif %}" {% if v.stock <= 0 %}disabled{% endif %}>{{ v.size }}</button>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="variant_id" class="variant-input" value="">
+                    <div class="alert alert-danger d-none variant-error py-2 small" role="alert">Avval variantni tanlang</div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="small fw-semibold">Miqdor:</span>
+                        <button type="button" class="btn btn-outline-secondary btn-sm variant-minus">−</button>
+                        <input type="number" name="quantity" class="form-control form-control-sm variant-qty" value="1" min="1" max="1" style="width:64px;text-align:center;">
+                        <button type="button" class="btn btn-outline-secondary btn-sm variant-plus">+</button>
+                    </div>
+                    <div class="small variant-stock text-muted">Mavjud: —</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Yopish</button>
+                    <button type="submit" class="btn btn-primary variant-submit" disabled>Savatga qo'shish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}

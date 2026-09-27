@@ -335,7 +335,7 @@
                                 <li><i class="fas fa-box text-primary me-2"></i>Zaxira: {{ i.stock }}</li>
                             </ul>
                             {% if i.default_variant %}
-                            <form method="post" action="{% url 'asic:add_to_cart' i.default_variant.id %}">
+                            <form method="post" class="js-ajax-cart" action="{% url 'asic:add_to_cart' i.default_variant.id %}">
                                 {% csrf_token %}
                                 <button class="btn btn-primary w-100" type="submit">
                                     <i class="fas fa-cart-plus me-2"></i>Savatchaga

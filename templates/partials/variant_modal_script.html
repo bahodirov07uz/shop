@@ -1,0 +1,138 @@
+{# Shared controller for every variant-selection modal on the page. Include once per page. #}
+<style>
+    .variant-color.active, .variant-size.active { border-width: 2px; border-color: #212529; }
+    .variant-size:disabled { text-decoration: line-through; }
+    .variant-modal-img {
+        width: 110px;
+        flex: 0 0 auto;
+        aspect-ratio: 3 / 4;
+        object-fit: contain;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+    }
+</style>
+<script>
+(function () {
+    // One delegated controller for every variant modal on the page.
+    document.querySelectorAll('.variant-modal-form').forEach(function (form) {
+        var colorBtns = Array.prototype.slice.call(form.querySelectorAll('.variant-color'));
+        var sizeBtns = Array.prototype.slice.call(form.querySelectorAll('.variant-size'));
+        var input = form.querySelector('.variant-input');
+        var qty = form.querySelector('.variant-qty');
+        var stockLine = form.querySelector('.variant-stock');
+        var submit = form.querySelector('.variant-submit');
+        var errorBox = form.querySelector('.variant-error');
+        var presetColor = form.getAttribute('data-preset-color') || null;
+        var currentColor = null, currentVariant = null, currentStock = 0;
+        var modalImg = form.querySelector('.variant-modal-img');
+        var modalImgDefault = modalImg ? modalImg.getAttribute('data-default-src') : null;
+        var modalStock = form.querySelector('.variant-modal-stock');
+
+        function setModalImage(src) {
+            if (modalImg && src) modalImg.src = src;
+        }
+
+        function colorHasStock(color) {
+            return sizeBtns.some(function (b) {
+                return b.dataset.color === color && parseInt(b.dataset.stock, 10) > 0;
+            });
+        }
+        colorBtns.forEach(function (b) {
+            if (!colorHasStock(b.dataset.color)) b.disabled = true;
+        });
+
+        function paint() {
+            colorBtns.forEach(function (b) {
+                b.classList.toggle('active', b.dataset.color === currentColor);
+            });
+            sizeBtns.forEach(function (b) {
+                var show = !currentColor || b.dataset.color === currentColor;
+                b.classList.toggle('d-none', !show);
+                b.classList.toggle('active', b.dataset.variant === currentVariant);
+            });
+            if (currentVariant) {
+                stockLine.textContent = 'Mavjud: ' + currentStock + ' dona';
+                stockLine.classList.remove('text-muted');
+                submit.disabled = currentStock <= 0;
+                qty.max = currentStock > 0 ? currentStock : 1;
+            } else {
+                stockLine.textContent = currentColor ? "O'lchamni tanlang" : 'Mavjud: —';
+                stockLine.classList.add('text-muted');
+                submit.disabled = true;
+                qty.max = 1;
+            }
+        }
+
+        colorBtns.forEach(function (b) {
+            b.addEventListener('click', function () {
+                if (b.disabled) return;
+                // Color alone never completes a variant — size must be picked.
+                currentColor = b.dataset.color;
+                currentVariant = null;
+                currentStock = 0;
+                input.value = '';
+                qty.value = 1;
+                errorBox.classList.add('d-none');
+                paint();
+            });
+        });
+        sizeBtns.forEach(function (b) {
+            b.addEventListener('click', function () {
+                if (b.disabled) return;
+                currentVariant = b.dataset.variant;
+                currentColor = b.dataset.color;
+                currentStock = parseInt(b.dataset.stock, 10) || 0;
+                input.value = currentVariant;
+                qty.value = 1;
+                errorBox.classList.add('d-none');
+                setModalImage(b.dataset.image || modalImgDefault);
+                paint();
+            });
+        });
+
+        function clamp(showHint) {
+            var max = currentVariant ? currentStock : 1;
+            var val = parseInt(qty.value, 10) || 1;
+            if (val < 1) val = 1;
+            if (val > max) {
+                val = max;
+                if (showHint) {
+                    stockLine.textContent = 'Mavjud: ' + max + ' dona';
+                }
+            }
+            qty.value = val;
+        }
+        form.querySelector('.variant-minus').addEventListener('click', function () {
+            qty.value = (parseInt(qty.value, 10) || 1) - 1; clamp(false);
+        });
+        form.querySelector('.variant-plus').addEventListener('click', function () {
+            qty.value = (parseInt(qty.value, 10) || 1) + 1; clamp(true);
+        });
+        qty.addEventListener('change', function () { clamp(true); });
+
+        form.addEventListener('submit', function (e) {
+            if (!currentVariant || currentStock <= 0) {
+                e.preventDefault();
+                errorBox.textContent = 'Avval variantni tanlang';
+                errorBox.classList.remove('d-none');
+                return;
+            }
+            clamp(false);
+        });
+
+        // Fresh state every time the modal opens; the card's color stays preselected.
+        var modal = form.closest('.modal');
+        if (modal) {
+            modal.addEventListener('show.bs.modal', function () {
+                currentColor = presetColor; currentVariant = null; currentStock = 0;
+                input.value = ''; qty.value = 1;
+                errorBox.classList.add('d-none');
+                setModalImage(modalImgDefault);
+                paint();
+            });
+        }
+        paint();
+    });
+})();
+</script>

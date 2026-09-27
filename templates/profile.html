@@ -143,7 +143,7 @@
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="first_name">Login</label>
+                    <label for="first_name">Foydalanuvchi nomi</label>
                     <input type="text" id="first_name" name="username" value="{{ request.user.username }}">
                 </div>
                 <div class="form-group">

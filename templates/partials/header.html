@@ -10,13 +10,7 @@
         </a>
         {% endif %}
 
-        <!-- Burger button for mobile -->
-        <button class="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
-            <span class="burger-bar"></span>
-            <span class="burger-bar"></span>
-            <span class="burger-bar"></span>
-        </button>
-
+        <!-- Burger button for mobile REMOVED: mobile uses bottom navigation only -->
         <ul class="navhead-menu" id="nav-menu">
             <li><a href="{% url 'asic:home' %}">Bosh sahifa</a></li>
             <li><a href="{% url 'asic:catalog' %}">Poyabzallar</a></li>
@@ -41,7 +35,7 @@
             {% else %}
             <li><a href="{% url 'account_login' %}"><i class="fas fa-user me-1"></i>Kirish</a></li>
             {% endif %}
-            <li><a href="{% url 'asic:cart_detail' %}"><i class="fas fa-shopping-cart me-1"></i>Savatcha</a></li>
+            <li><a href="{% url 'asic:cart_detail' %}"><i class="fas fa-shopping-cart me-1"></i>Savatcha <span class="cart-count-badge" data-cart-count>{{ cart_count|default:0 }}</span></a></li>
             <style>
                 /* Dropdown styles */
                 .dropdown {
@@ -159,65 +153,119 @@
         margin-right: 5px;
     }
 
-    /* Burger button */
-    .burger {
-        display: none;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 25px;
+    .cart-count-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
         height: 20px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-    }
-
-    .burger-bar {
-        height: 3px;
-        width: 100%;
+        padding: 0 6px;
+        border-radius: 999px;
         background-color: #28a745;
-        border-radius: 2px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        margin-left: 4px;
     }
 
-    /* Mobile styles */
-    @media (max-width: 768px) {
-        .burger {
-            display: flex;
-        }
+    .bottomnav a {
+        position: relative;
+    }
 
+    .bottomnav .cart-count-badge {
+        position: absolute;
+        top: 4px;
+        right: calc(50% - 24px);
+        margin-left: 0;
+    }
+
+    /* Burger button removed: mobile navigation is bottom-only. */
+
+    /* Mobile styles: top menu hidden, bottom navigation used instead */
+    @media (max-width: 768px) {
         .navhead-menu {
             display: none;
-            flex-direction: column;
-            background-color: #fff;
-            position: absolute;
-            top: 70px;
-            right: 0;
-            width: 220px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            border-radius: 5px;
-            padding: 10px 0;
-            z-index: 9999;
+        }
+    }
+
+    /* ---- Bottom mobile navigation (mobile widths only) ---- */
+    .bottomnav {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
         }
 
-        .navhead-menu.active {
+        .bottomnav {
             display: flex;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1040;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+            justify-content: space-around;
+            align-items: stretch;
         }
 
-        .navhead-menu li {
-            margin: 10px 0;
-            padding: 0 20px;
+        .bottomnav a {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            min-height: 56px;
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'Manrope', sans-serif;
+            border-radius: 8px;
+        }
+
+        .bottomnav a i {
+            font-size: 20px;
+        }
+
+        .bottomnav a.active {
+            color: #28a745;
+        }
+
+        /* Keep the PDP sticky buy bar above the bottom navigation */
+        .pdp-stickybar {
+            bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
         }
     }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const burger = document.querySelector('.burger');
-        const menu = document.querySelector('.navhead-menu');
-
-        burger.addEventListener('click', () => {
-            const expanded = burger.getAttribute('aria-expanded') === 'true' || false;
-            burger.setAttribute('aria-expanded', !expanded);
-            menu.classList.toggle('active');
-        });
-    });
-</script>
+<!-- Bottom mobile navigation -->
+{% with current=request.resolver_match.url_name %}
+<nav class="bottomnav" aria-label="Mobile navigation">
+    <a href="{% url 'asic:home' %}" class="{% if current == 'home' %}active{% endif %}">
+        <i class="fas fa-home"></i><span>Asosiy</span>
+    </a>
+    <a href="{% url 'asic:catalog' %}" class="{% if current == 'catalog' or current == 'detail' %}active{% endif %}">
+        <i class="fas fa-th-large"></i><span>Katalog</span>
+    </a>
+    <a href="{% url 'asic:cart_detail' %}" class="{% if current == 'cart_detail' or current == 'checkout' %}active{% endif %}">
+        <i class="fas fa-shopping-cart"></i><span>Savat</span><span class="cart-count-badge" data-cart-count>{{ cart_count|default:0 }}</span>
+    </a>
+    <a href="{% url 'asic:order_list' %}" class="{% if current == 'order_list' or current == 'order_detail' %}active{% endif %}">
+        <i class="fas fa-box-open"></i><span>Buyurtmalar</span>
+    </a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'asic:profile' %}" class="{% if current == 'profile' %}active{% endif %}">
+        <i class="fas fa-user"></i><span>Profil</span>
+    </a>
+    {% else %}
+    <a href="{% url 'account_login' %}">
+        <i class="fas fa-user"></i><span>Profil</span>
+    </a>
+    {% endif %}
+</nav>
+{% endwith %}

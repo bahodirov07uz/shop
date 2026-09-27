@@ -1,4 +1,6 @@
 import uuid
+import random
+from urllib.parse import quote
 from decimal import Decimal, InvalidOperation
 
 import requests
@@ -7,9 +9,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Max, Min, Count, Q
+from django.db.models import Max, Min, Count, Q, Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.text import slugify
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView
 
@@ -35,20 +38,166 @@ from .models import (
 )
 from .utils import calculate_product_discount, calculate_cart_total_discount
 
+
+def group_variants_by_color(product, variants):
+    """Group active variants by color (case-insensitive).
+
+    Returns a list of dicts, one per unique color:
+    {color, variants, images, image_url, stock, has_stock}.
+    `variants` should be a prefetched/evaluated list to avoid N+1 queries.
+    """
+    groups = []
+    for variant in variants:
+        group = next(
+            (g for g in groups if g["color"].lower() == variant.color.lower()),
+            None,
+        )
+        if not group:
+            group = {
+                "color": variant.color,
+                "variants": [],
+                "images": [],
+                "image_url": "",
+                "stock": 0,
+                "has_stock": False,
+            }
+            groups.append(group)
+        group["variants"].append(variant)
+        group["stock"] += variant.stock or 0
+        if variant.stock and variant.stock > 0:
+            group["has_stock"] = True
+        if variant.image:
+            try:
+                url = variant.image.url
+            except (ValueError, AttributeError):
+                url = ""
+            if url and url not in group["images"]:
+                group["images"].append(url)
+    if product and product.images:
+        try:
+            fallback = product.images.url
+        except (ValueError, AttributeError):
+            fallback = ""
+        for group in groups:
+            if not group["images"] and fallback:
+                group["images"] = [fallback]
+    for group in groups:
+        group["image_url"] = group["images"][0] if group["images"] else ""
+    return groups
+
+
+def product_fallback_images(product):
+    """Product-level images used when a color has no variant images."""
+    urls = []
+    for field in ("images", "image2", "image3"):
+        img = getattr(product, field, None)
+        if img:
+            try:
+                url = img.url
+            except (ValueError, AttributeError):
+                url = ""
+            if url and url not in urls:
+                urls.append(url)
+    return urls
+
+
+def build_color_cards(product, allowed_colors=None):
+    """One card per unique COLOR of the product (never per size).
+
+    Each card: {key, product, color, color_slug, detail_url, image_url,
+    images, variants, stock, has_stock}.
+    """
+    variants = list(
+        getattr(product, "active_variants", None)
+        if getattr(product, "active_variants", None) is not None
+        else product.variants.filter(is_active=True).order_by("color", "size")
+    )
+    groups = group_variants_by_color(product, variants)
+    fallback = product_fallback_images(product)
+    cards = []
+    if not groups:
+        image_url = fallback[0] if fallback else ""
+        cards.append({
+            "key": "p%d" % product.id,
+            "product": product,
+            "color": "",
+            "color_slug": "nocolor",
+            "detail_url": reverse("asic:detail", args=[product.id]),
+            "image_url": image_url,
+            "images": list(fallback),
+            "variants": [],
+            "stock": 0,
+            "has_stock": False,
+        })
+        return cards
+    for group in groups:
+        if allowed_colors and group["color"].lower() not in allowed_colors:
+            continue
+        color_slug = slugify(group["color"]) or "color"
+        detail_url = "%s?color=%s" % (
+            reverse("asic:detail", args=[product.id]), quote(group["color"]))
+        cards.append({
+            "key": "p%d-%s" % (product.id, color_slug),
+            "product": product,
+            "color": group["color"],
+            "color_slug": color_slug,
+            "detail_url": detail_url,
+            "image_url": group["image_url"] or (fallback[0] if fallback else ""),
+            "images": list(group["images"]) or list(fallback),
+            "variants": list(group["variants"]),
+            "stock": group["stock"],
+            "has_stock": group["has_stock"],
+        })
+    return cards
+
+
 class HomeView(ListView):
     template_name = "index.html"
     model = Product
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         active_banner = BannerImage.objects.filter(is_active=True).first()
-        context['products'] = Product.objects.filter(is_active=True).prefetch_related('variants')[:8]
-        context['categories'] = ProductCategory.objects.filter(
+        top_products = list(
+            Product.objects.filter(is_active=True)
+            .select_related("manufacturer", "category")
+            .prefetch_related(Prefetch(
+                "variants",
+                queryset=ProductVariant.objects.filter(is_active=True).order_by("color", "size"),
+                to_attr="active_variants",
+            ))
+            .order_by("-is_featured", "-created_at", "id")[:8]
+        )
+        color_cards = []
+        for product in top_products:
+            color_cards.extend(build_color_cards(product))
+        context['color_cards'] = color_cards[:12]
+        context['products'] = top_products
+        categories = list(ProductCategory.objects.filter(
             product__is_active=True
-        ).distinct().order_by("name")
+        ).distinct().order_by("name"))
+        # One real product image per category (DB-driven, single query).
+        if categories:
+            rep_products = (
+                Product.objects.filter(is_active=True, category__in=categories)
+                .exclude(images__isnull=True).exclude(images="")
+                .select_related("category")
+                .order_by("category_id", "-is_featured", "-created_at")
+            )
+            rep_by_cat = {}
+            for p in rep_products:
+                if p.category_id not in rep_by_cat:
+                    try:
+                        rep_by_cat[p.category_id] = p.images.url
+                    except (ValueError, AttributeError):
+                        rep_by_cat[p.category_id] = ""
+            for cat in categories:
+                cat.rep_image_url = rep_by_cat.get(cat.id, "")
+        context['categories'] = categories
         context['partners'] = Manufacturer.objects.filter(is_active=True)[:8]
         context['active_banner'] = active_banner
-        for product in context['products']:
-            product.default_variant = product.variants.filter(is_active=True).order_by('id').first()
+        for product in top_products:
+            cached = sorted(product.active_variants, key=lambda v: v.id)
+            product.default_variant = cached[0] if cached else None
 
         return context
 
@@ -62,7 +211,11 @@ class CatalogView(ListView):
         queryset = (
             Product.objects.filter(is_active=True)
             .select_related("manufacturer", "category")
-            .prefetch_related("variants")
+            .prefetch_related(Prefetch(
+                "variants",
+                queryset=ProductVariant.objects.filter(is_active=True).order_by("color", "size"),
+                to_attr="active_variants",
+            ))
         )
 
         manufacturers = self.request.GET.getlist("manufacturer")
@@ -162,8 +315,19 @@ class CatalogView(ListView):
         })
 
         context['partners'] = Manufacturer.objects.filter(is_active=True)[:8]
+        allowed_colors = [
+            c.strip().lower()
+            for c in self.request.GET.getlist("color") if c.strip()
+        ] or None
+        color_cards = []
         for product in context['products']:
-            product.default_variant = product.variants.filter(is_active=True).order_by('id').first()
+            cached = sorted(product.active_variants, key=lambda v: v.id)
+            product.default_variant = cached[0] if cached else None
+            active_variants = list(product.active_variants)
+            product.variant_list = active_variants
+            product.variant_count = len(active_variants)
+            color_cards.extend(build_color_cards(product, allowed_colors))
+        context['color_cards'] = color_cards
 
         if settings.DEBUG:
             context['debug_info'] = {
@@ -210,42 +374,76 @@ class ProductDetailView(DetailView):
         discount_info = product.get_discount_info()
         context['discount_info'] = discount_info
         context['delivery'] = DeliveryInfo.objects.first()
-        variants = product.variants.filter(is_active=True).order_by("color", "size")
+        variants = list(product.variants.filter(is_active=True).order_by("color", "size"))
         context["variants"] = variants
-        default_variant = variants.filter(stock__gt=0).first() or variants.first()
-        selected_variant = default_variant
+        default_variant = next((v for v in variants if v.stock and v.stock > 0), None)
+        if default_variant is None and variants:
+            default_variant = variants[0]
 
-        selected_variant_id = self.request.GET.get("variant")
-        if selected_variant_id:
-            try:
-                selected_variant = variants.get(id=selected_variant_id)
-            except (ValueError, ProductVariant.DoesNotExist):
-                selected_variant = default_variant
-
-        variant_groups = []
-        for variant in variants:
-            group = next(
-                (g for g in variant_groups if g["color"].lower() == variant.color.lower()),
-                None,
-            )
-            if not group:
-                group = {
-                    "color": variant.color,
-                    "variants": [],
-                    "image_url": None,
-                }
-                variant_groups.append(group)
-            group["variants"].append(variant)
-            if not group["image_url"] and variant.image:
-                group["image_url"] = variant.image.url
-
-        fallback_image = product.images.url if product.images else ""
+        variant_groups = group_variants_by_color(product, variants)
         for group in variant_groups:
             if not group.get("image_url"):
-                group["image_url"] = fallback_image
+                try:
+                    group["image_url"] = product.images.url if product.images else ""
+                except (ValueError, AttributeError):
+                    group["image_url"] = ""
+
+        # Selection priority:
+        # 1) single-variant product -> that variant;
+        # 2) valid ?variant=<id> (must belong to this product);
+        # 3) valid ?color=<name> (must belong to this product);
+        # 4) otherwise one RANDOM available color/variant.
+        selected_variant = None
+        selected_group = None
+        if len(variants) == 1:
+            selected_variant = variants[0]
+            selected_group = variant_groups[0] if variant_groups else None
+        else:
+            selected_variant_id = self.request.GET.get("variant")
+            if selected_variant_id:
+                try:
+                    match = next(v for v in variants if str(v.id) == str(int(selected_variant_id)))
+                    selected_variant = match
+                    selected_group = next(
+                        (g for g in variant_groups
+                         if any(v.id == match.id for v in g["variants"])),
+                        None,
+                    )
+                except (ValueError, TypeError, StopIteration):
+                    selected_variant = None
+
+            if selected_variant is None:
+                color_param = (self.request.GET.get("color") or "").strip()
+                if color_param:
+                    group = next(
+                        (g for g in variant_groups if g["color"].lower() == color_param.lower()),
+                        None,
+                    )
+                    if group is not None:
+                        selected_group = group
+                        in_stock = [v for v in group["variants"] if v.stock and v.stock > 0]
+                        selected_variant = in_stock[0] if in_stock else group["variants"][0]
+
+            if selected_variant is None and variant_groups:
+                available = [g for g in variant_groups if g["has_stock"]]
+                group = random.choice(available) if available else variant_groups[0]
+                selected_group = group
+                in_stock = [v for v in group["variants"] if v.stock and v.stock > 0]
+                selected_variant = in_stock[0] if in_stock else group["variants"][0]
+
+        if selected_group is None and selected_variant is not None:
+            selected_group = next(
+                (g for g in variant_groups
+                 if any(v.id == selected_variant.id for v in g["variants"])),
+                None,
+            )
+        gallery_images = list(selected_group["images"]) if selected_group and selected_group["images"] else product_fallback_images(product)
 
         context["default_variant"] = default_variant
         context["selected_variant"] = selected_variant
+        context["selected_color"] = selected_group["color"] if selected_group else ""
+        context["gallery_images"] = gallery_images
+        context["fallback_images"] = product_fallback_images(product)
         context["variant_groups"] = variant_groups
         context["seo_title"] = product.meta_title or product.name
         context["seo_description"] = product.meta_description or product.description[:160]
@@ -256,10 +454,30 @@ class ProductDetailView(DetailView):
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from .cart import Cart
+from django.http import JsonResponse
+
+
+def wants_json(request):
+    """True when the client expects a JSON response (AJAX add-to-cart)."""
+    return (
+        request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        or request.GET.get('format') == 'json'
+        or request.POST.get('ajax') == '1'
+    )
+
+
+def cart_json_response(cart, ok, message, status=200, quantity=0):
+    return JsonResponse({
+        'ok': ok,
+        'message': message,
+        'cart_count': len(cart),
+        'quantity': quantity,
+    }, status=status)
 
 # CART
 def add_to_cart(request, variant_id):
     variant = get_object_or_404(ProductVariant, id=variant_id, is_active=True)
+    variant.refresh_from_db()
     cart = Cart(request)
 
     try:
@@ -270,17 +488,94 @@ def add_to_cart(request, variant_id):
         quantity = 1
 
     if variant.stock <= 0:
-        messages.warning(request, "Tanlangan variant hozirda yoq.")
+        message = "Bu mahsulotdan yetarli miqdor mavjud emas."
+        if wants_json(request):
+            return cart_json_response(cart, False, message, status=400)
+        messages.warning(request, message)
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
     if quantity > variant.stock:
         quantity = variant.stock
+        message = f"Mavjud: {variant.stock} dona. Miqdor kamaytirildi."
+        cart.add(variant=variant, quantity=quantity, update_quantity=False)
+        if wants_json(request):
+            return cart_json_response(cart, True, message, quantity=quantity)
+        messages.warning(request, message)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
 
     cart.add(variant=variant, quantity=quantity, update_quantity=False)
+    if wants_json(request):
+        return cart_json_response(cart, True, "Savatga qo'shildi", quantity=quantity)
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def add_to_cart_detail(request, product_id):
+    """Detail/modal add: product + explicit variant_id, fully validated server-side."""
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+
+    def back_to_detail():
+        return redirect(reverse('asic:detail', args=[product.id]))
+
+    if request.method != 'POST':
+        return back_to_detail()
+
+    variant_id = request.POST.get('variant_id')
+    if not variant_id:
+        if wants_json(request):
+            return cart_json_response(Cart(request), False, "Avval variantni tanlang", status=400)
+        messages.error(request, "Avval variantni tanlang")
+        return back_to_detail()
+
+    try:
+        variant = ProductVariant.objects.get(
+            id=int(variant_id), product=product, is_active=True)
+    except (ValueError, TypeError, ProductVariant.DoesNotExist):
+        if wants_json(request):
+            return cart_json_response(Cart(request), False, "Avval variantni tanlang", status=400)
+        messages.error(request, "Avval variantni tanlang")
+        return back_to_detail()
+
+    variant.refresh_from_db()
+
+    try:
+        quantity = int(request.POST.get('quantity', 1))
+        if quantity <= 0:
+            quantity = 1
+    except (ValueError, TypeError):
+        quantity = 1
+
+    if variant.stock <= 0:
+        message = "Bu mahsulotdan yetarli miqdor mavjud emas."
+        if wants_json(request):
+            return cart_json_response(Cart(request), False, message, status=400)
+        messages.error(request, message)
+        return back_to_detail()
+
+    cart = Cart(request)
+    if quantity > variant.stock:
+        quantity = variant.stock
+        message = f"Mavjud: {variant.stock} dona. Miqdor kamaytirildi."
+        cart.add(variant=variant, quantity=quantity, update_quantity=False)
+        if request.POST.get('buy_now'):
+            return redirect('asic:checkout')
+        if wants_json(request):
+            return cart_json_response(cart, True, message, quantity=quantity)
+        messages.warning(request, message)
+        return back_to_detail()
+
+    cart.add(variant=variant, quantity=quantity, update_quantity=False)
+    if request.POST.get('buy_now'):
+        return redirect('asic:checkout')
+    if wants_json(request):
+        return cart_json_response(cart, True, "Savatga qo'shildi", quantity=quantity)
+    return back_to_detail()
 
 def add_cart_buy(request, variant_id):
     variant = get_object_or_404(ProductVariant, id=variant_id, is_active=True)
+    variant.refresh_from_db()
+    if variant.stock <= 0:
+        messages.error(request, "Sotuvda mavjud emas")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     cart = Cart(request)
     cart.add(variant)
 

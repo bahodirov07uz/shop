@@ -40,6 +40,24 @@
 {% include 'partials/header.html' %}
     {% block content %}
     {% endblock content %}
+    <!-- Django messages as non-intrusive toasts -->
+    {% if messages %}
+    <div id="site-toasts" style="position:fixed;right:14px;bottom:14px;z-index:2000;display:flex;flex-direction:column;gap:8px;max-width:min(92vw,360px);">
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %} alert-dismissible fade show mb-0 shadow" role="alert" style="font-size:14px;">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Yopish"></button>
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(function () {
+            document.querySelectorAll('#site-toasts .alert').forEach(function (el) {
+                try { bootstrap.Alert.getOrCreateInstance(el).close(); } catch (e) { el.remove(); }
+            });
+        }, 4000);
+    </script>
+    {% endif %}
     <!-- Footer -->
 {% include 'partials/footer.html' %}
 
@@ -47,37 +65,93 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script>
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        // AJAX add-to-cart: stay on the current page, update counter, show toast.
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
+            }
+            return cookieValue;
+        }
+
+        function updateCartCounters(count) {
+            document.querySelectorAll('[data-cart-count]').forEach(function (el) {
+                el.textContent = count;
+            });
+        }
+
+        function ensureToastContainer() {
+            var box = document.getElementById('site-toasts');
+            if (!box) {
+                box = document.createElement('div');
+                box.id = 'site-toasts';
+                box.setAttribute('style', 'position:fixed;right:14px;bottom:14px;z-index:2000;display:flex;flex-direction:column;gap:8px;max-width:min(92vw,360px);');
+                document.body.appendChild(box);
+            }
+            return box;
+        }
+
+        function showCartToast(message, ok) {
+            var box = ensureToastContainer();
+            var el = document.createElement('div');
+            el.className = 'alert ' + (ok ? 'alert-success' : 'alert-danger') + ' alert-dismissible fade show mb-0 shadow';
+            el.setAttribute('role', 'alert');
+            el.setAttribute('style', 'font-size:14px;');
+            var icon = ok ? '<i class="fas fa-check-circle me-1"></i>' : '<i class="fas fa-exclamation-circle me-1"></i>';
+            el.innerHTML = icon + '<span></span> '
+                + (ok ? '<a href="{% url 'asic:cart_detail' %}" class="btn btn-success btn-sm ms-2">Savatga o\'tish</a>'
+                       + '<button type="button" class="btn btn-outline-secondary btn-sm ms-1" data-bs-dismiss="alert">Xaridni davom ettirish</button>'
+                     : '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Yopish"></button>');
+            el.querySelector('span').textContent = message;
+            box.appendChild(el);
+            setTimeout(function () {
+                try { bootstrap.Alert.getOrCreateInstance(el).close(); } catch (e) { el.remove(); }
+            }, 5000);
+        }
+
+        document.addEventListener('submit', function (e) {
+            var form = e.target && e.target.closest ? e.target.closest('form.js-ajax-cart') : null;
+            if (!form || e.defaultPrevented) return;
+            e.preventDefault();
+            var data = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: data,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).then(function (resp) {
+                return resp.json().then(function (json) {
+                    return { status: resp.status, json: json };
+                }).catch(function () {
+                    return { status: resp.status, json: null };
+                });
+            }).then(function (result) {
+                var json = result.json || {};
+                if (result.status >= 200 && result.status < 300 && json.ok) {
+                    if (typeof json.cart_count !== 'undefined') updateCartCounters(json.cart_count);
+                    var modal = form.closest('.modal');
+                    if (modal) {
+                        try {
+                            var instance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                            instance.hide();
+                        } catch (err) {}
+                    }
+                    showCartToast(json.message || "Savatga qo'shildi", true);
+                } else {
+                    showCartToast(json.message || 'Xatolik yuz berdi. Qayta urinib ko\'ring.', false);
+                }
+            }).catch(function () {
+                showCartToast('Xatolik yuz berdi. Qayta urinib ko\'ring.', false);
             });
         });
-
-        // Add to cart functionality
-        document.querySelectorAll('.btn-primary').forEach(button => {
-            if (button.textContent.includes('Savatchaga')) {
-                button.addEventListener('click', function () {
-                    // Simple cart notification
-                    this.innerHTML = '<i class="fas fa-check me-2"></i>Qo?shildi!';
-                    this.classList.remove('btn-primary');
-                    this.classList.add('btn-success');
-
-                    setTimeout(() => {
-                        this.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Savatchaga';
-                        this.classList.remove('btn-success');
-                        this.classList.add('btn-primary');
-                    }, 2000);
-                });
-            }
-        });
+    </script>
+    <script>
 
         // Animation on scroll
         const observerOptions = {

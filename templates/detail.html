@@ -1,539 +1,685 @@
 {% extends 'base.html' %}
-{% load static %}
-<title>{% block title %}{{ page_titles.detail }}: {{ product.name }}{% endblock %}</title>
+{% load static humanize %}
+{% block title %}{{ page_titles.detail }}: {{ product.name }}{% endblock %}
 {% block meta_description %}{{ seo_description|default:product.description|truncatechars:160 }}{% endblock %}
 {% block og_title %}{{ seo_title|default:product.name }}{% endblock %}
 {% block og_description %}{{ seo_description|default:product.description|truncatechars:160 }}{% endblock %}
-{% if seo_image %}
-{% block og_image %}{{ seo_image }}{% endblock %}
-{% endif %}
+
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/detail.css' %}">
 
 <style>
-    .product-image-container {
-        position: relative;
-        width: 100%;
-        height: 400px;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 15px;
-        transition: border-color 0.3s ease;
+    /* Product Detail page — reference layout, existing site tokens
+       (Manrope, site green #28a745, bootstrap cards/spacing). */
+    .pdp-breadcrumb { font-size: 14px; color: #6c757d; }
+    .pdp-breadcrumb a { color: #6c757d; }
+    .pdp-breadcrumb a:hover { color: #28a745; }
+    .pdp-breadcrumb .sep { margin: 0 6px; color: #adb5bd; }
+    .pdp-breadcrumb .current { color: #6c757d; }
+
+    .pdp-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) 340px;
+        gap: 28px;
+        align-items: start;
     }
 
-    .product-image-container:hover {
-        border-color: #28a745;
+    /* ---- gallery (reference: vertical thumbs + large image + arrows) ---- */
+    .pdp-gallery { display: flex; gap: 12px; min-width: 0; }
+    .pdp-thumbs { display: flex; flex-direction: column; gap: 10px; }
+    .pdp-thumb {
+        width: 72px; height: 72px; object-fit: cover;
+        border-radius: 10px; border: 2px solid #e9ecef;
+        cursor: pointer; background: #fff; padding: 0;
+        transition: border-color .2s ease, transform .2s ease;
+    }
+    .pdp-thumb:hover { border-color: #28a745; }
+    .pdp-thumb.active { border-color: #28a745; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+    .pdp-main-wrap { position: relative; flex: 1; min-width: 0; }
+    .pdp-main {
+        width: 100%; aspect-ratio: 1 / 1; object-fit: contain;
+        background: #fff; border: 1px solid #e9ecef; border-radius: 14px;
+    }
+    .pdp-noimg {
+        width: 100%; aspect-ratio: 1 / 1; display: flex;
+        align-items: center; justify-content: center;
+        background: #f8f9fa; color: #6c757d;
+        border: 2px dashed #dee2e6; border-radius: 14px;
+    }
+    .pdp-arrow {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        width: 38px; height: 38px; border-radius: 50%;
+        border: 1px solid #dee2e6; background: #fff;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; color: #343a40;
+        box-shadow: 0 2px 6px rgba(0,0,0,.12);
+    }
+    .pdp-arrow:hover { border-color: #28a745; color: #28a745; }
+    .pdp-arrow.prev { left: 10px; }
+    .pdp-arrow.next { right: 10px; }
+
+    /* ---- middle info column ---- */
+    .pdp-brand { color: #6c757d; font-size: 15px; margin-bottom: 4px; }
+    .pdp-title { font-size: 24px; font-weight: 700; color: #212529; line-height: 1.3; margin-bottom: 10px; }
+    .pdp-opt-label { font-size: 15px; color: #212529; margin: 16px 0 10px; }
+    .pdp-opt-label strong { font-weight: 700; }
+
+    .pdp-colors { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pdp-color {
+        width: 64px; height: 64px; border-radius: 10px; overflow: hidden;
+        border: 2px solid #e9ecef; background: #fff; cursor: pointer;
+        padding: 0; position: relative;
+        transition: border-color .2s ease, transform .2s ease;
+    }
+    .pdp-color img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pdp-color .no-photo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6c757d; background: #f8f9fa; text-align: center; padding: 2px; }
+    .pdp-color:hover { border-color: #28a745; }
+    .pdp-color.selected { border-color: #212529; box-shadow: 0 0 0 1px #212529; }
+    .pdp-color.disabled { opacity: .45; cursor: not-allowed; }
+    .pdp-color.disabled::after {
+        content: ""; position: absolute; left: -10%; top: 50%;
+        width: 120%; height: 2px; background: #adb5bd; transform: rotate(-45deg);
     }
 
-    .product-image {
-        max-width: 90%;
-        max-height: 90%;
-        object-fit: contain;
-        transition: opacity 0.3s ease, transform 0.3s ease;
+    .pdp-sizes { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pdp-size {
+        min-width: 52px; height: 44px; padding: 0 14px;
+        border: 1px solid #dee2e6; border-radius: 10px; background: #fff;
+        font-weight: 600; font-size: 15px; color: #212529; cursor: pointer;
+        transition: border-color .2s ease, background .2s ease;
     }
-
-    .product-image.zoomed {
-        transform: scale(1.5);
-        cursor: zoom-out;
+    .pdp-size:hover:not(:disabled) { border-color: #28a745; }
+    .pdp-size.selected { border: 2px solid #212529; }
+    .pdp-size:disabled { opacity: .45; cursor: not-allowed; background: #f1f3f5; color: #868e96; text-decoration: line-through; }
+    .pdp-more {
+        height: 44px; padding: 0 14px; border: 1px solid #dee2e6; border-radius: 10px;
+        background: #fff; color: #212529; font-size: 14px;
     }
+    .pdp-sku { font-size: 13px; color: #868e96; margin-top: 12px; }
 
-    .product-gallery {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
+    /* ---- right buy box (site green CTA) ---- */
+    .pdp-buy {
+        border: 1px solid #e9ecef; border-radius: 16px; overflow: hidden;
+        background: #fff; position: sticky; top: 16px;
     }
-
-    .gallery-thumb {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border: 2px solid #dee2e6;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        background-color: white;
+    .pdp-buy-body { padding: 18px; }
+    .pdp-price { font-size: 30px; font-weight: 800; color: #212529; line-height: 1.1; }
+    .pdp-oldprice { font-size: 16px; color: #868e96; text-decoration: line-through; margin-top: 2px; }
+    .pdp-discount { display: inline-block; background: #dc3545; color: #fff; font-size: 13px; font-weight: 700; border-radius: 6px; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
+    .pdp-perpiece { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #495057; background: #f1f3f5; border-radius: 8px; padding: 6px 10px; margin-top: 12px; }
+    .pdp-alert { font-size: 14px; margin: 12px 0 0; padding: 10px 12px; }
+    .pdp-qty-hint { font-size: 12px; color: #fd7e14; margin-top: 6px; min-height: 18px; }
+    .pdp-qty { display: flex; align-items: center; gap: 8px; margin: 14px 0; }
+    .pdp-qty .quantity-btn { width: 38px; height: 38px; border: 1px solid #dee2e6; background: #fff; border-radius: 8px; cursor: pointer; font-size: 16px; }
+    .pdp-qty .quantity-btn:hover { border-color: #28a745; }
+    .pdp-qty .quantity-input { width: 64px; height: 38px; text-align: center; border: 1px solid #dee2e6; border-radius: 8px; font-weight: 700; }
+    .pdp-oneclick { width: 100%; border: 1px solid #dee2e6; background: #f1f3f5; border-radius: 10px; padding: 11px; font-weight: 600; margin-bottom: 10px; cursor: pointer; }
+    .pdp-oneclick:hover { background: #e9ecef; }
+    .pdp-add {
+        width: 100%; border: none; border-radius: 10px; padding: 13px;
+        background: linear-gradient(45deg, #28a745, #20c997); color: #fff;
+        font-weight: 700; font-size: 16px; cursor: pointer; margin-bottom: 6px;
+        transition: transform .2s ease, box-shadow .2s ease;
     }
+    .pdp-add small { display: block; font-weight: 400; font-size: 12px; opacity: .9; }
+    .pdp-add:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(40,167,69,.35); }
+    .pdp-add:disabled { opacity: .55; cursor: not-allowed; }
+    .pdp-stock { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 12px; }
+    .pdp-stock.ok { color: #28a745; font-weight: 600; }
+    .pdp-stock.out { color: #dc3545; font-weight: 700; }
+    .pdp-stock.muted { color: #6c757d; }
+    .pdp-stock .tick { width: 26px; height: 26px; border-radius: 8px; background: #e6f9ec; display: inline-flex; align-items: center; justify-content: center; }
+    .pdp-stock.muted .tick { background: #f1f3f5; }
+    .pdp-stock.out .tick { background: #fdecec; }
+    .pdp-delivery { border-top: 1px solid #e9ecef; margin-top: 14px; padding-top: 14px; font-size: 14px; }
+    .pdp-delivery strong { display: block; font-size: 16px; margin-bottom: 2px; }
 
-    .gallery-thumb:hover {
-        border-color: #28a745;
-        transform: translateY(-2px);
+    /* ---- tabs below (existing content kept) ---- */
+    .pdp-tabs { margin-top: 28px; }
+    .nav-tabs { border-bottom: 2px solid #e9ecef; margin-bottom: 0; }
+    .nav-tabs .nav-link { border: none; color: #6c757d; font-weight: 600; padding: 12px 22px; }
+    .nav-tabs .nav-link.active { color: #28a745; border-bottom: 3px solid #28a745; background: none; }
+    .tab-content { padding: 20px; border: 1px solid #e9ecef; border-top: none; border-radius: 0 0 8px 8px; background: #fff; }
+
+    /* ---- sticky mobile buy bar (reference mobile) ---- */
+    .pdp-stickybar {
+        display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030;
+        background: #fff; border-top: 1px solid #e9ecef; padding: 10px 14px;
+        align-items: center; justify-content: space-between; gap: 12px;
     }
+    .pdp-stickybar .p-old { font-size: 12px; color: #868e96; text-decoration: line-through; }
+    .pdp-stickybar .p-new { font-size: 17px; font-weight: 800; }
+    .pdp-stickybar button { border: none; border-radius: 10px; padding: 10px 22px; background: linear-gradient(45deg, #28a745, #20c997); color: #fff; font-weight: 700; }
+    .pdp-stickybar button small { display: block; font-size: 10px; font-weight: 400; }
+    .pdp-stickybar button:disabled { opacity: .55; }
 
-    .gallery-thumb.active {
-        border: 3px solid #28a745;
-        transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    @media (max-width: 991px) {
+        .pdp-grid { grid-template-columns: 1fr; }
+        .pdp-buy { position: static; }
+        .pdp-stickybar { display: flex; }
+        .pdp-page { padding-bottom: 76px; }
     }
-
-    .no-image-placeholder {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f8f9fa;
-        color: #6c757d;
-        font-size: 16px;
-        border: 2px dashed #dee2e6;
-        border-radius: 6px;
+    @media (max-width: 767px) {
+        .pdp-thumbs {
+            display: none;
+        }
     }
-
-    .product-badge {
-        display: inline-block;
-        background: linear-gradient(45deg, #28a745, #20c997);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 4px;
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-
-    .product-brand {
-        color: #6c757d;
-        font-size: 16px;
-        margin-bottom: 5px;
-    }
-
-    .product-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #343a40;
-        margin-bottom: 15px;
-        line-height: 1.3;
-    }
-
-    .price-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-    }
-
-    .discount-badge {
-        background-color: #dc3545;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-    .new-price {
-        font-size: 28px;
-        font-weight: 700;
-        color: #28a745;
-    }
-
-    .old-price {
-        font-size: 20px;
-        color: #6c757d;
-        text-decoration: line-through;
-    }
-
-    .availability {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #28a745;
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
-
-    .feature-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .feature-list li {
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .feature-list i {
-        color: #28a745;
-        width: 20px;
-    }
-
-    .quantity-selector {
-        margin: 20px 0;
-    }
-
-    .quantity-btn {
-        width: 40px;
-        height: 40px;
-        border: 1px solid #dee2e6;
-        background-color: white;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .quantity-btn:hover {
-        background-color: #f8f9fa;
-        border-color: #28a745;
-    }
-
-    .quantity-input {
-        width: 70px;
-        height: 40px;
-        text-align: center;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        font-weight: 600;
-    }
-
-    .btn-primary-custom {
-        background: linear-gradient(45deg, #28a745, #20c997);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        width: 100%;
-        margin-bottom: 15px;
-    }
-
-    .btn-primary-custom:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-    }
-
-    .nav-tabs {
-        border-bottom: 2px solid #e9ecef;
-        margin-bottom: 20px;
-    }
-
-    .nav-tabs .nav-link {
-        border: none;
-        color: #6c757d;
-        font-weight: 600;
-        padding: 12px 24px;
-        border-radius: 6px 6px 0 0;
-        transition: all 0.3s ease;
-    }
-
-    .nav-tabs .nav-link:hover {
-        color: #28a745;
-        background-color: #f8f9fa;
-    }
-
-    .nav-tabs .nav-link.active {
-        color: #28a745;
-        background-color: white;
-        border-bottom: 3px solid #28a745;
-    }
-
-    .tab-content {
-        padding: 20px;
-        border: 1px solid #e9ecef;
-        border-top: none;
-        border-radius: 0 0 6px 6px;
-        background-color: white;
-    }
-
-    .specs-table {
-        overflow-x: auto;
-    }
-
-    .specs-table table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .specs-table th {
-        background-color: #f8f9fa;
-        padding: 12px;
-        text-align: left;
-        border-bottom: 2px solid #dee2e6;
-    }
-
-    .specs-table td {
-        padding: 12px;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .specs-table tr:hover {
-        background-color: #f8f9fa;
-    }
-
-    @media (max-width: 768px) {
-        .product-image-container { height: 300px; }
-        .product-title { font-size: 20px; }
-        .new-price { font-size: 24px; }
-        .gallery-thumb { width: 60px; height: 60px; }
-        .nav-tabs .nav-link { padding: 10px 15px; font-size: 14px; }
-    }
-
     @media (max-width: 576px) {
-        .product-image-container { height: 250px; }
-        .price-wrapper { gap: 10px; }
-        .gallery-thumb { width: 50px; height: 50px; }
+        .pdp-gallery { flex-direction: column-reverse; }
+        .pdp-thumbs { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+        .pdp-thumb { width: 58px; height: 58px; flex: 0 0 auto; }
+        .pdp-arrow { width: 32px; height: 32px; }
+        .pdp-title { font-size: 19px; }
+        .pdp-price { font-size: 26px; }
+        .pdp-color { width: 56px; height: 56px; }
+        .pdp-size { min-width: 48px; height: 40px; font-size: 14px; }
     }
 </style>
 
-<section class="py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 mb-4">
-                <div class="product-image-container">
-                    {% if product.images %}
-                    <img src="{{ product.images.url }}" alt="{{ product.name }}" class="product-image" id="mainImage" onclick="toggleZoom()">
-                    {% else %}
-                    <div class="no-image-placeholder">Rasm yo?q</div>
-                    {% endif %}
-                </div>
+<div class="container py-3 pdp-page">
+    <nav class="pdp-breadcrumb mb-3" aria-label="breadcrumb">
+        <a href="{% url 'asic:home' %}">Bosh sahifa</a><span class="sep">›</span>
+        <a href="{% url 'asic:catalog' %}">Barcha toifalar</a><span class="sep">›</span>
+        {% if product.category %}
+            {% if product.category.parent %}
+            <a href="{% url 'asic:catalog' %}?category={{ product.category.parent.id }}">{{ product.category.parent.name }}</a><span class="sep">›</span>
+            {% endif %}
+            <a href="{% url 'asic:catalog' %}?category={{ product.category.id }}">{{ product.category.name }}</a><span class="sep">›</span>
+        {% endif %}
+        <span class="current">{{ product.name|truncatechars:40 }}</span>
+    </nav>
 
-                <div class="product-gallery">
-                    {% if product.images %}
-                    <img src="{{ product.images.url }}" alt="View 1" class="gallery-thumb active" onclick="changeImage(this, '{{ product.images.url }}')">
-                    {% endif %}
-                    {% if product.image2 %}
-                    <img src="{{ product.image2.url }}" alt="View 2" class="gallery-thumb" onclick="changeImage(this, '{{ product.image2.url }}')">
-                    {% endif %}
-                    {% if product.image3 %}
-                    <img src="{{ product.image3.url }}" alt="View 3" class="gallery-thumb" onclick="changeImage(this, '{{ product.image3.url }}')">
-                    {% endif %}
-                </div>
+    <div class="pdp-grid">
+        <!-- 1) Gallery (selected color images; updates on color change) -->
+        <div class="pdp-gallery">
+            <div class="pdp-thumbs" id="pdpThumbs">
+                {% for url in gallery_images %}
+                <img src="{{ url }}" alt="{{ product.name }} — {{ forloop.counter }}" class="pdp-thumb{% if forloop.first %} active{% endif %}" data-full="{{ url }}" tabindex="0">
+                {% endfor %}
             </div>
-
-            <div class="col-lg-6">
-                {% if product.is_featured %}
-                <div class="product-badge">TOP</div>
-                {% endif %}
-                <div class="product-brand">{{ product.manufacturer.name }}</div>
-                <h1 class="product-title">{{ product.name }}</h1>
-
-                <div class="price-wrapper">
-                    {% if discount_info.total_discount > 0 %}
-                    <div class="discount-badge">-{{ discount_info.total_discount_percent }}%</div>
-                    <div class="new-price">${{ discount_info.discounted_price }}</div>
-                    <div class="old-price">${{ product.price }}</div>
-                    {% else %}
-                    <div class="new-price">${{ product.price }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="availability" id="availabilityText">
-                    {% if default_variant and default_variant.stock > 0 %}
-                    <i class="fas fa-check-circle"></i>
-                    <span>Mavjud: {{ default_variant.stock }} ta</span>
-                    {% else %}
-                    <i class="fas fa-times-circle"></i>
-                    <span>Hozircha mavjud emas</span>
-                    {% endif %}
-                </div>
-
-                <div class="mb-3">
-                    <strong>Asosiy ma'lumotlar:</strong>
-                    <ul class="feature-list mt-2">
-                        {% if product.category %}
-                        <li><i class="fas fa-layer-group"></i>Kategoriya: {{ product.category.name }}</li>
-                        {% endif %}
-                        <li><i class="fas fa-tag"></i>Brend: {{ product.manufacturer.name }}</li>
-                        <li><i class="fas fa-box"></i>Jami zaxira: {{ product.stock }}</li>
-                    </ul>
-                </div>
-
-                {% if variants %}
-                <form method="post" id="addToCartForm" action="{% url 'asic:add_to_cart' default_variant.id %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label">Variant</label>
-                        <select class="form-select" id="variantSelect">
-                            {% for variant in variants %}
-                            <option value="{{ variant.id }}" data-stock="{{ variant.stock }}">
-                                {{ variant.color }} / {{ variant.size }} ({{ variant.sku }})
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="quantity-selector d-flex align-items-center mb-3">
-                        <strong class="me-3">Miqdor:</strong>
-                        <button type="button" class="quantity-btn" onclick="changeQuantity(-1)"><i class="fas fa-minus"></i></button>
-                        <input type="number" class="quantity-input mx-2" name="quantity" id="quantity" value="1" min="1">
-                        <button type="button" class="quantity-btn" onclick="changeQuantity(1)"><i class="fas fa-plus"></i></button>
-                    </div>
-
-                    <button type="submit" class="btn-primary-custom">
-                        <i class="fas fa-cart-plus me-2"></i>Savatchaga qo?shish
-                    </button>
-                </form>
+            <div class="pdp-main-wrap">
+                {% if gallery_images %}
+                <img src="{{ gallery_images.0 }}" alt="{{ product.name }}" class="pdp-main" id="pdpMain">
                 {% else %}
-                <button class="btn btn-outline-secondary w-100" disabled>Variant yo?q</button>
+                <div class="pdp-noimg">Rasm yo'q</div>
                 {% endif %}
-
-                <div class="mt-3">
-                    <small class="text-muted">{{ delivery.main_text|linebreaksbr }}</small>
-                </div>
+                <button class="pdp-arrow prev" id="pdpPrev" aria-label="Oldingi rasm" type="button">‹</button>
+                <button class="pdp-arrow next" id="pdpNext" aria-label="Keyingi rasm" type="button">›</button>
             </div>
         </div>
-    </div>
-</section>
 
-<section class="py-4">
-    <div class="container">
-        <ul class="nav nav-tabs" id="productTabs" role="tablist">
+        <!-- 2) Info: title, color + size selectors -->
+        <div class="pdp-info">
+            {% if product.is_featured %}
+            <span class="badge bg-success mb-2">TOP</span>
+            {% endif %}
+            <div class="pdp-brand">{{ product.manufacturer.name }}</div>
+            <h1 class="pdp-title">{{ product.name }}</h1>
+
+            {% if variant_groups %}
+            <div class="pdp-opt-label">Rang: <strong id="pdpColorName">{% if selected_variant %}{{ selected_variant.color }}{% else %}Tanlang{% endif %}</strong></div>
+            <div class="pdp-colors" id="pdpColors" role="radiogroup" aria-label="Rang tanlash">
+                {% for group in variant_groups %}
+                <button type="button" class="pdp-color{% if selected_variant and group.color == selected_variant.color %} selected{% endif %}"
+                        data-color="{{ group.color|escapejs }}" data-image="{{ group.image_url }}"
+                        role="radio" aria-checked="{% if selected_variant and group.color == selected_variant.color %}true{% else %}false{% endif %}"
+                        title="{{ group.color }}">
+                    {% if group.image_url %}
+                    <img src="{{ group.image_url }}" alt="{{ group.color }}" loading="lazy">
+                    {% else %}
+                    <span class="no-photo">{{ group.color }}</span>
+                    {% endif %}
+                </button>
+                {% endfor %}
+            </div>
+
+            <div class="pdp-opt-label">O'lcham EUR: <strong id="pdpSizeName">{% if selected_variant %}{{ selected_variant.size }}{% else %}Tanlang{% endif %}</strong></div>
+            <div class="pdp-sizes" id="pdpSizes" role="radiogroup" aria-label="O'lcham tanlash">
+                {% if selected_variant %}
+                    {% for group in variant_groups %}
+                        {% if group.color == selected_variant.color %}
+                            {% for v in group.variants %}
+                            <button type="button" class="pdp-size{% if v.id == selected_variant.id %} selected{% endif %}"
+                                    data-variant="{{ v.id }}" data-stock="{{ v.stock }}"
+                                    {% if v.stock <= 0 %}disabled title="Mavjud emas"{% endif %}
+                                    role="radio" aria-checked="{% if v.id == selected_variant.id %}true{% else %}false{% endif %}">
+                                {{ v.size }}
+                            </button>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <span class="text-muted small" id="pdpSizePrompt">Avval rangni tanlang</span>
+                {% endif %}
+            </div>
+            <div class="pdp-sku">SKU: <span id="pdpSku">{% if selected_variant %}{{ selected_variant.sku }}{% else %}—{% endif %}</span></div>
+            {% else %}
+            <div class="alert alert-secondary mt-3">Bu mahsulot uchun variant yo'q.</div>
+            {% endif %}
+        </div>
+
+        <!-- 3) Buy box -->
+        <aside class="pdp-buy" aria-label="Xarid paneli">
+            <div class="pdp-buy-body">
+                <div class="pdp-price">
+                    <span id="pdpPrice">{{ discount_info.discounted_price|floatformat:0|intcomma }} so'm</span>
+                    {% if discount_info.total_discount_percent > 0 %}
+                    <span class="pdp-discount">-{{ discount_info.total_discount_percent|floatformat:0 }}%</span>
+                    {% endif %}
+                </div>
+                {% if discount_info.total_discount > 0 %}
+                <div class="pdp-oldprice">{{ product.price|floatformat:0|intcomma }} so'm</div>
+                {% elif product.old_price %}
+                <div class="pdp-oldprice">{{ product.old_price|floatformat:0|intcomma }} so'm</div>
+                {% endif %}
+
+                <div class="pdp-perpiece">Dona xarid qilish mumkin</div>
+
+                {% if variant_groups %}
+                <form method="post" id="addToCartForm" class="js-ajax-cart" action="{% url 'asic:add_to_cart_detail' product.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="variant_id" id="pdpVariantId" value="{% if selected_variant %}{{ selected_variant.id }}{% endif %}">
+                    <div class="pdp-alert alert alert-danger d-none" id="pdpError" role="alert">Avval variantni tanlang</div>
+                    <div class="pdp-qty">
+                        <span class="me-1 fw-semibold">Miqdor:</span>
+                        <button type="button" class="quantity-btn" id="qtyMinus" aria-label="Kamaytirish">−</button>
+                        <input type="number" class="quantity-input" name="quantity" id="pdpQty" value="1" min="1" max="{% if selected_variant %}{{ selected_variant.stock|default:1 }}{% else %}1{% endif %}">
+                        <button type="button" class="quantity-btn" id="qtyPlus" aria-label="Ko'paytirish">+</button>
+                    </div>
+                    <div class="pdp-qty-hint" id="pdpQtyHint"></div>
+                    <button type="submit" class="pdp-add" id="pdpAddBtn">
+                        Savatga qo'shish
+                        <small>Ertaga yetkazib beramiz</small>
+                    </button>
+                </form>
+                <form method="post" id="buyNowForm" action="{% url 'asic:add_to_cart_detail' product.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="variant_id" id="pdpVariantIdBuy" value="{% if selected_variant %}{{ selected_variant.id }}{% endif %}">
+                    <input type="hidden" name="buy_now" value="1">
+                    <button type="submit" class="pdp-oneclick" id="pdpBuyBtn">1 klikda xarid qilish</button>
+                </form>
+                <div class="pdp-stock {% if selected_variant %}{% if selected_variant.stock <= 0 %}out{% else %}ok{% endif %}{% else %}muted{% endif %}" id="pdpStock">
+                    {% if selected_variant %}
+                        {% if selected_variant.stock <= 0 %}
+                        <span class="tick">✕</span><span>Sotuvda mavjud emas</span>
+                        {% else %}
+                        <span class="tick">✓</span><span>{{ selected_variant.stock }} dona mavjud</span>
+                        {% endif %}
+                    {% else %}
+                    <span class="tick">•</span><span>Variantni tanlang</span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <button class="pdp-add" disabled>Variant yo'q<small>Tanlash imkoni yo'q</small></button>
+                {% endif %}
+
+                <div class="pdp-delivery">
+                    <strong>Ertaga yetkazib beramiz</strong>
+                    <span>{{ delivery.main_text|default:"Topshirish punktiga yoki kuryer orqali"|linebreaksbr }}</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Tabs: description / specs / delivery -->
+    <div class="pdp-tabs" id="pdp-tabs">
+        <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">Tavsif</button>
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdp-desc" type="button" role="tab">Tavsif</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab">Xususiyatlar</button>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdp-specs" type="button" role="tab">Xususiyatlar</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab">Yetkazib berish</button>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdp-delivery" type="button" role="tab">Yetkazib berish</button>
             </li>
         </ul>
-
         <div class="tab-content">
-            <div class="tab-pane fade show active" id="description" role="tabpanel">
+            <div class="tab-pane fade show active" id="pdp-desc" role="tabpanel">
                 <h4>Mahsulot tavsifi</h4>
                 {% if product.description %}
                     {% for line in product.description.splitlines %}
-                        <p>{{ line }}</p>
+                    <p>{{ line }}</p>
                     {% endfor %}
                 {% endif %}
             </div>
-
-            <div class="tab-pane fade" id="specs" role="tabpanel">
-                <div class="specs-table">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Ko?rsatkich</th>
-                                <th>Qiymat</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Brend</td>
-                                <td>{{ product.manufacturer.name }}</td>
-                            </tr>
-                            <tr>
-                                <td>Model</td>
-                                <td>{{ product.name }}</td>
-                            </tr>
-                            {% if product.category %}
-                            <tr>
-                                <td>Kategoriya</td>
-                                <td>{{ product.category.name }}</td>
-                            </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
+            <div class="tab-pane fade" id="pdp-specs" role="tabpanel">
+                <div class="table-responsive">
+                <table class="table mb-0">
+                    <tbody>
+                        <tr><td>Brend</td><td>{{ product.manufacturer.name }}</td></tr>
+                        <tr><td>Model</td><td>{{ product.name }}</td></tr>
+                        {% if product.category %}<tr><td>Kategoriya</td><td>{{ product.category.name }}</td></tr>{% endif %}
+                        <tr><td>SKU</td><td id="pdpSku2">{% if selected_variant %}{{ selected_variant.sku }}{% else %}—{% endif %}</td></tr>
+                    </tbody>
+                </table>
                 </div>
-
                 {% if product.specifications %}
-                <div class="custom-characteristics mt-3 p-3" style="background-color: #f8f9fa; border: 1px solid #ddd; border-radius: 5px;">
+                <div class="mt-3 p-3" style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;">
                     <h5>Xususiyatlar</h5>
-                    <p>{{ product.specifications|linebreaksbr }}</p>
+                    <p class="mb-0">{{ product.specifications|linebreaksbr }}</p>
                 </div>
                 {% endif %}
             </div>
-
-            <div class="tab-pane fade" id="delivery" role="tabpanel">
-                <h4>{{ delivery.title }}</h4>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Yetkazib berish turlari:</h6>
-                        <ul class="feature-list">
-                            <li>{{ delivery.courier_title }}</li>
-                            <li>{{ delivery.air_title }}</li>
-                            <li>{{ delivery.sea_title }}</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Narxlar:</h6>
-                        <ul class="feature-list">
-                            <li>{{ delivery.free_shipping_text }}</li>
-                            <li>{{ delivery.paid_shipping_text }}</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="alert alert-info mt-3">
-                    <h6>{{ delivery.important_info_title }}</h6>
-                    <p class="mb-0">{{ delivery.important_info_body|linebreaksbr }}</p>
-                </div>
+            <div class="tab-pane fade" id="pdp-delivery" role="tabpanel">
+                <h4>{{ delivery.title|default:"Yetkazib berish" }}</h4>
+                <p>{{ delivery.main_text|default:"Ertaga yetkazib beramiz."|linebreaksbr }}</p>
+                <p class="mb-0 text-muted">{{ delivery.free_shipping_text|default:"" }} {{ delivery.paid_shipping_text|default:"" }}</p>
             </div>
         </div>
     </div>
-</section>
+</div>
+
+<!-- sticky mobile buy bar (only when a variant is already chosen) -->
+{% if selected_variant and selected_variant.stock > 0 %}
+<div class="pdp-stickybar">
+    <div>
+        {% if discount_info.total_discount > 0 %}
+        <div class="p-old">{{ product.price|floatformat:0|intcomma }} so'm</div>
+        {% elif product.old_price %}
+        <div class="p-old">{{ product.old_price|floatformat:0|intcomma }} so'm</div>
+        {% endif %}
+        <div class="p-new">{{ discount_info.discounted_price|floatformat:0|intcomma }} so'm</div>
+    </div>
+    <button type="submit" form="addToCartForm" id="pdpStickyBtn">
+        Savatga<small>Ertaga yetkazib beramiz</small>
+    </button>
+</div>
+{% endif %}
 
 <script>
-    function changeImage(thumbElement, imageUrl) {
-        const mainImage = document.getElementById('mainImage');
-        document.querySelectorAll('.gallery-thumb').forEach(thumb => {
-            thumb.classList.remove('active');
+(function () {
+    // Variant map built from real DB data (no hardcoding).
+    var VARIANTS = {
+        {% for group in variant_groups %}{% for v in group.variants %}"{{ v.id }}": {color: "{{ v.color|escapejs }}", size: "{{ v.size|escapejs }}", stock: {{ v.stock }}, sku: "{{ v.sku|escapejs }}"},{% endfor %}{% endfor %}
+    };
+    var GROUP_IMG = {
+        {% for group in variant_groups %}"{{ group.color|escapejs }}": "{{ group.image_url|default:''|escapejs }}",{% endfor %}
+    };
+    // Full per-color galleries (variant images; product images as fallback).
+    var COLOR_IMAGES = {
+        {% for group in variant_groups %}"{{ group.color|escapejs }}": [{% for u in group.images %}"{{ u|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}],{% endfor %}
+    };
+    var FALLBACK_IMAGES = [{% for u in fallback_images %}"{{ u|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+    var COLOR_OF = {};
+    Object.keys(VARIANTS).forEach(function (id) { COLOR_OF[VARIANTS[id].color] = true; });
+
+    var colorsBox = document.getElementById('pdpColors');
+    var sizesBox = document.getElementById('pdpSizes');
+    var colorName = document.getElementById('pdpColorName');
+    var sizeName = document.getElementById('pdpSizeName');
+    var skuEl = document.getElementById('pdpSku');
+    var sku2El = document.getElementById('pdpSku2');
+    var stockBox = document.getElementById('pdpStock');
+    var qtyInput = document.getElementById('pdpQty');
+    var form = document.getElementById('addToCartForm');
+    var buyForm = document.getElementById('buyNowForm');
+    var addBtn = document.getElementById('pdpAddBtn');
+    var buyBtn = document.getElementById('pdpBuyBtn');
+    var stickyBtn = document.getElementById('pdpStickyBtn');
+    var currentColor = null;
+    var currentVariant = {% if selected_variant %}"{{ selected_variant.id }}"{% else %}null{% endif %};
+    var currentStock = {% if selected_variant %}{{ selected_variant.stock }}{% else %}0{% endif %};
+    var errorBox = document.getElementById('pdpError');
+    var qtyHint = document.getElementById('pdpQtyHint');
+    var variantInput = document.getElementById('pdpVariantId');
+    var variantInputBuy = document.getElementById('pdpVariantIdBuy');
+
+    function colorHasStock(color) {
+        return Object.keys(VARIANTS).some(function (id) {
+            return VARIANTS[id].color === color && VARIANTS[id].stock > 0;
         });
-        if (thumbElement.classList.contains('gallery-thumb')) {
-            thumbElement.classList.add('active');
-        }
-        if (mainImage) {
-            mainImage.style.opacity = '0';
-            setTimeout(() => {
-                mainImage.src = imageUrl;
-                mainImage.alt = thumbElement.alt;
-                mainImage.style.opacity = '1';
-            }, 200);
-        }
+    }
+    // Visually disable colors with zero stock across all sizes.
+    if (colorsBox) {
+        colorsBox.querySelectorAll('.pdp-color').forEach(function (btn) {
+            if (!colorHasStock(btn.getAttribute('data-color'))) btn.classList.add('disabled');
+        });
     }
 
-    function toggleZoom() {
-        const mainImage = document.getElementById('mainImage');
-        if (mainImage) {
-            mainImage.classList.toggle('zoomed');
-        }
+    function stockHtml(stock) {
+        if (stock === null || stock === undefined) return '<span class="tick">•</span><span>Variantni tanlang</span>';
+        if (stock <= 0) return '<span class="tick">✕</span><span>Sotuvda mavjud emas</span>';
+        return '<span class="tick">✓</span><span>' + stock + ' dona mavjud</span>';
     }
 
-    function changeQuantity(amount) {
-        const input = document.getElementById('quantity');
-        let current = parseInt(input.value);
-        if (!isNaN(current)) {
-            let newVal = current + amount;
-            if (newVal < parseInt(input.min)) newVal = parseInt(input.min);
-            input.value = newVal;
-        }
+    function showError(text) {
+        if (!errorBox) return;
+        errorBox.textContent = text;
+        errorBox.classList.remove('d-none');
+        errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function hideError() {
+        if (errorBox) errorBox.classList.add('d-none');
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const variantSelect = document.getElementById('variantSelect');
-        const form = document.getElementById('addToCartForm');
-        const availability = document.getElementById('availabilityText');
+    function clearSelection() {
+        currentVariant = null;
+        currentStock = 0;
+        if (variantInput) variantInput.value = '';
+        if (variantInputBuy) variantInputBuy.value = '';
+        if (colorName) colorName.textContent = 'Tanlang';
+        if (sizeName) sizeName.textContent = 'Tanlang';
+        if (skuEl) skuEl.textContent = '—';
+        if (sku2El) sku2El.textContent = '—';
+        if (stockBox) {
+            stockBox.innerHTML = stockHtml(null);
+            stockBox.className = 'pdp-stock muted';
+        }
+        if (qtyInput) { qtyInput.max = 1; qtyInput.value = 1; }
+        if (colorsBox) {
+            colorsBox.querySelectorAll('.pdp-color').forEach(function (b) {
+                b.classList.remove('selected');
+                b.setAttribute('aria-checked', 'false');
+            });
+        }
+        hideError();
+    }
 
-        if (variantSelect && form) {
-            const updateVariant = () => {
-                const selected = variantSelect.options[variantSelect.selectedIndex];
-                const variantId = selected.value;
-                const stock = parseInt(selected.dataset.stock || '0');
-                form.action = form.action.replace(/\d+\/$/, `${variantId}/`);
+    function selectVariant(id) {
+        var v = VARIANTS[id];
+        if (!v || v.stock <= 0) return;
+        hideError();
+        currentVariant = id;
+        currentColor = v.color;
+        currentStock = v.stock;
+        if (variantInput) variantInput.value = id;
+        if (variantInputBuy) variantInputBuy.value = id;
+        if (colorName) colorName.textContent = v.color;
+        if (sizeName) sizeName.textContent = v.size;
+        if (skuEl) skuEl.textContent = v.sku;
+        if (sku2El) sku2El.textContent = v.sku;
+        if (stockBox) {
+            stockBox.innerHTML = stockHtml(v.stock);
+            stockBox.className = 'pdp-stock ok';
+        }
+        if (qtyInput) {
+            qtyInput.max = v.stock;
+            var q = parseInt(qtyInput.value, 10) || 1;
+            if (q > v.stock) qtyInput.value = v.stock;
+            if (q < 1) qtyInput.value = 1;
+        }
+        if (colorsBox) {
+            colorsBox.querySelectorAll('.pdp-color').forEach(function (b) {
+                var on = b.getAttribute('data-color') === v.color;
+                b.classList.toggle('selected', on);
+                b.setAttribute('aria-checked', on ? 'true' : 'false');
+            });
+        }
+        if (sizesBox) {
+            sizesBox.querySelectorAll('.pdp-size').forEach(function (b) {
+                var on = b.getAttribute('data-variant') === String(id);
+                b.classList.toggle('selected', on);
+                b.setAttribute('aria-checked', on ? 'true' : 'false');
+            });
+        }
+        // Swap gallery to the selected color's own images (never mixed).
+        setGallery(imagesForColor(v.color));
+        // Reflect color in URL (?color=) without reload for shareability.
+        try {
+            var url = new URL(window.location.href);
+            url.searchParams.set('color', v.color);
+            url.searchParams.delete('variant');
+            window.history.replaceState({}, '', url);
+        } catch (e) {}
+    }
 
-                if (availability) {
-                    if (stock > 0) {
-                        availability.innerHTML = `<i class="fas fa-check-circle"></i><span>Mavjud: ${stock} ta</span>`;
-                    } else {
-                        availability.innerHTML = `<i class="fas fa-times-circle"></i><span>Hozircha mavjud emas</span>`;
-                    }
+    function renderSizes(color) {
+        if (!sizesBox) return;
+        sizesBox.innerHTML = '';
+        Object.keys(VARIANTS).forEach(function (id) {
+            var v = VARIANTS[id];
+            if (v.color !== color) return;
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'pdp-size' + (String(id) === String(currentVariant) ? ' selected' : '');
+            b.setAttribute('data-variant', id);
+            b.setAttribute('data-stock', v.stock);
+            b.setAttribute('role', 'radio');
+            b.setAttribute('aria-checked', String(id) === String(currentVariant) ? 'true' : 'false');
+            b.textContent = v.size;
+            if (v.stock <= 0) { b.disabled = true; b.title = 'Mavjud emas'; }
+            b.addEventListener('click', function () { selectVariant(id); });
+            sizesBox.appendChild(b);
+        });
+    }
+
+    if (colorsBox) {
+        colorsBox.querySelectorAll('.pdp-color').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var color = btn.getAttribute('data-color');
+                if (btn.classList.contains('disabled')) return;
+                // Choosing a color only filters sizes — the user must
+                // explicitly pick a size (no automatic variant choice).
+                clearSelection();
+                if (colorName) colorName.textContent = color;
+                currentColor = color;
+                if (colorsBox) {
+                    colorsBox.querySelectorAll('.pdp-color').forEach(function (b) {
+                        var on = b.getAttribute('data-color') === color;
+                        b.classList.toggle('selected', on);
+                        b.setAttribute('aria-checked', on ? 'true' : 'false');
+                    });
                 }
-            };
-            updateVariant();
-            variantSelect.addEventListener('change', updateVariant);
+                renderSizes(color);
+                setGallery(imagesForColor(color));
+            });
+        });
+    }
+    if (sizesBox) {
+        sizesBox.querySelectorAll('.pdp-size').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                if (btn.disabled) return;
+                selectVariant(btn.getAttribute('data-variant'));
+            });
+        });
+    }
+
+    // Quantity stepper clamped to the selected variant's real stock.
+    function clampQty(showHint) {
+        if (!qtyInput) return true;
+        var max = currentVariant ? currentStock : 1;
+        var val = parseInt(qtyInput.value, 10) || 1;
+        if (val < 1) val = 1;
+        if (val > max) {
+            val = max;
+            if (showHint && currentVariant && qtyHint) {
+                qtyHint.textContent = 'Mavjud: ' + max + ' dona';
+                setTimeout(function () { if (qtyHint) qtyHint.textContent = ''; }, 2500);
+            }
         }
+        qtyInput.value = val;
+        return true;
+    }
+    var qm = document.getElementById('qtyMinus'), qp = document.getElementById('qtyPlus');
+    if (qm && qtyInput) qm.addEventListener('click', function () {
+        qtyInput.value = (parseInt(qtyInput.value, 10) || 1) - 1; clampQty(false);
     });
+    if (qp && qtyInput) qp.addEventListener('click', function () {
+        qtyInput.value = (parseInt(qtyInput.value, 10) || 1) + 1; clampQty(true);
+    });
+    if (qtyInput) qtyInput.addEventListener('change', function () { clampQty(true); });
+
+    // Block submit until a variant is explicitly chosen (no random default).
+    function guardSubmit(e) {
+        if (!currentVariant) {
+            e.preventDefault();
+            showError('Avval variantni tanlang');
+            return false;
+        }
+        var v = VARIANTS[currentVariant];
+        if (!v || v.stock <= 0) {
+            e.preventDefault();
+            showError('Sotuvda mavjud emas');
+            return false;
+        }
+        clampQty(false);
+        return true;
+    }
+    if (form) form.addEventListener('submit', guardSubmit);
+    if (buyForm) buyForm.addEventListener('submit', guardSubmit);
+
+    // Gallery: per-color images with thumbs + arrows.
+    var thumbsBox = document.getElementById('pdpThumbs');
+    var mainImg = document.getElementById('pdpMain');
+    var mainName = "{{ product.name|escapejs }}";
+    var idx = 0;
+
+    function imagesForColor(color) {
+        var urls = COLOR_IMAGES[color];
+        if (urls && urls.length) return urls;
+        return FALLBACK_IMAGES;
+    }
+    function currentThumbs() {
+        return thumbsBox ? Array.prototype.slice.call(thumbsBox.querySelectorAll('.pdp-thumb')) : [];
+    }
+    function setGallery(urls) {
+        if (!thumbsBox) return;
+        if (!urls || !urls.length) urls = FALLBACK_IMAGES;
+        thumbsBox.innerHTML = '';
+        urls.forEach(function (u, k) {
+            var t = document.createElement('img');
+            t.src = u;
+            t.alt = mainName + ' — ' + (k + 1);
+            t.className = 'pdp-thumb' + (k === 0 ? ' active' : '');
+            t.setAttribute('data-full', u);
+            t.setAttribute('tabindex', '0');
+            t.addEventListener('click', function () { show(k); });
+            t.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(k); }
+            });
+            thumbsBox.appendChild(t);
+        });
+        idx = 0;
+        if (mainImg) {
+            if (urls.length) {
+                mainImg.src = urls[0];
+                mainImg.alt = mainName;
+                mainImg.style.display = '';
+            } else {
+                mainImg.style.display = 'none';
+            }
+        }
+    }
+    function show(i) {
+        var thumbs = currentThumbs();
+        if (!thumbs.length || !mainImg) return;
+        idx = (i + thumbs.length) % thumbs.length;
+        thumbs.forEach(function (t, k) { t.classList.toggle('active', k === idx); });
+        mainImg.src = thumbs[idx].getAttribute('data-full');
+        mainImg.alt = thumbs[idx].alt || mainImg.alt;
+    }
+    var pv = document.getElementById('pdpPrev'), nx = document.getElementById('pdpNext');
+    if (pv) pv.addEventListener('click', function () { show(idx - 1); });
+    if (nx) nx.addEventListener('click', function () { show(idx + 1); });
+    if (mainImg) mainImg.addEventListener('click', function () { mainImg.classList.toggle('zoomed'); });
+    // Wire initial server-rendered thumbs.
+    currentThumbs().forEach(function (t, k) {
+        t.addEventListener('click', function () { show(k); });
+        t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(k); } });
+    });
+})();
 </script>
 
 {% endblock content %}

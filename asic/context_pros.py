@@ -1,6 +1,15 @@
 from .models import SiteSettings, StaticPage, TemplateEdit, Cards, PageTitle
 
 
+def cart_count(request):
+    """Cart item count for header / bottom-nav badges (no extra queries)."""
+    try:
+        from .cart import Cart
+        return {"cart_count": len(Cart(request))}
+    except Exception:
+        return {"cart_count": 0}
+
+
 def site_settings(request):
     try:
         settings = SiteSettings.objects.first()
